@@ -2,15 +2,26 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MedicalRecordController;
+use App\Http\Controllers\TriageController;
+use App\Http\Controllers\SignosVitalesController;
+use App\Http\Controllers\EvaluacionAbcdeController;
 
-//Definir la ruta pública de inicio de sesión
-Route::post('login', [AuthController::class, 'login']);
+/*
+|--------------------------------------------------------------------------
+| Rutas API - Plataforma Ficha Clínica TP
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::prefix('fichas/{medicalRecordId}')->group(function () {
+    // 1. Triage (3.º y 4.º Medio) 
+    Route::post('/triage', [TriageController::class, 'store']);
+    Route::get('/triage', [TriageController::class, 'show']);
 
+    // 2. Signos Vitales e IMC (3.º Medio) 📊
+    Route::post('/signos-vitales', [SignosVitalesController::class, 'store']);
+    Route::get('/signos-vitales', [SignosVitalesController::class, 'index']);
 
-Route::apiResource('medical-records', MedicalRecordController::class);
+    // 3. Evaluación Primaria ABCDE (4.º Medio) 🩺
+    Route::post('/evaluacion-abcde', [EvaluacionAbcdeController::class, 'store']);
+    Route::get('/evaluacion-abcde', [EvaluacionAbcdeController::class, 'show']);
+});
