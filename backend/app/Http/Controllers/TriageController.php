@@ -1,15 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Models\FichaClinica;
 use App\Models\Triage;
-use App\Models\MedicalRecord;
 use Illuminate\Http\Request;
 
 class TriageController extends Controller
 {
-    public function store(Request $request, $medicalRecordId)
+    public function store(Request $request, $fichaId)
     {
+        // Verificar que la ficha existe
+        $ficha = FichaClinica::findOrFail($fichaId);
+
         $validated = $request->validate([
             'motivo_consulta' => 'required|string',
             'prioridad_esi' => 'required|integer|min:1|max:5',
@@ -25,30 +29,17 @@ class TriageController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        // Cálculo automático según nivel ESI
-        $tiemposEsi = [
-            1 => 0,    // ESI 1: Inmediato (Reanimación)
-            2 => 10,   // ESI 2: 10 minutos (Emergencia)
-            3 => 30,   // ESI 3: 30 minutos (Urgencia)
-            4 => 60,   // ESI 4: 60 minutos (Menor urgencia)
-            5 => 120,  // ESI 5: 120 minutos (No urgente)
-        ];
-
+        $tiemposEsi = [1 => 0, 2 => 10, 3 => 30, 4 => 60, 5 => 120];
         $nivelesEsi = [
-            1 => 'CRÍTICO / ALTA',
-            2 => 'EMERGENCIA / ALTA',
-            3 => 'URGENCIA / MEDIA',
-            4 => 'MENOR URGENCIA / BAJA',
-            5 => 'NO URGENTE / BAJA',
+            1 => 'CRÍTICO / ALTA', 2 => 'EMERGENCIA / ALTA', 3 => 'URGENCIA / MEDIA',
+            4 => 'MENOR URGENCIA / BAJA', 5 => 'NO URGENTE / BAJA',
         ];
 
         $prioridadEsi = $validated['prioridad_esi'];
 
         $triage = Triage::create([
-            'medical_record_id' => $medicalRecordId,
-
-            'estudiante_id' => auth()->id() ?? 1, // Usuario autenticado o fallback
-
+            'ficha_clinica_id' => $ficha->id, // Usamos la nueva relación
+            'estudiante_id' => $request->user()->id,
             'motivo_consulta' => $validated['motivo_consulta'],
             'prioridad_esi' => $prioridadEsi,
             'escala_eva' => $validated['escala_eva'],
@@ -71,10 +62,9 @@ class TriageController extends Controller
         ], 201);
     }
 
-    public function show($medicalRecordId)
+    public function show($fichaId)
     {
-        $triage = Triage::where('medical_record_id', $medicalRecordId)->firstOrFail();
+        $triage = Triage::where('ficha_clinica_id', $fichaId)->firstOrFail();
         return response()->json($triage);
     }
 }
-

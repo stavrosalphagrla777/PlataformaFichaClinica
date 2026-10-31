@@ -11,6 +11,7 @@ Route::post('/auth/reset-password', [\App\Http\Controllers\Api\PasswordResetCont
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/fichas', [\App\Http\Controllers\Api\AdmisionController::class, 'store']);
     
         // Rutas de administración de usuarios
     Route::middleware('role:administrador')->group(function () {

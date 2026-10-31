@@ -1,47 +1,32 @@
-<<<<<<< HEAD
 /vendor
-=======
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
->>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
 /node_modules
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-<<<<<<< HEAD
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-auth.json
+
+*.log
+.DS_Store
+Thumbs.db
 npm-debug.log
 yarn-error.log
+
+.env
+.env.backup
+.env.production
+auth.json
+/auth.json
+
+.phpactor.json
+.phpunit.result.cache
+/.phpunit.cache
+
+Homestead.json
+Homestead.yaml
+
 /.fleet
 /.idea
 /.nova
 /.vscode
 /.zed
-
-# Archivos de entorno (¡ESTA ES LA LÍNEA MÁS IMPORTANTE!)
-.env
-.env.backup
-.env.production
-=======
-/vendor
-Homestead.json
-Homestead.yaml
-Thumbs.db
->>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
