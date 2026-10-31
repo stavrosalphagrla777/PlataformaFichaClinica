@@ -12,7 +12,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-<<<<<<< HEAD
         // Alias de los middleware de spatie/laravel-permission: role:administrador, role:estudiante|docente
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
@@ -25,10 +24,4 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn ($request, \Throwable $e) => $request->is('api/*') || $request->expectsJson()
         );
-=======
-        //
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
->>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     })->create();
