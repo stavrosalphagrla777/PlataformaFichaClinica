@@ -2,36 +2,26 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
+use App\Http\Controllers\Api\AuthController;
 
-Route::post('/auth/login', function() { return response()->json(['token' => 'fake']); });
-Route::post('/auth/logout', function() { return response()->json(['message' => 'ok']); });
-Route::post('/auth/forgot-password', function() { return response()->json(['message' => 'ok']); });
-Route::post('/auth/reset-password', function() { return response()->json(['message' => 'ok']); });
-Route::get('/auth/me', function(Request $request) { return $request->user(); })->middleware('auth:sanctum');
-Route::get('/admin/users', function() { return response()->json(['data' => []]); })->middleware('auth:sanctum');
-=======
-use App\Http\Controllers\TriageController;
-use App\Http\Controllers\SignosVitalesController;
-use App\Http\Controllers\EvaluacionAbcdeController;
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/forgot-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'forgotPassword']);
+Route::post('/auth/reset-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'resetPassword']);
 
-/*
-|--------------------------------------------------------------------------
-| Rutas API - Plataforma Ficha Clínica TP
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('fichas/{medicalRecordId}')->group(function () {
-    // 1. Triage (3.º y 4.º Medio) 
-    Route::post('/triage', [TriageController::class, 'store']);
-    Route::get('/triage', [TriageController::class, 'show']);
-
-    // 2. Signos Vitales e IMC (3.º Medio) 📊
-    Route::post('/signos-vitales', [SignosVitalesController::class, 'store']);
-    Route::get('/signos-vitales', [SignosVitalesController::class, 'index']);
-
-    // 3. Evaluación Primaria ABCDE (4.º Medio) 🩺
-    Route::post('/evaluacion-abcde', [EvaluacionAbcdeController::class, 'store']);
-    Route::get('/evaluacion-abcde', [EvaluacionAbcdeController::class, 'show']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    
+        // Rutas de administración de usuarios
+    Route::middleware('role:administrador')->group(function () {
+        Route::get('/admin/users', [\App\Http\Controllers\Api\UserManagementController::class, 'index']);
+        Route::post('/admin/users', [\App\Http\Controllers\Api\UserManagementController::class, 'store']);
+        Route::put('/admin/users/{user}', [\App\Http\Controllers\Api\UserManagementController::class, 'update']);
+        Route::patch('/admin/users/{user}/desactivar', [\App\Http\Controllers\Api\UserManagementController::class, 'desactivar']);
+        Route::patch('/admin/users/{user}/activar', [\App\Http\Controllers\Api\UserManagementController::class, 'activar']);
+        Route::patch('/admin/users/{user}/rol-nivel', [\App\Http\Controllers\Api\UserManagementController::class, 'asignarRolNivel']);
+    });
 });
->>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
+
+Route::middleware('auth:sanctum')->post('/fichas/{id}/triage', function() { return response()->json(['message' => 'ok']); });
+
