@@ -34,3 +34,4 @@ class DemoUserSeeder extends Seeder
         }
     }
 }
+

@@ -89,3 +89,4 @@ class PasswordResetTest extends TestCase
         ])->assertStatus(422)->assertJsonValidationErrors('password');
     }
 }
+

@@ -159,3 +159,4 @@ class UserManagementTest extends TestCase
         $this->assertTrue($this->admin->fresh()->hasRole('administrador'));
     }
 }
+

@@ -48,11 +48,9 @@ class SignosVitalesController extends Controller
 
         $signo = SignosVitales::create([
             'medical_record_id' => $medicalRecordId,
-<<<<<<< HEAD
-            'registrado_por_id' => auth()->id(),
-=======
+
             'registrado_por_id' => auth()->id() ?? 1,
->>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
+
             'fecha_hora_registro' => now(),
             'frecuencia_cardiaca' => $validated['frecuencia_cardiaca'],
             'presion_arterial' => $validated['presion_arterial'],

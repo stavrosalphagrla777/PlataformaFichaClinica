@@ -29,6 +29,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Usuario desactivado'], 403);
         }
 
+                // Validar que el usuario tenga un rol asignado
+        if ($user->roles->isEmpty()) {
+            return response()->json(['message' => 'El usuario no tiene un rol asignado.'], 403);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
