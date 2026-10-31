@@ -1,5 +1,8 @@
 {
+<<<<<<< HEAD
+=======
     "$schema": "https://getcomposer.org/schema.json",
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
@@ -7,6 +10,20 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+<<<<<<< HEAD
+        "laravel/framework": "^11.57",
+        "laravel/tinker": "^2.9",
+        "laravel/sanctum": "^4.0",
+        "spatie/laravel-permission": "^6.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.26",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.1",
+        "phpunit/phpunit": "^11.0.1"
+=======
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
@@ -20,6 +37,7 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^11.5.50"
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     },
     "autoload": {
         "psr-4": {
@@ -34,6 +52,8 @@
         }
     },
     "scripts": {
+<<<<<<< HEAD
+=======
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
@@ -50,6 +70,7 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
@@ -61,12 +82,16 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
+<<<<<<< HEAD
+            "@php artisan key:generate --ansi"
+=======
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
         ]
     },
     "extra": {
@@ -75,6 +100,22 @@
         }
     },
     "config": {
+<<<<<<< HEAD
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "audit": {
+        "block-insecure": false
+    },
+    "allow-plugins": {
+        "pestphp/pest-plugin": true,
+        "php-http/discovery": true
+    }
+},
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
+=======
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
@@ -86,3 +127,4 @@
     "minimum-stability": "stable",
     "prefer-stable": true
 }
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff

@@ -54,6 +54,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+<<<<<<< HEAD
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+
+=======
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -65,7 +70,11 @@ return [
     |
     */
 
+<<<<<<< HEAD
+    'timezone' => env('APP_TIMEZONE', 'America/Santiago'),
+=======
     'timezone' => 'UTC',
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
 
     /*
     |--------------------------------------------------------------------------

@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+/vendor
+=======
 *.log
 .DS_Store
 .env
@@ -12,13 +15,33 @@
 /.vscode
 /.zed
 /auth.json
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
 /node_modules
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
+<<<<<<< HEAD
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+
+# Archivos de entorno (¡ESTA ES LA LÍNEA MÁS IMPORTANTE!)
+.env
+.env.backup
+.env.production
+=======
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff

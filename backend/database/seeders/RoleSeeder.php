@@ -2,6 +2,22 @@
 
 namespace Database\Seeders;
 
+<<<<<<< HEAD
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+
+class RoleSeeder extends Seeder
+{
+    public function run(): void
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        foreach (User::ROLES as $rol) {
+            Role::firstOrCreate(['name' => $rol, 'guard_name' => 'web']);
+        }
+=======
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
@@ -34,5 +50,6 @@ class RoleSeeder extends Seeder
             'password' => Hash::make('12345678'),
         ]);
         $studentUser->assignRole($studentRole);
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     }
 }
