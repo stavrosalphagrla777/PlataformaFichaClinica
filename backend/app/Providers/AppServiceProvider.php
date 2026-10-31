@@ -2,17 +2,27 @@
 
 namespace App\Providers;
 
+<<<<<<< HEAD
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
+=======
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+<<<<<<< HEAD
+=======
+    /**
+     * Register any application services.
+     */
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     public function register(): void
     {
         //
     }
 
+<<<<<<< HEAD
     public function boot(): void
     {
         // El enlace del correo apunta al FRONTEND (no a una ruta de Laravel).
@@ -33,5 +43,13 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Este enlace expira en 60 minutos.')
                 ->line('Si no solicitaste este cambio, puedes ignorar este correo.');
         });
+=======
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        //
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
     }
 }

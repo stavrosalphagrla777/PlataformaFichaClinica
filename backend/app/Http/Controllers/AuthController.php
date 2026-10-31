@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -11,10 +12,16 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
+=======
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+<<<<<<< HEAD
     /** HU-01 - Iniciar sesión */
     public function login(Request $request): JsonResponse
     {
@@ -45,11 +52,29 @@ class AuthController extends Controller
             ], 403);
         }
 
+=======
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Las credenciales proporcionadas son incorrectas.'],
+            ]);
+        }
+
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+<<<<<<< HEAD
             'user' => new UserResource($user),
         ]);
     }
@@ -110,4 +135,9 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Contraseña actualizada correctamente.']);
     }
+=======
+            'user' => $user->load('roles'),
+        ]);
+    }
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
 }

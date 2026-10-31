@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Plataforma Digital Ficha Clínica TP
 
 Entorno de simulación clínica digital para la especialidad de Enfermería del
@@ -42,3 +43,6 @@ docker compose exec app php artisan test
 - `main`: solo código que funciona y pasa los tests.
 - Una rama por historia: `feature/HU-01-login`, `feature/HU-03-admision`...
 - Pull Request con revisión del compañero antes de mezclar a `main`.
+=======
+# Plataforma Digital Ficha Clinica
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff

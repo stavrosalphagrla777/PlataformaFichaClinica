@@ -46,7 +46,11 @@ class TriageController extends Controller
 
         $triage = Triage::create([
             'medical_record_id' => $medicalRecordId,
+<<<<<<< HEAD
             'estudiante_id' => auth()->id(), // Usuario autenticado o fallback
+=======
+            'estudiante_id' => auth()->id() ?? 1, // Usuario autenticado o fallback
+>>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
             'motivo_consulta' => $validated['motivo_consulta'],
             'prioridad_esi' => $prioridadEsi,
             'escala_eva' => $validated['escala_eva'],
