@@ -12,7 +12,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Alias de los middleware de spatie/laravel-permission: role:administrador, role:estudiante|docente
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
@@ -20,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Todas las rutas /api/* responden JSON (401, 403, 404, 422...) y nunca redirigen a /login
         $exceptions->shouldRenderJsonWhen(
             fn ($request, \Throwable $e) => $request->is('api/*') || $request->expectsJson()
         );
