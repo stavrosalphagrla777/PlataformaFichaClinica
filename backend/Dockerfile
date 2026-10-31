@@ -5,7 +5,7 @@ FROM --platform=linux/amd64 composer:2 AS composer_stage
 
 FROM --platform=linux/amd64 php:8.4-cli
 
-RUN apt-get update && apt-get install -y git unzip libzip-dev libpng-dev libonig-dev \
+RUN apt-get update && apt-get install -y git unzip nodejs npm libzip-dev libpng-dev libonig-dev \
     && docker-php-ext-install pdo_mysql mbstring zip gd bcmath \
     && rm -rf /var/lib/apt/lists/*
 
