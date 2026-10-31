@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Plataforma Digital Ficha Clínica TP
 
 Entorno de simulación clínica digital para la especialidad de Enfermería del
