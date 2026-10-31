@@ -1,48 +1,31 @@
-
 # Plataforma Digital Ficha Clínica TP
 
-Entorno de simulación clínica digital para la especialidad de Enfermería del
-Liceo Bicentenario Hermanos Sotomayor Baeza (3.º y 4.º medio).
+Entorno de simulación clínica digital para la especialidad de Enfermería del Liceo Bicentenario Hermanos Sotomayor Baeza (3.º y 4.º medio).
 
-- **Backend:** Laravel 12 (API REST) + Sanctum + spatie/laravel-permission + MySQL 8
-- **Frontend:** carpeta `frontend/` (a cargo de Pablo)
+## 🛠️ Stack Tecnológico
+- **Backend:** Laravel 11 (API REST) + Sanctum + Spatie/Laravel-Permission + MySQL 8
+- **Frontend:** Blade + Tailwind CSS + Vite (Integración en curso)
+- **Entorno:** Docker + Docker Compose
 - **Docs:** `docs/` (contrato de la API en `docs/API.md`)
 
-## Levantar el backend (Docker)
+## 🚀 Levantar el entorno (Docker)
 
 ```bash
+# 1. Copiar el archivo de entorno
 cp backend/.env.example backend/.env
+
+# 2. Construir y levantar los contenedores
 docker compose up -d --build
+
+# 3. Generar la clave de la aplicación
 docker compose exec app php artisan key:generate
+
+# 4. Ejecutar migraciones y seeders
 docker compose exec app php artisan migrate:fresh --seed
-```
 
-| Servicio | URL |
-|---|---|
-| API | http://localhost:8000/api |
-| phpMyAdmin | http://localhost:8080 (usuario `ficha` / `secret`) |
-| Correos de prueba (Mailpit) | http://localhost:8025 |
+# 5. Compilar assets del frontend
+docker compose exec app npm install
+docker compose exec app npm run build
 
-### Usuarios de prueba (contraseña `password123`)
 
-| Correo | Rol | Nivel |
-|---|---|---|
-| admin@liceo.cl | administrador | — |
-| docente@liceo.cl | docente | — |
-| estudiante@liceo.cl | estudiante | 4.º medio |
-| estudiante3@liceo.cl | estudiante | 3.º medio |
 
-### Ejecutar los tests
-
-```bash
-docker compose exec app php artisan test
-```
-
-## Flujo de trabajo (Git)
-
-- `main`: solo código que funciona y pasa los tests.
-- Una rama por historia: `feature/HU-01-login`, `feature/HU-03-admision`...
-- Pull Request con revisión del compañero antes de mezclar a `main`.
-=======
-# Plataforma Digital Ficha Clinica
->>>>>>> 6b61ff51a6ef315dbc9e8dc7c1fb0ae7e86644ff
