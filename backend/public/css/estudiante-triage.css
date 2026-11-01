@@ -1,0 +1,701 @@
+
+/* =========================================================
+   TRIAGE - ESTILOS COMPLEMENTARIOS
+   ========================================================= */
+
+/* NAVEGACIÓN ENTRE ETAPAS */
+
+.tabs a,
+.tabs a:visited {
+    flex: 0 0 auto;
+    padding: 11px 13px;
+    color: #60758a;
+    font-size: 12px;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+
+.tabs a:hover {
+    color: var(--blue);
+    background: #f1f7fd;
+}
+
+.tabs a.selected,
+.tabs a.selected:visited {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+    font-weight: 700;
+    background: #f1f7fd;
+}
+
+/* =========================================================
+   CAMPOS DE TRIAGE
+   ========================================================= */
+
+.triage-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #41566b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.triage-field textarea {
+    width: 100%;
+    min-height: 105px;
+    padding: 11px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    background: #ffffff;
+    color: var(--text);
+    font: 13px 'Segoe UI', Arial, sans-serif;
+    resize: vertical;
+}
+
+.triage-field textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(7, 91, 158, 0.1);
+}
+
+.triage-help {
+    margin: 0 0 16px;
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.optional-label {
+    margin-left: 6px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+/* =========================================================
+   CLASIFICACIÓN ESI
+   ========================================================= */
+
+.esi-options {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.esi-option {
+    --esi-color: #64748b;
+    --esi-light: #f1f5f9;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 105px;
+    padding: 15px 10px;
+    border: 2px solid var(--esi-color);
+    border-radius: 9px;
+    background: var(--esi-light);
+    text-align: center;
+    cursor: pointer;
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease,
+        border-width 0.2s ease;
+}
+
+.esi-option:hover {
+    transform: translateY(-2px);
+}
+
+.esi-option input[type="radio"] {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--esi-color);
+    cursor: pointer;
+}
+
+.esi-option strong {
+    color: var(--esi-color);
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.esi-option small {
+    color: #435468;
+    font-size: 12px;
+}
+
+.esi-option:has(input:checked) {
+    border-width: 3px;
+    box-shadow: 0 0 0 3px var(--esi-light);
+    transform: translateY(-2px);
+}
+
+.esi-option:has(input:focus-visible) {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+}
+
+/* COLORES ESI PERMANENTES */
+
+.esi-1 {
+    --esi-color: #c62828;
+    --esi-light: #fff0f0;
+}
+
+.esi-2 {
+    --esi-color: #a17600;
+    --esi-light: #fff7c2;
+}
+
+.esi-3 {
+    --esi-color: #cf5c08;
+    --esi-light: #fff0e1;
+}
+
+.esi-4 {
+    --esi-color: #227c45;
+    --esi-light: #e8f7ee;
+}
+
+.esi-5 {
+    --esi-color: #47759b;
+    --esi-light: #eaf3fc;
+}
+
+/* =========================================================
+   ESCALA DE DOLOR EVA
+   ========================================================= */
+
+.eva-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    color: #41566b;
+    font-size: 13px;
+}
+
+.eva-row output {
+    color: var(--blue);
+    font-weight: 700;
+}
+
+#eva {
+    width: 100%;
+    margin: 18px 0 8px;
+    accent-color: var(--blue);
+}
+
+#eva:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.eva-scale {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: #718096;
+    font-size: 12px;
+}
+
+.eva-enable {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 17px;
+    color: #41566b;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* =========================================================
+   SIGNOS VITALES
+   ========================================================= */
+
+.triage-grid {
+    align-items: start;
+}
+
+.triage-grid label,
+.vital-field > label {
+    display: block;
+    color: #41566b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.vital-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.vital-field > input {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 7px;
+    padding: 10px 11px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    background: #ffffff;
+    color: var(--text);
+    font: 13px 'Segoe UI', Arial, sans-serif;
+    outline: none;
+}
+
+.vital-field input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(7, 91, 158, 0.1);
+}
+
+/* =========================================================
+   PRESIÓN ARTERIAL
+   ========================================================= */
+
+.blood-pressure {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 7px;
+}
+
+.blood-pressure input {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    min-height: 40px;
+    margin: 0;
+    padding: 10px 8px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    background: #ffffff;
+    color: var(--text);
+    font: 13px 'Segoe UI', Arial, sans-serif;
+    text-align: center;
+    outline: none;
+}
+
+.pressure-divider {
+    flex: 0 0 auto;
+    color: var(--dark);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* =========================================================
+   ALERTAS CLÍNICAS
+   ========================================================= */
+
+.threshold-alert {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.threshold-alert:not(:empty) {
+    display: flex;
+}
+
+.threshold-row {
+    display: block;
+}
+
+.threshold-row strong {
+    margin-right: 4px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   VERDE - NORMAL
+   ========================================================= */
+
+.vital-field.status-normal input {
+    border: 2px solid #16a34a;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.threshold-alert.alert-normal {
+    border-color: #86efac;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+/* =========================================================
+   AMARILLO - ADVERTENCIA CLÍNICA
+   ========================================================= */
+
+.vital-field.status-warning input {
+    border: 2px solid #eab308;
+    background: #fefce8;
+    color: #854d0e;
+}
+
+.threshold-alert.alert-warning {
+    border-color: #fde047;
+    background: #fefce8;
+    color: #854d0e;
+}
+
+/* =========================================================
+   ROJO - CRÍTICO
+   ========================================================= */
+
+.vital-field.status-critical input {
+    border: 2px solid #dc2626;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.threshold-alert.alert-critical {
+    border-color: #fca5a5;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* =========================================================
+   AZUL - HIPOXIA LEVE
+   ========================================================= */
+
+.vital-field.status-info input {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.threshold-alert.alert-info {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* =========================================================
+   ADVERTENCIAS PREVENTIVAS DE VALORES ATÍPICOS
+   ========================================================= */
+
+.atypical-alert {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 11px 12px;
+    border: 1px solid #facc15;
+    border-radius: 6px;
+    background: #fefce8;
+    color: #854d0e;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.atypical-alert:not(:empty) {
+    display: flex;
+}
+
+.atypical-alert strong {
+    font-weight: 700;
+}
+
+.atypical-alert span {
+    display: block;
+}
+
+.atypical-alert small {
+    display: block;
+    color: #a16207;
+    font-size: 11px;
+}
+
+/*
+   Solo destacar el campo en amarillo cuando no exista
+   una clasificación clínica que ya le asignó otro color.
+*/
+
+.vital-field input.atypical-input:not(
+    .status-normal input,
+    .status-warning input,
+    .status-critical input,
+    .status-info input
+) {
+    border: 2px solid #eab308;
+    background: #fefce8;
+    color: #854d0e;
+}
+
+/* =========================================================
+   VALORES INVÁLIDOS
+   ========================================================= */
+
+.atypical-alert.invalid-warning {
+    border-color: #fca5a5;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.vital-field input:out-of-range {
+    border: 2px solid #dc2626;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.vital-field input {
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+/* =========================================================
+   PRIORIDAD ASIGNADA
+   ========================================================= */
+
+.priority-summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    border: 1px solid #dbe5ee;
+    border-left: 5px solid #94a3b8;
+    border-radius: 7px;
+    background: #f8fafc;
+}
+
+.priority-summary strong {
+    font-size: 20px;
+    white-space: nowrap;
+}
+
+.priority-summary span {
+    color: #536477;
+    font-size: 14px;
+}
+
+.priority-1 {
+    border-left-color: #c62828;
+    background: #fff0f0;
+}
+
+.priority-1 strong {
+    color: #c62828;
+}
+
+.priority-2 {
+    border-left-color: #eab308;
+    background: #fff7c2;
+}
+
+.priority-2 strong {
+    color: #856000;
+}
+
+.priority-3 {
+    border-left-color: #f97316;
+    background: #fff0e1;
+}
+
+.priority-3 strong {
+    color: #cf5c08;
+}
+
+.priority-4 {
+    border-left-color: #227c45;
+    background: #e8f7ee;
+}
+
+.priority-4 strong {
+    color: #227c45;
+}
+
+.priority-5 {
+    border-left-color: #47759b;
+    background: #eaf3fc;
+}
+
+.priority-5 strong {
+    color: #47759b;
+}
+
+/* =========================================================
+   MODAL DE CONFIRMACIÓN
+   ========================================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 430px;
+    padding: 32px;
+    border-radius: 16px;
+    background: #ffffff;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: modalAppear 0.25s ease;
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #fff0ee;
+    color: #b42318;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.modal-card h2 {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-size: 21px;
+}
+
+.modal-card p {
+    margin: 0 0 26px;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.modal-cancel,
+.modal-confirm {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.modal-cancel {
+    color: var(--text);
+    background: #eef2f7;
+}
+
+.modal-cancel:hover {
+    background: #dfe6ee;
+}
+
+.modal-confirm {
+    color: #ffffff;
+    background: #c0392b;
+}
+
+.modal-confirm:hover {
+    background: #a93226;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   DISEÑO RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1050px) {
+    .esi-options {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .esi-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .esi-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .esi-option {
+        min-height: 90px;
+        padding: 12px 8px;
+    }
+
+    .esi-option strong {
+        font-size: 16px;
+    }
+
+    .esi-option small {
+        font-size: 11px;
+    }
+
+    .priority-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .blood-pressure {
+        gap: 6px;
+    }
+
+    .modal-card {
+        padding: 24px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+}
