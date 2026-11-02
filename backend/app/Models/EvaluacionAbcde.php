@@ -73,3 +73,4 @@ class EvaluacionAbcde extends Model
         return $this->belongsTo(User::class, 'estudiante_id');
     }
 }
+

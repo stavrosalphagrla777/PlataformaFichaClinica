@@ -41,3 +41,4 @@ class SignosVitales extends Model
         return $this->belongsTo(User::class, 'registrado_por_id');
     }
 }
+

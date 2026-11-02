@@ -135,3 +135,4 @@ class AuthTest extends TestCase
         $this->getJson('/api/admin/users')->assertStatus(403);
     }
 }
+

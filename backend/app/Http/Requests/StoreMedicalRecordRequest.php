@@ -27,3 +27,4 @@ class StoreMedicalRecordRequest extends FormRequest
         ];
     }
 }
+
