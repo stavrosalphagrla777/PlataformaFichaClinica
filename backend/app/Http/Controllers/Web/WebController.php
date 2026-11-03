@@ -3,22 +3,84 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\FichaClinica; // Importamos el modelo para luego usarlo
 
 class WebController extends Controller
 {
-    // Esta es la pantalla principal: "Mis Casos Clínicos"
-    public function misCasos()
+    // --- AUTENTICACIÓN ---
+    public function login()
     {
-        // Por ahora, solo mostraremos una vista de prueba.
-        // Más adelante, aquí consultaremos la BD para traer los casos del estudiante.
-        return view('estudiante.mis-casos');
+        return view('auth.login');
     }
 
-    // Aquí iremos agregando las demás vistas (Admisión, Triage, etc.)
+    public function recuperar()
+    {
+        return view('auth.recuperar');
+    }
+
+    public function confirmacion()
+    {
+        return view('auth.confirmacion');
+    }
+
+    public function restablecer()
+    {
+        return view('auth.restablecer');
+    }
+
+    // --- ESTUDIANTE ---
+        public function dashboard()
+    {
+        return view('estudiante.casos'); 
+    }
+
+    public function misCasos()
+    {
+        return view('estudiante.casos'); 
+    }
+
+    public function casos()
+    {
+        return view('estudiante.casos');
+    }
+
+    public function ficha($id)
+    {
+        return view('estudiante.detalle-caso', compact('id'));
+    }
+
     public function admision($id)
     {
         return view('estudiante.admision', compact('id'));
+    }
+
+    public function triage($id)
+    {
+        return view('estudiante.triage', compact('id'));
+    }
+
+    // --- ADMIN ---
+    public function adminDashboard()
+    {
+        return view('admin.usuarios.index'); // Temporal: usa la vista de usuarios
+    }
+
+    public function adminUsuarios()
+    {
+        return view('admin.usuarios.index');
+    }
+
+    public function adminUsuariosCrear()
+    {
+        return view('admin.usuarios.crear');
+    }
+
+    public function adminUsuariosEditar($id)
+    {
+        return view('admin.usuarios.editar', compact('id'));
+    }
+
+    public function adminRolesNiveles()
+    {
+        return view('admin.roles-niveles');
     }
 }

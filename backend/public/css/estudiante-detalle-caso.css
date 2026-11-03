@@ -1,0 +1,622 @@
+
+:root {
+    --blue: #075b9e;
+    --dark: #064778;
+    --background: #f1f3f7;
+    --border: #e2e7ee;
+    --text: #243447;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ESTRUCTURA GENERAL */
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 235px;
+    flex: 0 0 235px;
+    background: var(--blue);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width .3s ease, flex-basis .3s ease;
+}
+
+.brand {
+    min-height: 90px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--dark);
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.brand > span {
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.brand-logo {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* NAVEGACIÓN */
+
+.nav-title {
+    padding: 20px 17px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: .75;
+}
+
+.nav-link {
+    display: block;
+    padding: 13px 18px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background .2s;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, .14);
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, .22);
+    border-left: 4px solid #fff;
+    padding-left: 14px;
+    font-weight: 600;
+}
+
+.nav-disabled {
+    opacity: 1;
+    color: #fff;
+    cursor: default;
+}
+
+/* ÁREA PRINCIPAL */
+
+.main-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 72px;
+    background: var(--dark);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    gap: 20px;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.topbar-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.topbar-user {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-size: 13px;
+}
+
+.topbar-user small {
+    font-size: 11px;
+    opacity: .8;
+}
+
+/* BOTÓN DEL MENÚ */
+
+/* ==========================================
+   BOTÓN DEL MENÚ
+   Abierto = X
+   Cerrado = Tres líneas
+   ========================================== */
+
+.menu-toggle {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    flex-shrink: 0;
+    transition: background .2s ease;
+}
+
+.menu-toggle:hover {
+    background: rgba(255, 255, 255, .15);
+}
+
+.menu-toggle:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 3px;
+
+    background: white;
+    border-radius: 3px;
+    flex-shrink: 0;
+
+    transform-origin: center;
+
+    transition:
+        transform .3s ease,
+        opacity .2s ease;
+}
+
+/* Menú visible: X */
+
+.app:not(.sidebar-hidden) .menu-toggle span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.app:not(.sidebar-hidden) .menu-toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.app:not(.sidebar-hidden) .menu-toggle span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Menú oculto: tres líneas */
+
+.app.sidebar-hidden .menu-toggle span {
+    transform: none;
+    opacity: 1;
+}
+
+/* Ocultar menú lateral */
+
+.app.sidebar-hidden .sidebar {
+    width: 0;
+    flex-basis: 0;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Centrar contenido cuando el menú está oculto */
+
+.app.sidebar-hidden .content {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* CONTENIDO */
+
+.content {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 28px;
+}
+
+.page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.page-heading h1 {
+    font-size: 25px;
+    margin: 5px 0;
+}
+
+.eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    color: var(--blue);
+    margin: 0;
+}
+
+.muted {
+    color: #687789;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* BOTONES */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 39px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font: 600 13px "Segoe UI", Arial, sans-serif;
+    text-decoration: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.btn-secondary {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+}
+
+.btn-secondary:hover {
+    background: var(--dark);
+    border-color: var(--dark);
+}
+
+.btn-primary {
+    background: var(--blue);
+    color: #fff;
+}
+
+.btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* INFORME CLÍNICO */
+
+.report {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(19, 51, 81, .045);
+    overflow: hidden;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 26px 30px;
+    background: #f8fbfe;
+    border-bottom: 1px solid var(--border);
+}
+
+.case-code {
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .6px;
+}
+
+.report-header h2 {
+    margin: 8px 0;
+    font-size: 23px;
+    color: #173a56;
+}
+
+.scenario {
+    margin: 0;
+    font-size: 14px;
+    color: #53687b;
+}
+
+.report-badges {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tag-type {
+    background: #eaf3fc;
+    color: #075b9e;
+}
+
+.tag-status {
+    background: #e6f7ee;
+    color: #18794e;
+}
+
+/* SECCIONES DEL INFORME */
+
+.report-section {
+    padding: 24px 30px;
+    border-bottom: 1px solid var(--border);
+}
+
+.report-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark);
+    font-size: 17px;
+    margin: 0 0 17px;
+}
+
+.section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #eaf3fc;
+    color: var(--blue);
+    border-radius: 8px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.report-section p {
+    font-size: 14px;
+    line-height: 1.85;
+    margin: 0 0 13px;
+}
+
+.report-section p:last-child {
+    margin-bottom: 0;
+}
+
+/* SIGNOS VITALES */
+
+.vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    gap: 12px;
+}
+
+.vital {
+    min-height: 100px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 15px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+}
+
+.vital-label {
+    color: #607387;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.vital strong {
+    font-size: 19px;
+    color: var(--dark);
+}
+
+.vital small {
+    font-size: 11px;
+    color: #718096;
+}
+
+/* PIE DEL INFORME */
+
+.report-footer {
+    padding: 22px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.report-footer strong {
+    font-size: 13px;
+}
+
+.report-footer p {
+    font-size: 12px;
+    color: #6b7886;
+    line-height: 1.5;
+    margin: 5px 0 0;
+    max-width: 650px;
+}
+
+.empty-report {
+    padding: 35px;
+}
+
+.empty-report h2 {
+    font-size: 20px;
+}
+
+.empty-report p {
+    margin-bottom: 22px;
+    color: #667788;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+    .sidebar {
+        width: 200px;
+        flex-basis: 200px;
+    }
+
+    .brand {
+        padding: 14px;
+        font-size: 17px;
+    }
+
+    .brand-logo {
+        width: 50px;
+        height: 50px;
+    }
+
+    .content {
+        padding: 18px;
+    }
+
+    .report-header,
+    .report-section,
+    .report-footer {
+        padding: 20px;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .report-header {
+        flex-direction: column;
+    }
+
+    .report-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 750px) {
+
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: 700px;
+        transition:
+            max-height .3s ease,
+            opacity .3s ease;
+    }
+
+    .app.sidebar-hidden .sidebar {
+        width: 100%;
+        flex-basis: auto;
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .main-area {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+}
+
+/* ==========================================
+   INFORMACIÓN DEL ESTUDIANTE
+   ========================================== */
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: white;
+    font-size: 13px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.user-details strong,
+.user-info strong {
+    display: block;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.user-details small,
+.user-info small {
+    display: block;
+    color: rgba(255, 255, 255, .8);
+    margin-top: 3px;
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .15);
+    border: 2px solid rgba(255, 255, 255, .7);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 600px) {
+    .user-info small,
+    .user-details small {
+        display: none;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 15px;
+    }
+}

@@ -15,6 +15,7 @@ return array(
     'App\\Http\\Controllers\\EvaluacionAbcdeController' => $baseDir . '/app/Http/Controllers/EvaluacionAbcdeController.php',
     'App\\Http\\Controllers\\MedicalRecordController' => $baseDir . '/app/Http/Controllers/MedicalRecordController.php',
     'App\\Http\\Controllers\\SignosVitalesController' => $baseDir . '/app/Http/Controllers/SignosVitalesController.php',
+    'App\\Http\\Controllers\\Web\\WebController' => $baseDir . '/app/Http/Controllers/Web/WebController.php',
     'App\\Http\\Requests\\StoreMedicalRecordRequest' => $baseDir . '/app/Http/Requests/StoreMedicalRecordRequest.php',
     'App\\Http\\Requests\\StoreUserRequest' => $baseDir . '/app/Http/Requests/StoreUserRequest.php',
     'App\\Http\\Requests\\UpdateUserRequest' => $baseDir . '/app/Http/Requests/UpdateUserRequest.php',

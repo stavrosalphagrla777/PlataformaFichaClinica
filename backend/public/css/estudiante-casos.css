@@ -1,0 +1,973 @@
+
+/* =====================================================
+   Plataforma Ficha Clínica TP
+   Sprint 2 - HU-06: Mis casos clínicos
+   Estética basada en Administración de Usuarios
+   ===================================================== */
+
+:root {
+    --blue: #075b9e;
+    --dark: #064778;
+    --background: #f1f3f7;
+    --border: #e2e7ee;
+    --text: #243447;
+    --muted: #718096;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* =====================================================
+   ESTRUCTURA GENERAL
+   ===================================================== */
+
+.app {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    align-items: stretch;
+}
+
+.sidebar {
+    width: 235px;
+    flex: 0 0 235px;
+    background: var(--blue);
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    transition:
+        width .3s ease,
+        flex-basis .3s ease,
+        opacity .3s ease;
+}
+
+.main {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.app.sidebar-hidden .sidebar {
+    width: 0;
+    flex-basis: 0;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* =====================================================
+   LOGOTIPO Y MENÚ LATERAL
+   ===================================================== */
+
+.brand {
+    min-height: 90px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--dark);
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.brand-logo {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+
+    transition: transform .3s ease;
+}
+
+.brand-logo img:hover {
+    transform: scale(1.06);
+}
+
+.nav-title {
+    padding: 20px 17px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: .75;
+    white-space: nowrap;
+}
+
+.nav-link {
+    display: block;
+    padding: 13px 18px;
+
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+
+    transition: background .2s;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, .14);
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, .22);
+    border-left: 4px solid white;
+    padding-left: 14px;
+    font-weight: 600;
+}
+
+.nav-disabled {
+    opacity: 1;
+    color: #ffffff;
+    cursor: default;
+}
+
+/* =====================================================
+   BARRA SUPERIOR
+   ===================================================== */
+
+.topbar {
+    width: 100%;
+    min-height: 72px;
+
+    background-color: var(--dark);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 28px;
+    gap: 20px;
+}
+
+.topbar strong {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: white;
+    font-size: 13px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.user-details strong,
+.user-info strong {
+    display: block;
+    color: white;
+    font-size: 14px;
+}
+
+.user-details small,
+.user-info small {
+    display: block;
+    color: rgba(255, 255, 255, .8);
+    margin-top: 3px;
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .15);
+    border: 2px solid rgba(255, 255, 255, .7);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* =====================================================
+   BOTÓN DEL MENÚ
+   Abierto = X
+   Cerrado = Tres líneas
+   ===================================================== */
+
+.menu-toggle {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    flex-shrink: 0;
+    transition: background .2s ease;
+}
+
+.menu-toggle:hover {
+    background: rgba(255, 255, 255, .15);
+}
+
+.menu-toggle:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 3px;
+
+    background: white;
+    border-radius: 3px;
+    flex-shrink: 0;
+
+    transform-origin: center;
+    transition:
+        transform .3s ease,
+        opacity .2s ease;
+}
+
+/* Menú visible: X */
+
+.app:not(.sidebar-hidden)
+.menu-toggle span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.app:not(.sidebar-hidden)
+.menu-toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.app:not(.sidebar-hidden)
+.menu-toggle span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Menú oculto: hamburguesa */
+
+.app.sidebar-hidden .menu-toggle span {
+    transform: none;
+    opacity: 1;
+}
+
+/* =====================================================
+   CONTENIDO PRINCIPAL
+   ===================================================== */
+
+.content {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0;
+    padding: 28px;
+
+    transition: margin .3s ease;
+}
+
+.app.sidebar-hidden .content {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.page-heading h1 {
+    margin: 0 0 7px;
+    font-size: 25px;
+}
+
+.page-heading p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   TARJETAS ESTADÍSTICAS
+   ===================================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    box-shadow: 0 4px 18px #23344b0a;
+
+    padding: 21px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-card span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.stat-card strong {
+    display: block;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-top: 8px;
+}
+
+.stat-card small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =====================================================
+   PANEL PRINCIPAL
+   ===================================================== */
+
+.cases-panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    box-shadow: 0 4px 18px #23344b0a;
+
+    padding: 23px;
+    min-width: 0;
+}
+
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.panel-heading h2 {
+    margin: 0 0 7px;
+    font-size: 18px;
+}
+
+.panel-heading p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.results-count {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+
+    background: #eaf3fc;
+    color: var(--blue);
+
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* =====================================================
+   FILTROS
+   ===================================================== */
+
+.filters {
+    display: grid;
+    grid-template-columns: minmax(220px, 2fr) 1fr 1fr auto;
+    align-items: end;
+    gap: 11px;
+    margin-bottom: 20px;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.filter-field label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-width: 0;
+    height: 43px;
+    padding: 10px 12px;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    outline: 2px solid #075b9e44;
+    border-color: var(--blue);
+}
+
+.clear-btn {
+    height: 43px;
+    padding: 10px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    background: #f7f9fc;
+    color: var(--text);
+
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.clear-btn:hover {
+    background: #eaf3fc;
+    color: var(--blue);
+}
+
+/* =====================================================
+   TABLA DE CASOS CLÍNICOS
+   ===================================================== */
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+.cases-table {
+    width: 100%;
+    min-width: 1120px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.cases-table thead {
+    background: var(--dark);
+}
+
+.cases-table th {
+    background: var(--dark);
+    color: white;
+
+    padding: 15px 12px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.cases-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.cases-table tbody tr {
+    transition: background .2s;
+}
+
+.cases-table tbody tr:hover {
+    background: #f1f7fd;
+}
+
+.case-id {
+    font-weight: 700;
+    color: var(--blue);
+    white-space: nowrap;
+}
+
+.case-name {
+    font-weight: 600;
+    min-width: 145px;
+}
+
+.date-cell {
+    color: #697586;
+    white-space: nowrap;
+}
+
+/* =====================================================
+   ETIQUETAS ESI
+   ===================================================== */
+
+.esi-badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 6px 12px;
+
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.esi-1 {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.esi-2 {
+    color: #9a3412;
+    background: #ffedd5;
+}
+
+.esi-3 {
+    color: #92400e;
+    background: #fef3c7;
+}
+
+.esi-4 {
+    color: #1d4ed8;
+    background: #dbeafe;
+}
+
+.esi-5 {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.esi-pending {
+    color: #697586;
+    background: #edf0f3;
+}
+
+/* =====================================================
+   ESTADOS DE CASOS
+   ===================================================== */
+
+.status-badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 6px 12px;
+
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.status-available {
+    color: var(--blue);
+    background: #eaf3fc;
+}
+
+.status-progress {
+    color: #956300;
+    background: #fff3d6;
+}
+
+.status-finished {
+    color: #18794e;
+    background: #e6f7ee;
+}
+
+/* =====================================================
+   BOTONES DE ACCIÓN
+   Estilo original del Sprint 1
+   ===================================================== */
+
+.action-btn {
+    display: inline-block;
+    padding: 8px 10px;
+    margin: 2px;
+
+    background: #eaf3fc;
+    color: var(--blue);
+
+    border: none;
+    border-radius: 6px;
+
+    text-decoration: none;
+    text-align: center;
+
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.action-btn:hover {
+    background: #d7eafb;
+}
+
+.action-btn:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+/* =====================================================
+   MENSAJES Y PIE DE TABLA
+   ===================================================== */
+
+.empty-state {
+    padding: 32px 20px;
+    text-align: center;
+
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding-top: 18px;
+    margin-top: 12px;
+
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =====================================================
+   RESPONSIVIDAD - TABLETS Y NOTEBOOKS
+   ===================================================== */
+
+@media (max-width: 1100px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+/* =====================================================
+   RESPONSIVIDAD - DISPOSITIVOS MÓVILES
+   ===================================================== */
+
+@media (max-width: 750px) {
+
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: 700px;
+
+        transition:
+            max-height .3s ease,
+            opacity .3s ease;
+    }
+
+    .app.sidebar-hidden .sidebar {
+        width: 100%;
+        flex-basis: auto;
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .main {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .brand {
+        padding: 12px 18px;
+    }
+
+    .nav-title {
+        padding-top: 10px;
+    }
+
+    .topbar {
+        padding: 15px 18px;
+    }
+
+    .content {
+        padding: 18px;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .app.sidebar-hidden .content {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+}
+
+/* =====================================================
+   RESPONSIVIDAD - TELÉFONOS
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        padding: 12px 15px;
+    }
+
+    .topbar-left {
+        gap: 10px;
+    }
+
+    .topbar-left strong {
+        font-size: 14px;
+    }
+
+    .user-info small,
+    .user-details small {
+        display: none;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 15px;
+    }
+
+    .page-heading h1 {
+        font-size: 23px;
+    }
+
+    .stats-grid {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-card strong {
+        font-size: 25px;
+    }
+
+    .cases-panel {
+        padding: 16px;
+    }
+
+    .table-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stat-card span {
+        font-size: 12px;
+    }
+
+    .stat-card small {
+        font-size: 11px;
+    }
+
+    .filter-field,
+    .search-field,
+    .clear-btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+}
+
+/* =====================================================
+   ACCESIBILIDAD
+   ===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sidebar,
+    .menu-toggle,
+    .menu-toggle span,
+    .action-btn {
+        transition: none;
+    }
+
+}
+/* ==========================================
+   HU-06 - Tipo de caso y calificación
+   ========================================== */
+
+.case-type,
+.grade-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Examen */
+.type-exam {
+    background: #fce8e6;
+    color: #a12622;
+}
+
+/* Tarea */
+.type-task {
+    background: #eaf3fc;
+    color: #075b9e;
+}
+
+/* Apoyo */
+.type-support {
+    background: #edf0f3;
+    color: #697586;
+}
+
+/* Nota aprobada */
+.grade-pass {
+    background: #e6f7ee;
+    color: #18794e;
+}
+
+/* Nota reprobada */
+.grade-fail {
+    background: #fff0ee;
+    color: #b42318;
+}
+
+/* Nota pendiente o no aplicable */
+.grade-pending {
+    color: #718096;
+    font-size: 12px;
+}
+
+/* Ancho para las 10 columnas */
+.cases-table {
+    min-width: 1380px;
+}
+
+/* Porcentaje de logro y nota */
+
+.grade-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.evaluation-value {
+    color: #075b9e;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+/* Centrar columna Logro / Nota */
+
+.cases-table th:nth-child(9),
+.cases-table td:nth-child(9) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.grade-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.evaluation-value {
+    color: #075b9e;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+}

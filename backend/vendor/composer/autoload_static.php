@@ -543,6 +543,7 @@ class ComposerStaticInit176b7691256c358b280104e7553af5b5
         'App\\Http\\Controllers\\EvaluacionAbcdeController' => __DIR__ . '/../..' . '/app/Http/Controllers/EvaluacionAbcdeController.php',
         'App\\Http\\Controllers\\MedicalRecordController' => __DIR__ . '/../..' . '/app/Http/Controllers/MedicalRecordController.php',
         'App\\Http\\Controllers\\SignosVitalesController' => __DIR__ . '/../..' . '/app/Http/Controllers/SignosVitalesController.php',
+        'App\\Http\\Controllers\\Web\\WebController' => __DIR__ . '/../..' . '/app/Http/Controllers/Web/WebController.php',
         'App\\Http\\Requests\\StoreMedicalRecordRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreMedicalRecordRequest.php',
         'App\\Http\\Requests\\StoreUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreUserRequest.php',
         'App\\Http\\Requests\\UpdateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateUserRequest.php',

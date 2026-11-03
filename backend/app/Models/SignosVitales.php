@@ -9,26 +9,6 @@ class SignosVitales extends Model
 {
     use HasFactory;
 
-    protected $table = 'signos_vitales';
-
-    protected $fillable = [
-        'medical_record_id',
-        'registrado_por_id',
-        'fecha_hora_registro',
-        'frecuencia_cardiaca',
-        'presion_arterial',
-        'frecuencia_respiratoria',
-        'temperatura',
-        'saturacion_oxigeno',
-        'glicemia_hgt',
-        'peso',
-        'talla',
-        'imc',
-        'clasificacion_imc',
-        'estado_hemodinamico',
-        'observaciones',
-    ];
-
     // Relación con la Ficha Clínica
     public function medicalRecord()
     {
@@ -40,5 +20,19 @@ class SignosVitales extends Model
     {
         return $this->belongsTo(User::class, 'registrado_por_id');
     }
-}
 
+    protected $fillable = [
+        'ficha_clinica_id',
+        'estudiante_id',
+        'frecuencia_cardiaca',
+        'presion_arterial',
+        'frecuencia_respiratoria',
+        'saturacion_oxigeno',
+        'temperatura',
+        'escala_glasgow',
+        'peso',
+        'talla',
+        'observaciones',
+        'interpretacion_clinica',
+    ];
+}
