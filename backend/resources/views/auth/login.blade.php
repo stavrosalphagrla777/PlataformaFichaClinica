@@ -98,40 +98,86 @@
         </div>
     </footer>
 
+        <!-- Script para el login con Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        const passwordInput = document.getElementById('password');
-        const toggleButton = document.getElementById('togglePassword');
-        const loginForm = document.getElementById('loginForm');
-        const loginMessage = document.getElementById('loginMessage');
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordButton = document.getElementById('togglePassword');
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            const loginMessage = document.getElementById('loginMessage');
 
-        toggleButton.addEventListener('click', () => {
-            const isVisible = passwordInput.type === 'text';
+            // Mostrar/Ocultar contraseña
+            if (togglePasswordButton) {
+                togglePasswordButton.addEventListener('click', function () {
+                    const isVisible = passwordInput.type === 'text';
+                    passwordInput.type = isVisible ? 'password' : 'text';
+                    this.textContent = isVisible ? 'Mostrar' : 'Ocultar';
+                    this.setAttribute('aria-pressed', String(!isVisible));
+                    this.setAttribute('aria-label', isVisible ? 'Mostrar contraseña' : 'Ocultar contraseña');
+                });
+            }
 
-            passwordInput.type = isVisible ? 'password' : 'text';
-            toggleButton.textContent = isVisible ? 'Mostrar' : 'Ocultar';
-            toggleButton.setAttribute('aria-pressed', String(!isVisible));
-            toggleButton.setAttribute(
-                'aria-label',
-                isVisible ? 'Mostrar contraseña' : 'Ocultar contraseña'
-            );
+            // Manejar el envío del formulario
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Limpiar errores previos
+                loginMessage.textContent = '';
+                loginMessage.classList.remove('visible');
+                emailInput.classList.remove('input-error');
+                passwordInput.classList.remove('input-error');
+
+                // Deshabilitar el botón mientras carga
+                submitButton.disabled = true;
+                submitButton.textContent = 'Iniciando sesión...';
+
+                try {
+                    const response = await axios.post('/api/auth/login', {
+                        email: emailInput.value,
+                        password: passwordInput.value,
+                    });
+
+                    const data = response.data;
+
+                    // Guardar token y usuario
+                    localStorage.setItem('auth_token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Redirigir según rol
+                    const rol = data.user.rol;
+                    if (rol === 'administrador') {
+                        window.location.href = '/admin/usuarios';
+                    } else if (rol === 'docente') {
+                        window.location.href = '/docente/dashboard';
+                    } else {
+                        window.location.href = '/estudiante/mis-casos';
+                    }
+                } catch (error) {
+                    let errorMessage = 'Ocurrió un error inesperado. Intenta de nuevo.';
+                    if (error.response && error.response.data) {
+                        if (error.response.data.message) {
+                            errorMessage = error.response.data.message;
+                        } else if (error.response.data.errors) {
+                            const firstError = Object.values(error.response.data.errors)[0];
+                            errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+                        }
+                    }
+
+                    // Mostrar mensaje
+                    loginMessage.textContent = errorMessage;
+                    loginMessage.classList.add('visible');
+                    emailInput.classList.add('input-error');
+                    passwordInput.classList.add('input-error');
+
+                    // Reactivar botón
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Iniciar sesión';
+                }
+            });
         });
-
-        loginForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-
-            loginMessage.textContent =
-                'Correo electrónico o contraseña incorrectos. Verifica tus datos e inténtalo nuevamente.';
-
-            loginMessage.classList.add('visible');
-
-            email.classList.add('input-error');
-            password.classList.add('input-error');
-        });
-
-        
     </script>
 </body>
 </html>

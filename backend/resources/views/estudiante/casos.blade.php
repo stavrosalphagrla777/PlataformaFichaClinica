@@ -40,9 +40,8 @@
             Mi perfil
         </a>
 
-        <a href="#" class="nav-link nav-disabled"
-           aria-disabled="true">
-            Cerrar sesión
+       <a href="#" id="btnLogout" class="nav-link">
+        Cerrar sesión
         </a>
 
     </aside>
@@ -582,6 +581,29 @@
         });
 
     renderCases();
+</script>
+<script>
+    // 1. Proteger la ruta: si no hay token, redirigir al login
+    if (!localStorage.getItem('auth_token')) {
+        window.location.href = '/auth/login';
+    }
+
+    // 2. Manejar el botón "Cerrar sesión"
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnLogout = document.getElementById('btnLogout');
+        if (btnLogout) {
+            btnLogout.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Borrar token y usuario
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user');
+                
+                // Redirigir al login
+                window.location.href = '/auth/login';
+            });
+        }
+    });
 </script>
 
 </body>

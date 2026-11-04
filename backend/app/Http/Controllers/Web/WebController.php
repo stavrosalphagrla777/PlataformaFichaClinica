@@ -48,12 +48,12 @@ class WebController extends Controller
         return view('estudiante.detalle-caso', compact('id'));
     }
 
-    public function admision($id)
+    public function admision($id = null)
     {
         return view('estudiante.admision', compact('id'));
     }
 
-    public function triage($id)
+    public function triage($id = null)
     {
         return view('estudiante.triage', compact('id'));
     }
