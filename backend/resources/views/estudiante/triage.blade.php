@@ -9,6 +9,8 @@
 
     <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-triage.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </head>
 
 <body>
@@ -1575,30 +1577,62 @@
             // y valores inválidos según la escala o formato.
             // =====================================================
 
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
+            form.addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-                updateValidations();
+    updateValidations();
 
-                if (!form.reportValidity()) {
-                    message.textContent =
-                        'Revisa los campos obligatorios o inválidos.';
-                    return;
-                }
+    if (!form.reportValidity()) {
+        message.textContent = 'Revisa los campos obligatorios o inválidos.';
+        return;
+    }
 
-                try {
-                    localStorage.setItem(
-                        storageKey,
-                        JSON.stringify(capture())
-                    );
+    message.textContent = 'Guardando Triage...';
 
-                    message.textContent =
-                        'Triage guardado correctamente.';
-                } catch (error) {
-                    message.textContent =
-                        'No se pudo guardar en este navegador.';
-                }
-            });
+    const datos = capture();
+
+    // Construimos el payload adaptado al backend
+    const payload = {
+        motivo_consulta: datos.motivo,
+        prioridad_esi: Number(datos.esi),
+        escala_eva: datos.eva_registrada ? Number(datos.eva) : null,
+        presion_arterial: datos.presion_sistolica + '/' + datos.presion_diastolica,
+        frecuencia_cardiaca: Number(datos.frecuencia_cardiaca),
+        frecuencia_respiratoria: Number(datos.frecuencia_respiratoria),
+        saturacion_oxigeno: Number(datos.saturacion),
+        temperatura: Number(datos.temperatura),
+        glicemia_hgt: Number(datos.hemoglucotest),
+        escala_glasgow: Number(datos.glasgow),
+        peso: datos.peso ? Number(datos.peso) : null,
+        talla: datos.talla ? Number(datos.talla) : null,
+        observaciones: datos.observaciones || null,
+    };
+
+    try {
+        const token = localStorage.getItem('auth_token');
+
+        const response = await axios.post('/api/fichas/1/triage', payload, {
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.status === 201 || response.status === 200) {
+    message.textContent = 'Triage guardado con éxito. Redirigiendo...';
+    // Aquí luego redirigiremos a signos vitales
+    // setTimeout(function () { window.location.href = signosVitalesUrl; }, 1000);
+        }
+    } catch (error) {
+        let errorMessage = 'Error al guardar el Triage.';
+        if (error.response && error.response.data && error.response.data.message) {
+            errorMessage = error.response.data.message;
+        }
+        message.textContent = errorMessage;
+        console.error('Error completo:', error.response?.data);
+    }
+});
 
             // =====================================================
             // RECUPERAR DATOS
