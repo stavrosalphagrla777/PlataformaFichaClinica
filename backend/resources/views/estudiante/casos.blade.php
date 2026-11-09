@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -256,8 +255,6 @@
     });
 
     // Datos ficticios para probar la interfaz
-    
-    
     const cases = [
         {
             id: 'CAS-001',
@@ -354,8 +351,6 @@
         }
     ];
 
-
-
     const tableBody = document.getElementById('casesTableBody');
     const searchInput = document.getElementById('searchCases');
     const statusFilter = document.getElementById('statusFilter');
@@ -374,7 +369,6 @@
         return badge;
     }
 
-    
     function renderCases() {
         const search = searchInput.value
             .toLocaleLowerCase('es')
@@ -540,8 +534,20 @@
                 actionCell
             );
 
+            // 🚀 NUEVO: Hacer toda la fila clickeable
+            const detalleUrl = '{{ route("preview.estudiante.caso", ["id" => "__ID__"]) }}'
+                .replace('__ID__', encodeURIComponent(item.id));
+            
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function(e) {
+                // Si el clic fue en el botón de acción, no duplicar
+                if (e.target.tagName !== 'A') {
+                    window.location.href = detalleUrl;
+                }
+            });
+
             tableBody.appendChild(row);
-        });
+        }); // <-- ESTA LLAVE FALTABA (cierra el forEach)
 
         // Actualizar cantidad de resultados
         document.getElementById('resultsCount').textContent =
@@ -553,8 +559,7 @@
         // Mostrar mensaje cuando no hay resultados
         document.getElementById('emptyState').hidden =
             filtered.length !== 0;
-    }
-
+    } // <-- Cierre de la función renderCases
 
     document.getElementById('totalCases').textContent =
         cases.length;
@@ -582,6 +587,7 @@
 
     renderCases();
 </script>
+
 <script>
     // 1. Proteger la ruta: si no hay token, redirigir al login
     if (!localStorage.getItem('auth_token')) {

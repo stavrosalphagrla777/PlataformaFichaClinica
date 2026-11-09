@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\EvaluacionAbcde;
 use Illuminate\Http\Request;
 
@@ -57,9 +58,7 @@ class EvaluacionAbcdeController extends Controller
 
         $evaluacionData = array_merge($validated, [
             'medical_record_id' => $medicalRecordId,
-
             'estudiante_id' => auth()->id() ?? 1,
-
             'total_glasgow' => $totalGlasgow,
             'porcentaje_scq' => $validated['porcentaje_scq'] ?? 0,
         ]);
@@ -81,4 +80,3 @@ class EvaluacionAbcdeController extends Controller
         return response()->json($evaluacion);
     }
 }
-

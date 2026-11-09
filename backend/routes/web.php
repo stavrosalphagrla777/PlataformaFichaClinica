@@ -34,6 +34,15 @@ Route::get('/estudiante/admision', [WebController::class, 'admision'])->name('pr
 Route::get('/estudiante/triage', [WebController::class, 'triage'])->name('preview.estudiante.triage');
 Route::get('/estudiante/caso/{id}', [WebController::class, 'ficha'])->name('preview.estudiante.caso');
 
+// Rutas para Signos Vitales y ABCDE (usando closures para evitar modificar el controlador)
+Route::get('/estudiante/signos-vitales', function () {
+    return view('estudiante.signos-vitales');
+})->name('preview.estudiante.signos-vitales');
+
+Route::get('/estudiante/abcde', function () {
+    return view('estudiante.abcde');
+})->name('preview.estudiante.abcde');
+
 // --- MÓDULO ADMINISTRADOR ---
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [WebController::class, 'adminDashboard'])->name('dashboard');
