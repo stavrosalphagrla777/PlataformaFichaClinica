@@ -10,24 +10,24 @@ class Triage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'medical_record_id',
-        'estudiante_id',
-        'motivo_consulta',
-        'prioridad_esi',
-        'escala_eva',
-        'frecuencia_cardiaca',
-        'presion_arterial',
-        'frecuencia_respiratoria',
-        'saturacion_oxigeno',
-        'temperatura',
-        'escala_glasgow',
-        'peso',
-        'talla',
-        'nivel_prioridad_calculado',
-        'tiempo_maximo_espera_min',
-        'riesgos_identificados',
-        'observaciones',
-    ];
+    'medical_record_id',
+    'estudiante_id',
+    'motivo_consulta',
+    'prioridad_esi',
+    'escala_eva',
+    'frecuencia_cardiaca',
+    'presion_arterial',
+    'frecuencia_respiratoria',
+    'saturacion_oxigeno',
+    'temperatura',
+    'escala_glasgow',
+    'peso',
+    'talla',
+    'nivel_prioridad_calculado',
+    'tiempo_maximo_espera_min',
+    'box',  // 🚀 AGREGADO
+    'observaciones',
+];
 
     protected $casts = [
         'riesgos_identificados' => 'array',

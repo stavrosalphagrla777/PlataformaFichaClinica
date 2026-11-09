@@ -12,3 +12,9 @@ RUN apt-get update && apt-get install -y git unzip nodejs npm libzip-dev libpng-
 COPY --from=composer_stage /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
+
+# Exponer el puerto 8000
+EXPOSE 8000
+
+# Comando por defecto: arrancar el servidor de Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
