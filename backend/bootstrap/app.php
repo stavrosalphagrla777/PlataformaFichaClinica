@@ -12,10 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // 🚀 Configuración de Sanctum para rutas API
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'auth.token' => \App\Http\Middleware\AuthenticateWithToken::class, // <-- NUEVO MIDDLEWARE
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -23,4 +29,3 @@ return Application::configure(basePath: dirname(__DIR__))
             fn ($request, \Throwable $e) => $request->is('api/*') || $request->expectsJson()
         );
     })->create();
-

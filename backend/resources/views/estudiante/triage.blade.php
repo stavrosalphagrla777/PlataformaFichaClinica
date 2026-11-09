@@ -731,6 +731,7 @@
             const caseId = /^CAS-00[1-5]$/.test(params.get('caso') || '')
                 ? params.get('caso')
                 : 'CAS-001';
+                const signosVitalesUrl = "{{ route('preview.estudiante.signos-vitales') }}" + '?caso=' + encodeURIComponent(caseId);
 
             const titles = {
                 'CAS-001': 'Alteración neurológica aguda',
@@ -1619,10 +1620,13 @@
             },
         });
 
-        if (response.status === 201 || response.status === 200) {
-    message.textContent = 'Triage guardado con éxito. Redirigiendo...';
-    // Aquí luego redirigiremos a signos vitales
-    // setTimeout(function () { window.location.href = signosVitalesUrl; }, 1000);
+            if (response.status === 201 || response.status === 200) {
+            message.textContent = 'Triage guardado con éxito. Redirigiendo a Signos Vitales...';
+            
+            // 🚀 Redirigir a Signos Vitales
+            setTimeout(function () { 
+                window.location.href = signosVitalesUrl; 
+            }, 1500); // 1.5 segundos para que el usuario vea el mensaje
         }
     } catch (error) {
         let errorMessage = 'Error al guardar el Triage.';
