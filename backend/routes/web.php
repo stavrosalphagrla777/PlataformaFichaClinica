@@ -63,6 +63,7 @@ Route::middleware(['auth', 'role:estudiante'])->prefix('4to/casos/{code}')
         Route::get('/secciones', [StudentCaseController::class, 'snapshots'])->name('snapshots');
         Route::put('/secciones/{section}', [StudentCaseController::class, 'saveSection'])->name('save');
         Route::post('/entregar', [StudentCaseController::class, 'submit'])->name('submit');
+        Route::post('/secciones/{section}/upload', [StudentCaseController::class, 'uploadExamFile'])->name('upload');
     });
 
 

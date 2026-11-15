@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Exámenes | Ficha Clínica TP</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-triage.css') }}">
@@ -2222,56 +2223,87 @@
                 } catch (error) { console.info('Se usará directamente el archivo arrastrado.', error); }
                 actualizarNombreArchivo();
             });
-            $('materialForm').addEventListener('submit', e => {
-                e.preventDefault();
-                limpiarAviso();
-                if (!$('materialForm').reportValidity()) return;
-                const sol = solicitudes.find(s => s.id === $('solicitudAsociada').value);
-                if (!sol) {
-                    aviso('Selecciona una solicitud válida.', 'error');
-                    return;
-                }
-                const archivo = obtenerArchivo();
-                if (archivo && !['image/jpeg', 'image/png', 'application/pdf'].includes(archivo.type)) {
-                    aviso('Solo se permiten archivos JPG, PNG o PDF.', 'error');
-                    return;
-                }
-                if (archivo && archivo.size > 10 * 1024 * 1024) {
-                    aviso('El archivo debe pesar como máximo 10 MB.', 'error');
-                    return;
-                }
-                const id = crypto.randomUUID(),
-                    mat = {
-                        id,
-                        tipo: $('tipoMaterial').value,
-                        estado: $('estadoMaterial').value,
-                        nombre: $('nombreMaterial').value.trim(),
-                        archivoNombre: archivo?.name || null,
-                        mime: archivo?.type || null,
-                        fecha: $('fechaMaterial').value,
-                        hora: $('horaMaterial').value,
-                        descripcion: $('descripcionMaterial').value.trim()
-                    };
-                sol.materiales.push(mat);
-                const url = archivo ? URL.createObjectURL(archivo) : null;
-                if (url) archivosEnMemoria.set(id, url);
-                try {
-                    persistir();
-                    render();
-                    $('materialForm').reset();
-                    archivoArrastrado = null;
-                    actualizarNombreArchivo();
-                    cargarFecha();
-                    confirmarGuardado(archivo
-                        ? 'Resultado guardado. El archivo se puede visualizar solo mientras esta pestaña esté abierta.'
-                        : 'Resultado guardado correctamente sin archivo adjunto.');
-                } catch (err) {
-                    sol.materiales.pop();
-                    if (url) URL.revokeObjectURL(url);
-                    archivosEnMemoria.delete(id);
-                    aviso('No fue posible guardar el material.', 'error');
-                }
+            $('materialForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    limpiarAviso();
+    if (!$('materialForm').reportValidity()) return;
+
+    const sol = solicitudes.find(s => s.id === $('solicitudAsociada').value);
+    if (!sol) {
+        aviso('Selecciona una solicitud válida.', 'error');
+        return;
+    }
+
+    const archivo = obtenerArchivo();
+    if (archivo) {
+        if (!['image/jpeg', 'image/png', 'application/pdf'].includes(archivo.type)) {
+            aviso('Solo se permiten archivos JPG, PNG o PDF.', 'error');
+            return;
+        }
+        if (archivo.size > 10 * 1024 * 1024) {
+            aviso('El archivo debe pesar como máximo 10 MB.', 'error');
+            return;
+        }
+    }
+
+    // 🚀 SUBIR ARCHIVO AL SERVIDOR (si existe)
+    let archivoSubido = null;
+    if (archivo) {
+        const formData = new FormData();
+        formData.append('archivo', archivo);
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+        try {
+            const response = await fetch(`/4to/casos/${casoId}/secciones/examenes/upload`, {
+                method: 'POST',
+                body: formData,
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al subir el archivo');
+            }
+
+            archivoSubido = await response.json();
+        } catch (error) {
+            aviso('Error al subir el archivo: ' + error.message, 'error');
+            return;
+        }
+    }
+
+    // 🚀 GUARDAR METADATOS EN EL PAYLOAD DE LA SECCIÓN
+    const id = crypto.randomUUID();
+    const mat = {
+        id,
+        tipo: $('tipoMaterial').value,
+        estado: $('estadoMaterial').value,
+        nombre: $('nombreMaterial').value.trim(),
+        archivoNombre: archivoSubido?.name || null,
+        archivoPath: archivoSubido?.path || null,
+        archivoUrl: archivoSubido?.url || null,
+        mime: archivoSubido?.mime || null,
+        fecha: $('fechaMaterial').value,
+        hora: $('horaMaterial').value,
+        descripcion: $('descripcionMaterial').value.trim()
+    };
+
+    sol.materiales.push(mat);
+
+    try {
+        persistir();
+        render();
+        $('materialForm').reset();
+        archivoArrastrado = null;
+        actualizarNombreArchivo();
+        cargarFecha();
+        confirmarGuardado(archivoSubido
+            ? 'Resultado guardado y archivo subido al servidor correctamente.'
+            : 'Resultado guardado correctamente sin archivo adjunto.');
+    } catch (err) {
+        sol.materiales.pop();
+        aviso('No fue posible guardar el material.', 'error');
+    }
+});
             $('limpiarSolicitud').addEventListener('click', () => abrirConfirmacion('Limpiar solicitud',
                 '¿Limpiar los campos de la solicitud? Las solicitudes guardadas no se eliminarán.', () => {
                     $('solicitudForm').reset();

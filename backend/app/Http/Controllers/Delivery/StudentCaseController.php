@@ -124,4 +124,36 @@ class StudentCaseController extends Controller
         });
         return response()->json(['message' => 'Ficha entregada. Ya no puede modificarse.', 'submitted_at' => $submitted->submitted_at->toIso8601String()]);
     }
+
+    /**
+     * Sube un archivo de examen (JPG, PNG, PDF) y lo asocia a una sección de la ficha.
+     * Guarda directamente en public/examenes/{id}/ para evitar problemas con enlaces simbólicos.
+     */
+    
+    public function uploadExamFile(Request $request, string $code, string $section)
+{
+    abort_unless(isset(FourthYear::SECTIONS[$section]), 404);
+    
+    $record = $this->getStudentRecord($request, $code, true);
+    FourthYear::requireEditable($record);
+
+    $request->validate([
+        'archivo' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240',
+    ]);
+
+    $file = $request->file('archivo');
+    
+    //  Usar storeAs() en lugar de move() para evitar conflictos con la validación
+    $filename = $file->hashName();
+    $path = $file->storeAs("examenes/{$record->id}", $filename, 'public');
+
+    return response()->json([
+        'message' => 'Archivo subido correctamente.',
+        'path' => $path,
+        'url' => \Storage::url($path),
+        'name' => $file->getClientOriginalName(),
+        'mime' => $file->getMimeType(),
+        'size' => $file->getSize(),
+    ]);
+}
 }
