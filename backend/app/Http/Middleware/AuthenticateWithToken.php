@@ -23,7 +23,14 @@ class AuthenticateWithToken
             return response()->json(['message' => 'Token inválido'], 401);
         }
 
-        $request->setUserResolver(fn () => $accessToken->tokenable);
+        $user = $accessToken->tokenable;
+        if (!$user || !$user->activo || $user->roles->isEmpty()
+            || (app()->environment('production') && str_ends_with(strtolower($user->email), '@ficha.test'))) {
+            return response()->json(['message' => 'Cuenta no habilitada para acceder'], 403);
+        }
+
+        $user->withAccessToken($accessToken);
+        $request->setUserResolver(fn () => $user);
 
         return $next($request);
     }

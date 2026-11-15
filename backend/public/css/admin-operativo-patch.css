@@ -1,0 +1,19 @@
+/* Mantiene el diseño administrativo original de Pablo; estilos añadidos para formularios conectados a MySQL. */
+.sidebar form{margin:0}.sidebar form .nav-link{border:0;background:transparent;color:#fff;width:100%;text-align:left;font:inherit;cursor:pointer}
+.menu-toggle{background:transparent;border:0;cursor:pointer;display:inline-flex;flex-direction:column;gap:5px;padding:10px}
+.menu-toggle span{display:block;width:23px;height:2px;background:white;border-radius:3px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:17px 0 22px}
+.toolbar form{margin:0}.toolbar input,.toolbar select,.form-grid input,.form-grid select,textarea{padding:11px;border:1px solid #cbd6e4;border-radius:8px;max-width:100%;font:inherit}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:23px}
+.form-grid label{display:block;font-size:13px;font-weight:650;color:#41566b;margin:0 0 8px}
+.form-grid input,.form-grid select{width:100%}
+button:not(.menu-toggle):not(.nav-link),a.btn{font:inherit;display:inline-block;background:#075b9e;border:1px solid #075b9e;color:#fff;border-radius:8px;padding:10px 14px;cursor:pointer;text-decoration:none;font-size:13px;font-weight:600}
+button.secondary,a.btn.secondary{color:#075b9e;background:#eef6ff;border-color:#d4e3f0}
+button.danger{background:#b42334;border-color:#b42334}
+.toolbar a.btn,.actions a.btn{line-height:1.4}.panel.table-wrap{overflow-x:auto}.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:650px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid #e3eaf1;font-size:13px}thead th{background:#064778;color:white}td{color:#42536a}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.action-form{margin:0}.actions button{font-size:12px}
+.badge{border-radius:16px;padding:5px 10px;background:#eaf3fc;color:#075b9e;font-size:12px;font-weight:700}
+.notice{border-radius:8px;padding:14px;margin-bottom:20px;background:#eaf7ef;color:#17613c}.notice.error{background:#fff1f2;color:#b42334}
+.muted{color:#6b7b8e;font-size:13px}.pager{padding-top:18px}.panel p{line-height:1.6}.dash-tile a{display:inline-block}
+@media(max-width:650px){.toolbar input,.toolbar select{width:100%}.toolbar form{width:100%}.dash-grid{grid-template-columns:1fr}}

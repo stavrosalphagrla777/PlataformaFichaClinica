@@ -1,0 +1,47 @@
+# Solo GCP/VM tras configurar HTTPS externo y las claves de producción.
+# El docker-compose.yml de Alexis NO se toca.
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+    env_file: .env.production
+    restart: unless-stopped
+    volumes:
+      - ficha_storage:/var/www/html/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [private]
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:?DB_DATABASE required}
+      MYSQL_USER: ${DB_USERNAME:?DB_USERNAME required}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD required}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD required}
+    volumes:
+      - ficha_database:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [private]
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on: [app]
+    ports:
+      - "80:80" # SOLO abrir a la IP del balanceador HTTPS de GCP mediante reglas firewall
+    volumes:
+      - ./backend/public:/var/www/html/public:ro
+      - ./deployment/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks: [private]
+volumes:
+  ficha_storage:
+  ficha_database:
+networks:
+  private:

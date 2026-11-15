@@ -9,73 +9,17 @@
 
     <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-triage.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+    <!-- Contexto autorizado de 4.º medio; nunca contiene datos de otros estudiantes. -->
+    <script>window.__FICHA_4TO = @json($ficha4toContext ?? null);</script>
+    <link rel="stylesheet" href="{{ asset('css/estudiante-confirmacion-4to.css') }}">
+    <script src="{{ asset('js/estudiante/4to-backend-bridge.js') }}"></script>
 </head>
 
 <body>
     <div class="app app-shell" id="appShell">
 
         <!-- MENÚ LATERAL -->
-        <aside class="sidebar" id="sidebar">
-            <div class="brand">
-                <div class="brand-logo">
-                    <img
-                        src="{{ asset('images/logo-tp.png') }}"
-                        alt="Logo TP"
-                    >
-                </div>
-
-                <span>Ficha Clínica TP</span>
-            </div>
-
-            <nav aria-label="Navegación principal">
-                <div class="nav-title">Principal</div>
-
-                <a
-                    class="nav-link"
-                    href="{{ url('/estudiante/casos-preview') }}"
-                >
-                    Mis casos clínicos
-                </a>
-
-                <div class="nav-title">Atención clínica</div>
-
-                <a class="nav-link" id="sidebarFicha" href="#">
-                    Ficha clínica
-                </a>
-
-                <a class="nav-link" id="sidebarAdmision" href="#">
-                    Admisión
-                </a>
-
-                <a
-                    class="nav-link active"
-                    href="#"
-                    aria-current="page"
-                >
-                    Triage
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Signos vitales
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Evaluación clínica
-                </a>
-
-                <div class="nav-title">Cuenta</div>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Mi perfil
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Cerrar sesión
-                </a>
-            </nav>
-        </aside>
+        @include('estudiante.partials.sidebar-4to')
 
         <!-- ÁREA PRINCIPAL -->
         <div class="main-area">
@@ -127,7 +71,7 @@
                     <a
                         class="btn btn-secondary"
                         id="backToCase"
-                        href="{{ url('/estudiante/casos-preview') }}"
+                        href="{{ url('/estudiante/casos') }}"
                     >
                         ← Volver al caso
                     </a>
@@ -155,25 +99,25 @@
                 <!-- NAVEGACIÓN ENTRE ETAPAS -->
                 <nav class="tabs" aria-label="Etapas de ficha clínica">
                     <a id="tabResumen" href="#">Resumen</a>
-                    <a id="tabAdmision" href="#">Admisión</a>
+                    <a id="tabAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a>
 
                     <a
                         class="selected"
-                        href="#"
+                        href="{{ route('preview.estudiante.triage') }}"
                         aria-current="page"
                     >
                         Triage
                     </a>
 
-                    <span>Signos vitales</span>
-                    <span>ABCDE</span>
-                    <span>Anamnesis</span>
-                    <span>Examen físico</span>
-                    <span>Procedimientos</span>
-                    <span>Medicamentos</span>
-                    <span>Exámenes</span>
-                    <span>Acciones de enfermería</span>
-                    <span>Destino</span>
+                    <a id="tabAdmision" href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a>
+                    <a id="tabAdmision" href="{{ route('preview.estudiante.abcde') }}">ABCDE</a>
+                    <a id="tabAnamnesis" href="{{ route('preview.estudiante.anamnesis') }}">Anamnesis</a>
+                    <a id="tabExaFisico" href="#">Examen físico</a>
+                    <a id="tabProcedimientos" href="#">Procedimientos</a>
+                    <a id="tabMedicamentos" href="#">Medicamentos</a>
+                    <a id="tabExamenes" href="#">Exámenes</a>
+                    <a id="tabAccEnfermeria" href="#">Acciones de enfermería</a>
+                    <a id="tabDestino" href="#">Destino</a>
                 </nav>
 
                 <!-- FORMULARIO -->
@@ -643,7 +587,7 @@
                         <a
                             class="btn btn-light"
                             id="cancelButton"
-                            href="{{ url('/estudiante/casos-preview') }}"
+                            href="{{ url('/estudiante/casos') }}"
                         >
                             Cancelar
                         </a>
@@ -728,10 +672,9 @@
 
             const params = new URLSearchParams(window.location.search);
 
-            const caseId = /^CAS-00[1-5]$/.test(params.get('caso') || '')
+            const caseId = window.__FICHA_4TO?.codigo || (/^CAS-00[1-5]$/.test(params.get('caso') || '')
                 ? params.get('caso')
-                : 'CAS-001';
-                const signosVitalesUrl = "{{ route('preview.estudiante.signos-vitales') }}" + '?caso=' + encodeURIComponent(caseId);
+                : 'CAS-001');
 
             const titles = {
                 'CAS-001': 'Alteración neurológica aguda',
@@ -742,7 +685,7 @@
             };
 
             document.getElementById('caseCode').textContent = caseId;
-            document.getElementById('caseTitle').textContent = titles[caseId];
+            document.getElementById('caseTitle').textContent = window.__FICHA_4TO?.titulo || titles[caseId] || 'Caso clínico';
 
             const storageKey = 'ficha-tp-triage-demo-' + caseId;
 
@@ -756,13 +699,13 @@
                 encodeURIComponent(caseId);
 
             const detailUrl =
-                @json(url('/estudiante/caso-preview')) +
+                @json(url('/estudiante/caso')) +
                 '/' +
                 encodeURIComponent(caseId);
 
             document.getElementById('tabAdmision').href = admissionUrl;
             document.getElementById('sidebarAdmision').href = admissionUrl;
-            document.getElementById('sidebarFicha').href = admissionUrl;
+            document.getElementById('sidebarFicha').href = detailUrl;
 
             document.getElementById('tabResumen').href = detailUrl;
             document.getElementById('backToCase').href = detailUrl;
@@ -1578,65 +1521,30 @@
             // y valores inválidos según la escala o formato.
             // =====================================================
 
-            form.addEventListener('submit', async function (event) {
-    event.preventDefault();
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-    updateValidations();
+                updateValidations();
 
-    if (!form.reportValidity()) {
-        message.textContent = 'Revisa los campos obligatorios o inválidos.';
-        return;
-    }
+                if (!form.reportValidity()) {
+                    message.textContent =
+                        'Revisa los campos obligatorios o inválidos.';
+                    return;
+                }
 
-    message.textContent = 'Guardando Triage...';
+                try {
+                    localStorage.setItem(
+                        storageKey,
+                        JSON.stringify(capture())
+                    );
 
-    const datos = capture();
-
-    // Construimos el payload adaptado al backend
-    const payload = {
-        motivo_consulta: datos.motivo,
-        prioridad_esi: Number(datos.esi),
-        escala_eva: datos.eva_registrada ? Number(datos.eva) : null,
-        presion_arterial: datos.presion_sistolica + '/' + datos.presion_diastolica,
-        frecuencia_cardiaca: Number(datos.frecuencia_cardiaca),
-        frecuencia_respiratoria: Number(datos.frecuencia_respiratoria),
-        saturacion_oxigeno: Number(datos.saturacion),
-        temperatura: Number(datos.temperatura),
-        glicemia_hgt: Number(datos.hemoglucotest),
-        escala_glasgow: Number(datos.glasgow),
-        peso: datos.peso ? Number(datos.peso) : null,
-        talla: datos.talla ? Number(datos.talla) : null,
-        observaciones: datos.observaciones || null,
-    };
-
-    try {
-        const token = localStorage.getItem('auth_token');
-
-        const response = await axios.post('/api/fichas/1/triage', payload, {
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
-
-            if (response.status === 201 || response.status === 200) {
-            message.textContent = 'Triage guardado con éxito. Redirigiendo a Signos Vitales...';
-            
-            // 🚀 Redirigir a Signos Vitales
-            setTimeout(function () { 
-                window.location.href = signosVitalesUrl; 
-            }, 1500); // 1.5 segundos para que el usuario vea el mensaje
-        }
-    } catch (error) {
-        let errorMessage = 'Error al guardar el Triage.';
-        if (error.response && error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-        }
-        message.textContent = errorMessage;
-        console.error('Error completo:', error.response?.data);
-    }
-});
+                    message.textContent =
+                        'Triage guardado correctamente.';
+                } catch (error) {
+                    message.textContent =
+                        'No se pudo guardar en este navegador.';
+                }
+            });
 
             // =====================================================
             // RECUPERAR DATOS

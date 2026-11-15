@@ -1,0 +1,267 @@
+/* Exclusivo de Signos vitales 3.º medio; no altera otras vistas. */
+.ces-vital-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start
+}
+
+.ces-vital-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0
+}
+
+.ces-panel .ces-vital-field>label {
+    display: block;
+    margin-bottom: 8px;
+    color: #172a41;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.5
+}
+
+.ces-panel .ces-vital-field>input {
+    width: 100%;
+    min-height: 40px;
+    margin: 0;
+    padding: 10px 11px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    background: #fff;
+    color: #263849;
+    font: 13px 'Segoe UI', Arial, sans-serif;
+    box-sizing: border-box
+}
+
+.ces-panel .ces-vital-field>input:focus {
+    outline: none;
+    border-color: #075b9e;
+    box-shadow: 0 0 0 2px rgba(7, 91, 158, .1)
+}
+
+.ces-panel .ces-vital-field>input[readonly] {
+    background: #f1f7fd;
+    color: #075b9e;
+    border-color: #b8d4ed;
+    font-weight: 700
+}
+
+.ces-vital-field .ces-threshold-alert,
+.ces-vital-field .ces-atypical-alert {
+    display: none;
+    margin-top: 9px;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere
+}
+
+.ces-vital-field .ces-threshold-alert:not(:empty) {
+    display: block
+}
+
+.ces-vital-field .ces-threshold-alert div+div {
+    margin-top: 3px
+}
+
+.ces-vital-field .ces-atypical-alert:not(:empty) {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: #fff7ed;
+    border-color: #fdba74;
+    color: #9a3412
+}
+
+.ces-vital-field .ces-atypical-alert small {
+    font-size: 11px
+}
+
+.ces-vital-field .alert-normal {
+    background: #ecfdf3;
+    border-color: #a7e2bd;
+    color: #166534
+}
+
+.ces-vital-field .alert-warning {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e
+}
+
+.ces-vital-field .alert-critical {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b
+}
+
+.ces-vital-field .alert-info {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8
+}
+
+.ces-panel .ces-vital-field.status-normal>input {
+    border: 2px solid #16a34a;
+    background: #f0fdf4;
+    color: #166534
+}
+
+.ces-panel .ces-vital-field.status-warning>input {
+    border: 2px solid #eab308;
+    background: #fefce8;
+    color: #854d0e
+}
+
+.ces-panel .ces-vital-field.status-critical>input {
+    border: 2px solid #dc2626;
+    background: #fef2f2;
+    color: #991b1b
+}
+
+.ces-panel .ces-vital-field.status-info>input {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8
+}
+
+.ces-panel .ces-vital-field.status-invalid>input {
+    border: 2px solid #f97316;
+    background: #fff7ed;
+    color: #9a3412
+}
+
+.ces-vital-help {
+    font-size: 12px;
+    color: #718096;
+    line-height: 1.6;
+    margin: -3px 0 16px
+}
+
+@media(max-width:900px) {
+    .ces-vital-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+}
+
+@media(max-width:600px) {
+    .ces-vital-grid {
+        grid-template-columns: 1fr
+    }
+}
+
+/* =========================================
+   PRESIÓN ARTERIAL - ALERTAS DINÁMICAS
+   3.º MEDIO
+   ========================================= */
+
+/* Contenedor de presión arterial */
+.ces-panel .ces-presion-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Cuadros de clasificación y advertencias */
+.ces-presion-field .ces-threshold-alert,
+.ces-presion-field .ces-atypical-alert {
+    display: none;
+    margin-top: 9px;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Mostrar clasificación cuando contiene información */
+.ces-presion-field .ces-threshold-alert:not(:empty) {
+    display: block;
+}
+
+.ces-presion-field .ces-threshold-alert div + div {
+    margin-top: 3px;
+}
+
+/* Advertencia de valor atípico */
+.ces-presion-field .ces-atypical-alert:not(:empty) {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: #fff7ed;
+    border-color: #fdba74;
+    color: #9a3412;
+}
+
+.ces-presion-field .ces-atypical-alert small {
+    font-size: 11px;
+    color: #9a3412;
+}
+
+/* Clasificación normal - verde */
+.ces-presion-field .alert-normal {
+    background: #ecfdf3;
+    border-color: #a7e2bd;
+    color: #166534;
+}
+
+/* Advertencia clínica - amarillo */
+.ces-presion-field .alert-warning {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+/* Clasificación crítica - rojo */
+.ces-presion-field .alert-critical {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+/* Clasificación informativa - azul */
+.ces-presion-field .alert-info {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+}
+
+/* Colores de los campos de presión arterial */
+.ces-panel .ces-presion-field.status-normal
+.ces-blood-pressure input {
+    border: 2px solid #16a34a;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.ces-panel .ces-presion-field.status-warning
+.ces-blood-pressure input {
+    border: 2px solid #eab308;
+    background: #fefce8;
+    color: #854d0e;
+}
+
+.ces-panel .ces-presion-field.status-critical
+.ces-blood-pressure input {
+    border: 2px solid #dc2626;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.ces-panel .ces-presion-field.status-info
+.ces-blood-pressure input {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.ces-panel .ces-presion-field.status-invalid
+.ces-blood-pressure input {
+    border: 2px solid #f97316;
+    background: #fff7ed;
+    color: #9a3412;
+}

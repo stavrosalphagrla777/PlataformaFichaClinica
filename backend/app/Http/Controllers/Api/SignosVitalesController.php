@@ -6,10 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\SignosVitales;
 use Illuminate\Http\Request;
 
+/**
+ * API clínica heredada de signos vitales: validación y registro asociado a ficha.
+ * Independiente del historial JSON de 4.º medio administrado por Delivery.
+ */
 class SignosVitalesController extends Controller
 {
+    /** Guarda signos vitales asociados a una ficha. */
     public function store(Request $request, $medicalRecordId)
     {
+        $medicalRecordId = \App\Support\MedicalRecordAccess::forWrite($request, $medicalRecordId)->id;
         $validated = $request->validate([
             'frecuencia_cardiaca' => 'required|integer',
             'presion_arterial' => 'required|string',
@@ -49,7 +55,7 @@ class SignosVitalesController extends Controller
 
         $signo = SignosVitales::create([
             'medical_record_id' => $medicalRecordId,
-            'registrado_por_id' => auth()->id() ?? 1,
+            'registrado_por_id' => $request->user()->id,
             'fecha_hora_registro' => now(),
             'frecuencia_cardiaca' => $validated['frecuencia_cardiaca'],
             'presion_arterial' => $validated['presion_arterial'],
@@ -71,6 +77,7 @@ class SignosVitalesController extends Controller
         ], 201);
     }
 
+    /** Consulta registros de signos vitales de la ficha. */
     public function index($medicalRecordId)
     {
         $signos = SignosVitales::where('medical_record_id', $medicalRecordId)

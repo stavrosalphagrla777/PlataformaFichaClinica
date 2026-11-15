@@ -971,3 +971,15 @@ select {
     line-height: 1.4;
     white-space: nowrap;
 }
+
+/* Ajuste responsive: el área principal ocupa TODO el espacio liberado por el menú. */
+.app, .app-shell { max-width: none; }
+.app > .main, .app > .main-area, .app .main { min-width: 0; }
+.app .content { width: 100%; max-width: none; margin-left: 0; margin-right: 0; box-sizing: border-box; }
+.app.sidebar-hidden .content { width: 100%; max-width: none; margin-left: 0; margin-right: 0; }
+.app.sidebar-hidden .page-heading h1, .app.sidebar-hidden .heading h1 { font-size: clamp(24px, 2.1vw, 32px); }
+.app.sidebar-hidden .content p, .app.sidebar-hidden .content label,
+.app.sidebar-hidden .content td { font-size: max(1em, clamp(14px, 1.1vw, 16px)); }
+@media (max-width: 760px) {
+    .app .content, .app.sidebar-hidden .content { padding: 18px; }
+}

@@ -1,0 +1,11 @@
+.env
+.env.production
+.git
+backend/vendor
+backend/.env
+backend/.env.local
+backend/storage/logs/*
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/node_modules

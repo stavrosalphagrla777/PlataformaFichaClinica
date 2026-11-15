@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,9 +40,7 @@
             Mi perfil
         </a>
 
-       <a href="#" id="btnLogout" class="nav-link">
-        Cerrar sesión
-        </a>
+        <form action="{{ route('delivery.logout') }}" method="POST">@csrf<button type="submit" class="nav-link" style="width:100%;border:0;background:transparent;text-align:left;cursor:pointer">Cerrar sesión</button></form>
 
     </aside>
 
@@ -71,8 +70,8 @@
 
             <div class="user-info">
                 <div class="user-details">
-                    <strong>Estudiante</strong>
-                    <small>4.º medio</small>
+                    <strong>{{ auth()->user()?->name ?? 'Estudiante' }}</strong>
+                    <small>{{ \App\Support\ThirdYear::isThirdYear(auth()->user()) ? '3.º medio' : '4.º medio' }}</small>
                 </div>
 
                 <div class="user-avatar">E</div>
@@ -81,6 +80,9 @@
         </header>
 
         <main class="content">
+            @if(session('error'))
+                <p role="alert" style="padding:12px;background:#fff1f2;color:#9f1239;border-radius:8px">{{ session('error') }}</p>
+            @endif
 
             <div class="page-heading">
                 <div>
@@ -162,7 +164,9 @@
                             <option value="">Todos</option>
                             <option value="Disponible">Disponible</option>
                             <option value="En desarrollo">En desarrollo</option>
-                            <option value="Finalizado">Finalizado</option>
+                            <option value="Finalizado">Entregado</option>
+                            <option value="Tiempo agotado">Tiempo agotado</option>
+                            <option value="Programada">Programada</option>
                         </select>
                     </div>
 
@@ -222,7 +226,7 @@
                 <div class="table-footer">
                     <span id="tableInfo"></span>
                     <span>
-                        Datos de demostración
+                        Información de tus casos asignados
                     </span>
                 </div>
 
@@ -255,101 +259,9 @@
     });
 
     // Datos ficticios para probar la interfaz
-    const cases = [
-        {
-            id: 'CAS-001',
-            esi: 'Sin clasificar',
-            name: 'Alteración neurológica aguda',
-            patient: 'Masculino, 68 años',
-            type: 'Examen',
-            assigned: '27/10/2026 09:30',
-            modified: '28/10/2026 11:15',
-            status: 'En desarrollo',
-            grade: null,
-            achievement: null,
-            description:
-                'Paciente masculino de 68 años, con antecedentes de ' +
-                'hipertensión arterial, diabetes mellitus tipo 2, ' +
-                'dislipidemia y tabaquismo. Es trasladado al Servicio ' +
-                'de Urgencias tras presentar inicio súbito de dificultad ' +
-                'para hablar y pérdida de fuerza del lado derecho del cuerpo.'
-        },
-        {
-            id: 'CAS-002',
-            esi: 'Sin clasificar',
-            name: 'Crisis convulsivas en Urgencias',
-            patient: 'Femenino, 24 años',
-            type: 'Tarea',
-            assigned: '27/10/2026 10:00',
-            modified: 'Sin modificaciones',
-            status: 'Disponible',
-            grade: null,
-            achievement: null,
-            description:
-                'Paciente femenina de 24 años, sin diagnóstico previo ' +
-                'de epilepsia, trasladada a Urgencias después de una ' +
-                'crisis convulsiva en su lugar de trabajo. Durante la ' +
-                'observación presenta una segunda crisis tónico-clónica ' +
-                'generalizada que supera los cinco minutos.'
-        },
-        {
-            id: 'CAS-003',
-            esi: 'Sin clasificar',
-            name: 'Dolor torácico agudo',
-            patient: 'Masculino, 59 años',
-            type: 'Examen',
-            assigned: '25/10/2026 14:20',
-            modified: '26/10/2026 16:45',
-            status: 'Finalizado',
-            grade: 6.5,
-            achievement: 92,
-            description:
-                'Paciente masculino de 59 años, con antecedentes de ' +
-                'hipertensión arterial, diabetes mellitus tipo 2, ' +
-                'dislipidemia y tabaquismo. Consulta por dolor torácico ' +
-                'opresivo intenso, irradiado al brazo izquierdo, hombro ' +
-                'y mandíbula. El electrocardiograma presenta elevación ' +
-                'del segmento ST en derivaciones precordiales anteriores.'
-        },
-        {
-            id: 'CAS-004',
-            esi: 'Sin clasificar',
-            name: 'Hipoglicemia severa',
-            patient: 'Femenino, 32 años',
-            type: 'Apoyo',
-            assigned: '28/10/2026 08:00',
-            modified: 'Sin modificaciones',
-            status: 'Disponible',
-            grade: null,
-            achievement: null,
-            description:
-                'Paciente femenina de 32 años, con diabetes mellitus ' +
-                'tipo 1 en tratamiento con insulina. Es encontrada ' +
-                'inconsciente en su domicilio y trasladada a Urgencias. ' +
-                'Al ingreso presenta HGT de 40 mg/dl y Glasgow de ' +
-                '5 puntos. Durante el manejo requiere controles ' +
-                'seriados de glicemia por nuevos descensos.'
-        },
-        {
-            id: 'CAS-005',
-            esi: 'Sin clasificar',
-            name: 'Politraumatismo por accidente de tránsito',
-            patient: 'Masculino, 31 años',
-            type: 'Tarea',
-            assigned: '28/10/2026 12:30',
-            modified: '29/10/2026 09:10',
-            status: 'En desarrollo',
-            grade: null,
-            achievement: null,
-            description:
-                'Paciente masculino de 31 años, conductor involucrado ' +
-                'en un accidente de tránsito de alta energía. Presenta ' +
-                'dificultad respiratoria, herida sangrante en cuero ' +
-                'cabelludo, dolor torácico y abdominal, deformidad ' +
-                'del fémur derecho y múltiples abrasiones. El escenario ' +
-                'requiere analizar ABCDE, estabilización y traslado.'
-        }
-    ];
+    
+    
+    const cases = @json($casosPayload ?? []);
 
     const tableBody = document.getElementById('casesTableBody');
     const searchInput = document.getElementById('searchCases');
@@ -369,6 +281,7 @@
         return badge;
     }
 
+    
     function renderCases() {
         const search = searchInput.value
             .toLocaleLowerCase('es')
@@ -450,7 +363,9 @@
             const statusClass = {
                 'Disponible': 'status-available',
                 'En desarrollo': 'status-progress',
-                'Finalizado': 'status-finished'
+                'Finalizado': 'status-finished',
+                'Tiempo agotado': 'status-finished',
+                'Programada': 'status-available'
             }[item.status] || 'status-available';
 
             statusCell.appendChild(
@@ -510,7 +425,9 @@
             actionLink.textContent = {
                 'Disponible': 'Ver caso',
                 'En desarrollo': 'Continuar',
-                'Finalizado': 'Ver ficha'
+                'Finalizado': 'Ver ficha',
+                'Tiempo agotado': 'Ver ficha',
+                'Programada': 'Ver caso'
             }[item.status] || 'Ver caso';
 
             // Todos pasan primero por el detalle del caso
@@ -534,20 +451,8 @@
                 actionCell
             );
 
-            // 🚀 NUEVO: Hacer toda la fila clickeable
-            const detalleUrl = '{{ route("preview.estudiante.caso", ["id" => "__ID__"]) }}'
-                .replace('__ID__', encodeURIComponent(item.id));
-            
-            row.style.cursor = 'pointer';
-            row.addEventListener('click', function(e) {
-                // Si el clic fue en el botón de acción, no duplicar
-                if (e.target.tagName !== 'A') {
-                    window.location.href = detalleUrl;
-                }
-            });
-
             tableBody.appendChild(row);
-        }); // <-- ESTA LLAVE FALTABA (cierra el forEach)
+        });
 
         // Actualizar cantidad de resultados
         document.getElementById('resultsCount').textContent =
@@ -559,7 +464,8 @@
         // Mostrar mensaje cuando no hay resultados
         document.getElementById('emptyState').hidden =
             filtered.length !== 0;
-    } // <-- Cierre de la función renderCases
+    }
+
 
     document.getElementById('totalCases').textContent =
         cases.length;
@@ -586,30 +492,6 @@
         });
 
     renderCases();
-</script>
-
-<script>
-    // 1. Proteger la ruta: si no hay token, redirigir al login
-    if (!localStorage.getItem('auth_token')) {
-        window.location.href = '/auth/login';
-    }
-
-    // 2. Manejar el botón "Cerrar sesión"
-    document.addEventListener('DOMContentLoaded', function () {
-        const btnLogout = document.getElementById('btnLogout');
-        if (btnLogout) {
-            btnLogout.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                // Borrar token y usuario
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('user');
-                
-                // Redirigir al login
-                window.location.href = '/auth/login';
-            });
-        }
-    });
 </script>
 
 </body>

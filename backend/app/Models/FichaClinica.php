@@ -10,6 +10,7 @@ class FichaClinica extends Model
 
     protected $fillable = [
         'user_id',
+        'medical_record_id',
         'paciente_id',
         'estado',
         'motivo_consulta',

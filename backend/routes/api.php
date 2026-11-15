@@ -10,13 +10,17 @@ use App\Http\Controllers\Api\EvaluacionAbcdeController;
 use App\Http\Controllers\Api\UserManagementController;
 
 // --- RUTAS PÚBLICAS ---
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/auth/forgot-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'forgotPassword']);
 Route::post('/auth/reset-password', [\App\Http\Controllers\Api\PasswordResetController::class, 'resetPassword']);
 
-// --- RUTAS PROTEGIDAS (Requieren token Sanctum) ---
+// --- RUTAS PROTEGIDAS (Usan el middleware personalizado auth.token de Alexis) ---
 Route::middleware('auth.token')->group(function () {
     
+    // HU-06: listar y consultar exclusivamente casos asignados al estudiante.
+    Route::get('/estudiante/casos', [\App\Http\Controllers\Api\StudentCasesController::class,'index']);
+    Route::get('/estudiante/casos/{code}', [\App\Http\Controllers\Api\StudentCasesController::class,'show']);
+
     // Autenticación
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);

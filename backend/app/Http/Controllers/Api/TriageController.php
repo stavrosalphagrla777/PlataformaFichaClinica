@@ -7,10 +7,16 @@ use App\Models\Triage;
 use App\Models\MedicalRecord;
 use Illuminate\Http\Request;
 
+/**
+ * API clínica heredada de Triage y asignación de box, ligada a ficha autorizada.
+ * Se conserva por compatibilidad con el backend de Alexis.
+ */
 class TriageController extends Controller
 {
+    /** Crea registro de triaje vinculado a ficha clínica. */
     public function store(Request $request, $medicalRecordId)
     {
+        $medicalRecordId = \App\Support\MedicalRecordAccess::forWrite($request, $medicalRecordId)->id;
         $validated = $request->validate([
             'motivo_consulta' => 'required|string',
             'prioridad_esi' => 'required|integer|min:1|max:5',
@@ -50,7 +56,7 @@ class TriageController extends Controller
 
         $triage = Triage::create([
             'medical_record_id' => $medicalRecordId,
-            'estudiante_id' => auth()->id() ?? 1,
+            'estudiante_id' => $request->user()->id,
             'motivo_consulta' => $validated['motivo_consulta'],
             'prioridad_esi' => $prioridadEsi,
             'escala_eva' => $validated['escala_eva'] ?? null,
@@ -79,6 +85,7 @@ class TriageController extends Controller
      * Asigna un Box automáticamente según la prioridad ESI.
      * Si el Box preferido está ocupado, busca el siguiente disponible.
      */
+    /** Modifica el box de atención de una ficha autorizada. */
     private function asignarBox($prioridadEsi)
     {
         // Mapeo de ESI a Box preferido
@@ -114,6 +121,7 @@ class TriageController extends Controller
         return 'Sin Box';
     }
 
+    /** Consulta triage por ficha. */
     public function show($medicalRecordId)
     {
         $triage = Triage::where('medical_record_id', $medicalRecordId)->firstOrFail();

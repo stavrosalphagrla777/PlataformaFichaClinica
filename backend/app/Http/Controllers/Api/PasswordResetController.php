@@ -10,8 +10,13 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Recuperación de contraseña vía API: solicitud de enlace y aplicación del token.
+ * El correo SMTP real y su entrega deben validarse por Alexis antes del despliegue.
+ */
 class PasswordResetController extends Controller
 {
+    /** Solicita enlace de restablecimiento sin revelar si existe el usuario. */
     public function forgotPassword(Request $request)
     {
         $request->validate(['email' => 'required|email']);
@@ -22,6 +27,7 @@ class PasswordResetController extends Controller
         return response()->json(['message' => 'Si el correo existe, recibirás un enlace.']);
     }
 
+    /** Valida token y reemplaza la contraseña; revoca tokens previos. */
     public function resetPassword(Request $request)
     {
         $request->validate([

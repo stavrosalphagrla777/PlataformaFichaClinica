@@ -1,31 +1,21 @@
-# Plataforma Digital Ficha Clínica TP
+# Ficha Clínica TP — Plataforma educativa
 
-Entorno de simulación clínica digital para la especialidad de Enfermería del Liceo Bicentenario Hermanos Sotomayor Baeza (3.º y 4.º medio).
+Aplicación de simulación clínica (3.º CESFAM y 4.º Urgencias) desarrollada con Laravel, MySQL y Docker. Integra backend de Alexis e interfaces de Pablo. **Solo usar datos ficticios**.
 
-## 🛠️ Stack Tecnológico
-- **Backend:** Laravel 11 (API REST) + Sanctum + Spatie/Laravel-Permission + MySQL 8
-- **Frontend:** Blade + Tailwind CSS + Vite (Integración en curso)
-- **Entorno:** Docker + Docker Compose
-- **Docs:** `docs/` (contrato de la API en `docs/API.md`)
+**Documento de referencia para Alexis:** [`docs/INFORME_TECNICO_Y_TRANSFERENCIA.md`](docs/INFORME_TECNICO_Y_TRANSFERENCIA.md).
 
-## 🚀 Levantar el entorno (Docker)
+## Inicio local en Windows
 
-```bash
-# 1. Copiar el archivo de entorno
-cp backend/.env.example backend/.env
+1. Abrir Docker Desktop (contenedores Linux).
+2. En PowerShell, desde la carpeta del proyecto:
 
-# 2. Construir y levantar los contenedores
-docker compose up -d --build
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File .\INICIAR_LOCAL.ps1
+   ```
 
-# 3. Generar la clave de la aplicación
-docker compose exec app php artisan key:generate
+3. Abrir <http://localhost:8000/login>.
+4. Si el entorno ya estaba configurado, basta `docker compose up -d`.
 
-# 4. Ejecutar migraciones y seeders
-docker compose exec app php artisan migrate:fresh --seed
+No ejecutar `migrate:fresh` ni `docker compose down -v` en una base de datos que deba conservarse.
 
-# 5. Compilar assets del frontend
-docker compose exec app npm install
-docker compose exec app npm run build
-
-
-
+**Pendiente antes de producción:** correo real para recuperación de contraseña (Alexis), almacenamiento persistente y descarga segura de adjuntos, pruebas de aceptación y configuración segura de despliegue. Ver el informe completo para rutas, datos, auditoría, pruebas, estados y responsabilidades.

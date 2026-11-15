@@ -19,7 +19,7 @@
         </div>
 
         <div class="nav-title">Principal</div>
-        <a href="#" class="nav-link">Dashboard</a>
+        <a href="{{ route('preview.admin.dashboard') }}" class="nav-link">Dashboard</a>
 
         <div class="nav-title">Acciones</div>
         <a href="{{ route('preview.admin.usuarios') }}"
@@ -27,11 +27,16 @@
         <a href="{{ route('preview.admin.crear') }}"
            class="nav-link">Crear usuario</a>
         <a href="{{ route('preview.admin.roles') }}" class="nav-link">Asignar roles y niveles</a>
-        <a href="#" class="nav-link">Historial de actividad</a>
+        <a href="{{ route('preview.admin.historial') }}" class="nav-link">Historial de actividad</a>
 
+        <div class="nav-title">Funciones docentes</div>
+            <a href="#" class="nav-link">Crear casos clínicos</a>
+            <a href="#" class="nav-link">Asignación de casos</a>
+            <a href="#" class="nav-link">Revisión de fichas</a>
+            <a href="#" class="nav-link">Evaluaciones</a>
         <div class="nav-title">Configuración</div>
-        <a href="#" class="nav-link">Configuración</a>
-        <a href="#" class="nav-link">Cerrar sesión</a>
+            <a href="#" class="nav-link">Configuración</a>
+            <a href="#" class="nav-link">Cerrar sesión</a>
     </aside>
 
     <div class="main">

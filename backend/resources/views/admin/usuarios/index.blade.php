@@ -18,15 +18,20 @@
             <span>Ficha Clínica TP</span>
         </div>
         <div class="nav-title">Principal</div>
-        <a href="#" class="nav-link">Dashboard</a>
+        <a href="{{ route('preview.admin.dashboard') }}" class="nav-link">Dashboard</a>
         <div class="nav-title">Acciones</div>
         <a href="{{ route('preview.admin.usuarios') }}" class="nav-link active">Gestión de usuarios</a>
         <a href="{{ route('preview.admin.crear') }}" class="nav-link">Crear usuario</a>
         <a href="{{ route('preview.admin.roles') }}" class="nav-link">Asignar roles y niveles</a>
-        <a href="#" class="nav-link">Historial de actividad</a>
+        <a href="{{ route('preview.admin.historial') }}" class="nav-link">Historial de actividad</a>
+        <div class="nav-title">Funciones docentes</div>
+            <a href="#" class="nav-link">Crear casos clínicos</a>
+            <a href="#" class="nav-link">Asignación de casos</a>
+            <a href="#" class="nav-link">Revisión de fichas</a>
+            <a href="#" class="nav-link">Evaluaciones</a>
         <div class="nav-title">Configuración</div>
-        <a href="#" class="nav-link">Configuración</a>
-        <a href="#" class="nav-link">Cerrar sesión</a>
+            <a href="#" class="nav-link">Configuración</a>
+            <a href="#" class="nav-link">Cerrar sesión</a>
     </aside>
 
     <div class="main">
@@ -124,15 +129,25 @@
                         <option>Inactivo</option>
                     </select>
 
-                    <button type="button" class="clear-btn" id="clearFilters">
+                    <button type="button" class="clear-btn admin-clean-button" id="clearFilters">
                         Limpiar filtros
                     </button>
+                </div>
+
+                <div class="bulk-toolbar" id="bulkToolbar" aria-live="polite">
+                    <strong id="selectionCount">0 usuarios seleccionados</strong>
+                    <div class="bulk-buttons">
+                        <button type="button" id="bulkActivate" disabled>Activar seleccionados</button>
+                        <button type="button" id="bulkDeactivate" disabled>Desactivar seleccionados</button>
+                        <button type="button" id="clearSelection" disabled>Deseleccionar</button>
+                    </div>
                 </div>
 
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
+                                <th class="check-col"><input type="checkbox" id="selectAll" aria-label="Seleccionar todos los usuarios visibles" title="Seleccionar usuarios visibles"></th>
                                 <th>Nombre / correo</th>
                                 <th>RUT</th>
                                 <th>Rol</th>
@@ -144,7 +159,7 @@
                         </thead>
                         <tbody id="userTable">
                             <tr data-role="Estudiante" data-level="4.º medio" data-status="Activo">
-                                <td>Camila Torres<span class="email">camila.torres@liceobicentenariohsb.cl</span></td>
+                                <td class="check-col"><input type="checkbox" class="user-check" aria-label="Seleccionar usuario"></td><td>Camila Torres<span class="email">camila.torres@liceobicentenariohsb.cl</span></td>
                                 <td>21.234.567-8</td><td>Estudiante</td><td>4.º medio</td><td>4.º A</td>
                                 <td><span class="status active-status">Activo</span></td>
                                 <td><a href="{{ route('preview.admin.editar', ['id' => 1]) }}"
@@ -152,28 +167,28 @@
                                 <button class="action danger" type="button">Desactivar</button></td>
                             </tr>
                             <tr data-role="Estudiante" data-level="3.º medio" data-status="Activo">
-                                <td>Matías Rojas<span class="email">matias.rojas@liceobicentenariohsb.cl</span></td>
+                                <td class="check-col"><input type="checkbox" class="user-check" aria-label="Seleccionar usuario"></td><td>Matías Rojas<span class="email">matias.rojas@liceobicentenariohsb.cl</span></td>
                                 <td>22.345.678-9</td><td>Estudiante</td><td>3.º medio</td><td>3.º B</td>
                                 <td><span class="status active-status">Activo</span></td>
                                 <td><a href="{{ route('preview.admin.editar', ['id' => 2]) }}"
                                    class="action">Editar</a><button class="action danger" type="button">Desactivar</button></td>
                             </tr>
                             <tr data-role="Docente" data-level="" data-status="Activo">
-                                <td>Daniela Pérez<span class="email">daniela.perez@liceobicentenariohsb.cl</span></td>
+                                <td class="check-col"><input type="checkbox" class="user-check" aria-label="Seleccionar usuario"></td><td>Daniela Pérez<span class="email">daniela.perez@liceobicentenariohsb.cl</span></td>
                                 <td>17.456.789-0</td><td>Docente</td><td>—</td><td>—</td>
                                 <td><span class="status active-status">Activo</span></td>
                                 <td><a href="{{ route('preview.admin.editar', ['id' => 3]) }}"
                                    class="action">Editar</a><button class="action danger" type="button">Desactivar</button></td>
                             </tr>
                             <tr data-role="Estudiante" data-level="4.º medio" data-status="Inactivo">
-                                <td>Felipe Muñoz<span class="email">felipe.munoz@liceobicentenariohsb.cl</span></td>
+                                <td class="check-col"><input type="checkbox" class="user-check" aria-label="Seleccionar usuario"></td><td>Felipe Muñoz<span class="email">felipe.munoz@liceobicentenariohsb.cl</span></td>
                                 <td>23.567.890-1</td><td>Estudiante</td><td>4.º medio</td><td>4.º B</td>
                                 <td><span class="status inactive-status">Inactivo</span></td>
                                 <td><a href="{{ route('preview.admin.editar', ['id' => 4]) }}"
                                    class="action">Editar</a><button class="action" type="button">Reactivar</button></td>
                             </tr>
                             <tr data-role="Administrador" data-level="" data-status="Activo">
-                                <td>Andrea Silva<span class="email">andrea.silva@liceobicentenariohsb.cl</span></td>
+                                <td class="check-col"><input type="checkbox" class="user-check" aria-label="Seleccionar usuario"></td><td>Andrea Silva<span class="email">andrea.silva@liceobicentenariohsb.cl</span></td>
                                 <td>16.678.901-2</td><td>Administrador</td><td>—</td><td>—</td>
                                 <td><span class="status active-status">Activo</span></td>
                                 <td><a href="{{ route('preview.admin.editar', ['id' => 5]) }}"
@@ -253,6 +268,7 @@
         });
 
         resultCount.textContent = `Mostrando ${visible} de ${rows.length} usuarios de ejemplo.`;
+        updateSelection();
     }
 
     [search, role, level, status].forEach(control => {
@@ -277,6 +293,59 @@
     const confirmStatus = document.getElementById('confirmStatus');
     const cancelStatus = document.getElementById('cancelStatus');
 
+    let bulkTargetStatus = null;
+    let bulkTargetRows = [];
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = Array.from(document.querySelectorAll('.user-check'));
+    const selectionCount = document.getElementById('selectionCount');
+    const bulkActivate = document.getElementById('bulkActivate');
+    const bulkDeactivate = document.getElementById('bulkDeactivate');
+    const clearSelection = document.getElementById('clearSelection');
+
+    function updateSelection() {
+        const selected = checkboxes.filter(c => c.checked);
+        const visible = checkboxes.filter(c => c.closest('tr').style.display !== 'none');
+        selectionCount.textContent = `${selected.length} usuario${selected.length === 1 ? '' : 's'} seleccionado${selected.length === 1 ? '' : 's'}`;
+        [bulkActivate, bulkDeactivate, clearSelection].forEach(b => b.disabled = !selected.length);
+        selectAll.checked = visible.length > 0 && visible.every(c => c.checked);
+        selectAll.indeterminate = visible.some(c => c.checked) && !selectAll.checked;
+    }
+    checkboxes.forEach(c => c.addEventListener('change', updateSelection));
+    selectAll.addEventListener('change', () => {
+        checkboxes.forEach(c => { if (c.closest('tr').style.display !== 'none') c.checked = selectAll.checked; });
+        updateSelection();
+    });
+    clearSelection.addEventListener('click', () => { checkboxes.forEach(c => c.checked = false); updateSelection(); });
+
+    function applyStatus(row, newStatus) {
+        row.dataset.status = newStatus;
+        const badge = row.querySelector('.status');
+        badge.textContent = newStatus;
+        badge.className = newStatus === 'Activo' ? 'status active-status' : 'status inactive-status';
+        const button = row.querySelector('button.action');
+        button.textContent = newStatus === 'Activo' ? 'Desactivar' : 'Reactivar';
+        button.classList.toggle('danger', newStatus === 'Activo');
+    }
+
+    function openBulkModal(targetStatus) {
+        bulkTargetRows = checkboxes.filter(c => c.checked).map(c => c.closest('tr'));
+        if (!bulkTargetRows.length) return;
+        bulkTargetStatus = targetStatus;
+        previousFocus = document.activeElement;
+        const verb = targetStatus === 'Activo' ? 'reactivar' : 'desactivar';
+        modalTitle.textContent = targetStatus === 'Activo' ? 'Activar usuarios seleccionados' : 'Desactivar usuarios seleccionados';
+        modalDescription.textContent = `¿Deseas ${verb} las cuentas de los ${bulkTargetRows.length} usuarios seleccionados?`;
+        modalIcon.textContent = targetStatus === 'Activo' ? '✓' : '!';
+        modalIcon.className = targetStatus === 'Activo' ? 'modal-icon activate' : 'modal-icon deactivate';
+        confirmStatus.textContent = targetStatus === 'Activo' ? 'Sí, activar' : 'Sí, desactivar';
+        confirmStatus.className = targetStatus === 'Activo' ? 'modal-confirm activate' : 'modal-confirm deactivate';
+        statusModal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        cancelStatus.focus();
+    }
+    bulkActivate.addEventListener('click', () => openBulkModal('Activo'));
+    bulkDeactivate.addEventListener('click', () => openBulkModal('Inactivo'));
+
     let selectedButton = null;
     let selectedRow = null;
     let previousFocus = null;
@@ -291,6 +360,8 @@
 
         selectedButton = null;
         selectedRow = null;
+        bulkTargetStatus = null;
+        bulkTargetRows = [];
     }
 
     document.querySelectorAll('#userTable button.action').forEach(button => {
@@ -329,30 +400,17 @@
         });
     });
 
-    // Confirmar cambio de estado
+    // Confirmar cambios individuales o masivos (solo vista previa).
     confirmStatus.addEventListener('click', () => {
-        if (!selectedButton || !selectedRow) return;
-
-        const newStatus = selectedRow.dataset.status === 'Activo'
-            ? 'Inactivo'
-            : 'Activo';
-
-        selectedRow.dataset.status = newStatus;
-
-        const badge = selectedRow.querySelector('.status');
-        badge.textContent = newStatus;
-        badge.className = newStatus === 'Activo'
-            ? 'status active-status'
-            : 'status inactive-status';
-
-        selectedButton.textContent = newStatus === 'Activo'
-            ? 'Desactivar'
-            : 'Reactivar';
-
-        selectedButton.classList.toggle('danger', newStatus === 'Activo');
-
+        if (bulkTargetStatus) {
+            bulkTargetRows.forEach(row => applyStatus(row, bulkTargetStatus));
+            checkboxes.forEach(c => c.checked = false);
+        } else if (selectedRow) {
+            applyStatus(selectedRow, selectedRow.dataset.status === 'Activo' ? 'Inactivo' : 'Activo');
+        } else return;
         closeStatusModal();
         filterUsers();
+        updateSelection();
     });
 
     // Cancelar

@@ -13,9 +13,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Controlador administrativo heredado para operaciones con usuarios.
+ * Verificar su vigencia antes de reutilizarlo; la administración web activa usa AdminPanelController.
+ */
 class UserController extends Controller
 {
     /** HU-13 - Listado con búsqueda y filtros */
+    /** Lista usuarios por API/controlador legado. */
     public function index(Request $request)
     {
         $request->validate([
@@ -52,6 +57,7 @@ class UserController extends Controller
     }
 
     /** HU-11 - Crear usuario (con rol y nivel: HU-12) */
+    /** Crea una cuenta. */
     public function store(StoreUserRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -71,12 +77,14 @@ class UserController extends Controller
             ->response()->setStatusCode(201);
     }
 
+    /** Consulta datos de un usuario. */
     public function show(User $user): UserResource
     {
         return new UserResource($user->load('roles'));
     }
 
     /** HU-11 - Modificar usuario */
+    /** Actualiza datos de usuario. */
     public function update(UpdateUserRequest $request, User $user): UserResource
     {
         $data = $request->validated();
@@ -95,6 +103,7 @@ class UserController extends Controller
     }
 
     /** HU-12 - Asignar rol y nivel educativo */
+    /** Asigna rol y nivel al usuario. */
     public function asignarRolNivel(Request $request, User $user): UserResource
     {
         $data = $request->validate([
@@ -109,6 +118,7 @@ class UserController extends Controller
     }
 
     /** HU-11 - Desactivar: bloquea el login y cierra sus sesiones */
+    /** Deshabilita una cuenta. */
     public function desactivar(Request $request, User $user): UserResource
     {
         if ($request->user()->is($user)) {
@@ -123,6 +133,7 @@ class UserController extends Controller
         return new UserResource($user->load('roles'));
     }
 
+    /** Habilita una cuenta. */
     public function activar(User $user): UserResource
     {
         $user->update(['activo' => true]);
@@ -134,6 +145,7 @@ class UserController extends Controller
      * Regla de negocio: el estudiante exige nivel (3º/4º medio) y curso;
      * docentes y administradores no tienen nivel ni curso.
      */
+    /** Normaliza y persiste la combinación de rol y nivel. */
     private function aplicarRolYNivel(User $user, array $data): void
     {
         $user->loadMissing('roles');

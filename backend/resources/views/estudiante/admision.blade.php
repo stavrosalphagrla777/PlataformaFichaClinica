@@ -8,62 +8,17 @@
     <title>Admisión | Ficha Clínica TP</title>
 
     <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Contexto autorizado de 4.º medio; nunca contiene datos de otros estudiantes. -->
+    <script>window.__FICHA_4TO = @json($ficha4toContext ?? null);</script>
+    <link rel="stylesheet" href="{{ asset('css/estudiante-confirmacion-4to.css') }}">
+    <script src="{{ asset('js/estudiante/4to-backend-bridge.js') }}"></script>
 </head>
 
 <body>
     <div class="app app-shell" id="appShell">
 
         <!-- MENÚ LATERAL -->
-        <aside class="sidebar" id="sidebar">
-            <div class="brand">
-                <div class="brand-logo">
-                    <img src="{{ asset('images/logo-tp.png') }}" alt="Logo TP">
-                </div>
-
-                <span>Ficha Clínica TP</span>
-            </div>
-
-            <nav aria-label="Navegación principal">
-                <div class="nav-title">Principal</div>
-
-                <a class="nav-link" href="{{ url('/estudiante/casos') }}">
-                    Mis casos clínicos
-                </a>
-
-                <div class="nav-title">Atención clínica</div>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Ficha clínica
-                </a>
-
-                <a class="nav-link active" href="{{ url('/estudiante/admision') }}" aria-current="page">
-                    Admisión
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Triage
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Signos vitales
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Evaluación clínica
-                </a>
-
-                <div class="nav-title">Cuenta</div>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Mi perfil
-                </a>
-
-                <a class="nav-link nav-disabled" href="#">
-                    Cerrar sesión
-                </a>
-            </nav>
-        </aside>
+        @include('estudiante.partials.sidebar-4to')
 
         <!-- ÁREA PRINCIPAL -->
         <div class="main-area">
@@ -114,7 +69,7 @@
 
                     <a
                         class="btn btn-secondary"
-                        href="{{ url('/estudiante/casos-preview') }}"
+                        href="{{ url('/estudiante/casos') }}"
                     >
                         ← Volver a mis casos
                     </a>
@@ -141,18 +96,17 @@
                 
                 <div class="tabs" aria-label="Etapas de ficha clínica">
                     <a id="tabResumen" href="#">Resumen</a>
-                    <a class="selected" href="{{ url('/estudiante/admision') }}" aria-current="page">Admisión</a>
-                    <a id="tabTriage" href="{{ url('/estudiante/triage') }}">Triage</a>
-
-                    <span>Signos vitales</span>
-                    <span>ABCDE</span>
-                    <span>Anamnesis</span>
-                    <span>Examen físico</span>
-                    <span>Procedimientos</span>
-                    <span>Medicamentos</span>
-                    <span>Exámenes</span>
-                    <span>Acciones de enfermería</span>
-                    <span>Destino</span>
+                    <a class="selected" id="tabAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a>
+                    <a id="tabTriage" href="{{ route('preview.estudiante.triage') }}">Triage</a>
+                    <a id="tabSignos" href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a>
+                    <a id="tabABCDE" href="{{ route('preview.estudiante.abcde') }}" aria-current="page">ABCDE</a>
+                    <a id="tabAnamnesis" href="{{ route('preview.estudiante.anamnesis') }}">Anamnesis</a>
+                    <a id="tabExaFisico" href="#">Examen físico</a>
+                    <a id="tabProcedimientos" href="#">Procedimientos</a>
+                    <a id="tabMedicamentos" href="#">Medicamentos</a>
+                    <a id="tabExamenes" href="#">Exámenes</a>
+                    <a id="tabAccEnfermeria" href="#">Acciones de enfermería</a>
+                    <a id="tabDestino" href="#">Destino</a>
                 </div>
 
 
@@ -366,19 +320,16 @@
                         <h2>⚠ Alergias</h2>
 
                         <div class="form-grid cols-3">
-                            <label>
-                                Alergias
-
-                                <textarea
-                                    name="alergias"
-                                    rows="4"
-                                    placeholder="Describir alergias conocidas o indicar que no refiere"
-                                ></textarea>
-                            </label>
+                            <fieldset class="allergy-detail">
+                                <legend>Detalles de alergias (opcional)</legend>
+                                <p class="helper">Primero selecciona el tipo de alergia. Utiliza este espacio si necesitas especificar el medicamento, alimento u otra sustancia.</p>
+                                <textarea name="alergias" id="allergyDetails" rows="4" placeholder="Ej.: penicilina, maní, tipo de látex u otra sustancia"></textarea>
+                            </fieldset>
 
                             <fieldset>
                                 <legend>Tipo de alergia</legend>
 
+                                <p class="helper">Puedes marcar una o varias alternativas.</p>
                                 <div class="check-column">
                                     <label>
                                         <input
@@ -412,21 +363,22 @@
                                             type="checkbox"
                                             name="tipo_alergia[]"
                                             value="Otras"
+                                            id="allergyOther"
                                         >
                                         Otras
                                     </label>
                                 </div>
                             </fieldset>
 
-                            <label>
-                                Reacción
-
-                                <textarea
-                                    name="reaccion"
-                                    rows="4"
-                                    placeholder="Describir la reacción"
-                                ></textarea>
-                            </label>
+                            <fieldset class="allergy-reaction">
+                                <legend>Reacción alérgica</legend>
+                                <div class="radio-row" role="group" aria-label="Presencia de reacción">
+                                    <label><input type="radio" name="reaccion_refiere" value="si"> Sí refiere</label>
+                                    <label><input type="radio" name="reaccion_refiere" value="no"> No refiere</label>
+                                </div>
+                                <label for="allergyReactionDetails" class="helper">Descripción de la reacción (opcional)</label>
+                                <textarea name="reaccion" id="allergyReactionDetails" rows="4" placeholder="Ej.: urticaria, disnea, náuseas o fecha de la reacción"></textarea>
+                            </fieldset>
                         </div>
                     </section>
 
@@ -522,7 +474,7 @@
 
                         <a
                             class="btn btn-light"
-                            href="{{ url('/estudiante/casos-preview') }}"
+                            href="{{ url('/estudiante/casos') }}"
                         >
                             Cancelar
                         </a>
@@ -602,9 +554,9 @@
             // IDENTIFICACIÓN DEL CASO
             const params = new URLSearchParams(window.location.search);
 
-            const caseId = /^CAS-00[1-5]$/.test(params.get('caso') || '')
+            const caseId = window.__FICHA_4TO?.codigo || (/^CAS-00[1-5]$/.test(params.get('caso') || '')
                 ? params.get('caso')
-                : 'CAS-001';
+                : 'CAS-001');
 
             const titles = {
                 'CAS-001': 'Alteración neurológica aguda',
@@ -615,7 +567,7 @@
             };
 
             document.getElementById('caseCode').textContent = caseId;
-            document.getElementById('caseTitle').textContent = titles[caseId];
+            document.getElementById('caseTitle').textContent = window.__FICHA_4TO?.titulo || titles[caseId] || 'Caso clínico';
 
             const key = 'ficha-tp-admision-demo-' + caseId;
 
@@ -626,7 +578,7 @@
                 encodeURIComponent(caseId);
 
             const detailUrl =
-                @json(url('/estudiante/caso-preview')) +
+                @json(url('/estudiante/caso')) +
                 '/' +
                 encodeURIComponent(caseId);
 
@@ -656,6 +608,13 @@
                     input.type = 'text';
                     input.dataset.field = field;
                     input.value = data[field] || '';
+                    input.placeholder = ({
+                        medicamento:'Ej.: Paracetamol',
+                        dosis:'Ej.: 500 mg',
+                        via:'Ej.: Oral',
+                        frecuencia:'Ej.: Cada 8 horas',
+                        indicacion:'Ej.: Control del dolor'
+                    })[field] || '';
                     input.setAttribute('aria-label', field);
 
                     td.appendChild(input);
@@ -875,51 +834,85 @@
             });
 
 
-            // GUARDAR FORMULARIO (conectado a la API)
-form.addEventListener('submit', async function (event) {
-    event.preventDefault();
+            // GUARDAR FORMULARIO
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-    if (!form.reportValidity()) {
-        return;
-    }
+                if (!form.reportValidity()) {
+                    return;
+                }
 
-    message.textContent = 'Guardando...';
+                try {
+                    localStorage.setItem(key, JSON.stringify(capture()));
+                    message.textContent = 'Guardando admisión...';
+                    window.Ficha4toBridge?.flush().then(() => {
+                        message.textContent = 'Admisión guardada correctamente.';
+                    }).catch(error => { message.textContent = 'No fue posible guardar admisión: ' + error.message; });
+                } catch (error) {
+                    message.textContent =
+                        'No se pudo guardar el registro.';
+                }
+            });
 
-    try {
-        const token = localStorage.getItem('auth_token');
-        const datos = capture();
+            // Autoguardado real de borradores: se conserva incluso si se abre Resumen
+            // antes de pulsar «Guardar». No interrumpe la edición ni exige completar campos.
+            let autoSaveTimer = null;
+            let admissionDirty = false;
+            function persistAdmissionDraft() {
+                if (!admissionDirty || !window.__FICHA_4TO?.editable) return;
+                clearTimeout(autoSaveTimer);
+                admissionDirty = false;
+                try { localStorage.setItem(key, JSON.stringify(capture())); }
+                catch (error) { admissionDirty = true; message.textContent = 'No se pudo guardar el borrador: ' + error.message; }
+            }
+            function scheduleAdmissionDraft() {
+                if (!window.__FICHA_4TO?.editable) return;
+                admissionDirty = true;
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(persistAdmissionDraft, 900);
+            }
+            form.addEventListener('input', scheduleAdmissionDraft);
+            form.addEventListener('change', scheduleAdmissionDraft);
+            tbody.addEventListener('click', e => { if (e.target.closest('.remove-med')) setTimeout(scheduleAdmissionDraft, 0); });
+            document.getElementById('addMedication').addEventListener('click', scheduleAdmissionDraft);
+            document.getElementById('allergyOther')?.addEventListener('change', function () {
+                if (this.checked) {
+                    const input = document.getElementById('allergyDetails');
+                    input.placeholder = 'Especifica aquí el otro tipo de alergia';
+                    input.focus();
+                }
+            });
+            form.querySelectorAll('[name="reaccion_refiere"]').forEach(radio => radio.addEventListener('change', () => {
+                const detail = document.getElementById('allergyReactionDetails');
+                if (radio.checked && radio.value === 'no') {
+                    detail.placeholder = 'No refiere reacción alérgica';
+                    detail.value = '';
+                    detail.disabled = true;
+                } else if (radio.checked) {
+                    detail.disabled = false;
+                    detail.placeholder = 'Ej.: urticaria, disnea, náuseas o fecha de la reacción';
+                }
+            }));
+            document.addEventListener('click', async function (event) {
+                const link = event.target.closest('a[href]');
+                if (!link || !link.closest('.tabs, .sidebar') || !admissionDirty || !window.__FICHA_4TO?.editable) return;
+                if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target === '_blank') return;
+                const href = link.href;
+                if (!href || new URL(href).origin !== location.origin) return;
+                event.preventDefault();
+                persistAdmissionDraft();
+                try { await window.Ficha4toBridge.flush(); location.assign(href); }
+                catch (error) { message.textContent = 'No fue posible guardar el borrador. Reintenta antes de salir: ' + error.message; }
+            }, true);
 
-        const response = await axios.post('/api/fichas', {
-            paciente_id: 1,
-            motivo_consulta: 'Admisión del paciente: ' + (datos.nombre || 'Sin nombre'),
-        }, {
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (response.status === 201) {
-            message.textContent = 'Admisión guardada con éxito. Redirigiendo a Triage...';
-            setTimeout(function () {
-                window.location.href = triageUrl;
-            }, 1000);
-        }
-    } catch (error) {
-        let errorMessage = 'Error al guardar la admisión.';
-        if (error.response && error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-        }
-        message.textContent = errorMessage;
-    }
-});
             // CARGAR DATOS PREVIOS
             try {
                 const saved = localStorage.getItem(key);
 
                 if (saved) {
                     restore(JSON.parse(saved));
+                    const noReaction = form.querySelector('[name="reaccion_refiere"][value="no"]');
+                    if (noReaction?.checked) document.getElementById('allergyReactionDetails').disabled = true;
                 }
             } catch (error) {
                 // Si los datos no pueden recuperarse, se inicia vacío.
