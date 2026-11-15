@@ -8,21 +8,37 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Autenticación de la API heredada de Alexis: tokens Sanctum, usuario autenticado
+ * y revocación. Ruta protegida con middleware auth.token cuando corresponde.
+ */
 class AuthController extends Controller
 {
+    /** Autentica y emite token API. */
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $data = $request->validate([
+            'login' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255', // retrocompatibilidad API
+            'password' => 'required|string',
         ]);
+        $login = trim((string) ($data['login'] ?? $data['email'] ?? ''));
+        if ($login === '') {
+            throw ValidationException::withMessages(['login' => ['Ingresa usuario o correo.']]);
+        }
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $user = User::where($field, $login)->first();
 
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            $errorField = $request->filled('login') ? 'login' : 'email';
             throw ValidationException::withMessages([
-                'email' => ['Las credenciales proporcionadas son incorrectas.'],
+                $errorField => ['Las credenciales proporcionadas son incorrectas.'],
             ]);
+        }
+
+        // Las cuentas QA no se podrán utilizar en un entorno público aunque se copie la BD.
+        if (app()->environment('production') && str_ends_with(strtolower($user->email), '@ficha.test')) {
+            return response()->json(['message' => 'Cuenta de pruebas deshabilitada'], 403);
         }
 
         if (isset($user->activo) && !$user->activo) {
@@ -50,6 +66,7 @@ class AuthController extends Controller
         ]);
     }
 
+    /** Devuelve los datos de la cuenta autenticada. */
     public function me(Request $request)
     {
         return response()->json([
@@ -64,6 +81,7 @@ class AuthController extends Controller
         ]);
     }
 
+    /** Revoca la sesión token utilizada. */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Destino del paciente | Ficha Clínica TP</title>
+
+    <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/estudiante-triage.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/estudiante-formularios.css') }}">
+
+    <style>
+        .anamnesis-container {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+            align-items: stretch;
+        }
+
+        .anamnesis-card {
+            grid-column: span 2;
+            min-width: 0;
+            background: #fff;
+            border: 1px solid #dce5ef;
+            border-radius: 9px;
+            padding: 12px;
+            box-shadow: 0 2px 9px rgba(15, 42, 76, .045);
+        }
+
+        .anamnesis-card.wide {
+            grid-column: span 3;
+        }
+
+        .anamnesis-header {
+            padding: 9px 12px;
+            border-radius: 5px;
+            margin-bottom: 12px;
+        }
+
+        .anamnesis-header h2 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 750;
+            color: #12416e;
+        }
+
+        .anamnesis-header.rosa {
+            background: #fce6eb;
+        }
+
+        .anamnesis-header.azul {
+            background: #e0edff;
+        }
+
+        .anamnesis-header.naranja {
+            background: #fff0d8;
+        }
+
+        .anamnesis-header.lila {
+            background: #eee5ff;
+        }
+
+        .anamnesis-header.verde {
+            background: #ddf7eb;
+        }
+
+        .anamnesis-header.celeste {
+            background: #deebff;
+        }
+
+        .anamnesis-header.rosado {
+            background: #fce1e9;
+        }
+
+        .anamnesis-header.menta {
+            background: #d9f5eb;
+        }
+
+        .anamnesis-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            margin-bottom: 10px;
+        }
+
+        .anamnesis-field label,
+        .anamnesis-label {
+            font-size: 12px;
+            font-weight: 650;
+            color: #25354b;
+        }
+
+        .anamnesis-field input:not([type=radio]),
+        .anamnesis-field select,
+        .anamnesis-field textarea {
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
+            color: #172a41;
+            padding: 9px 10px;
+            font: 13px 'Segoe UI', Arial, sans-serif;
+        }
+
+        .anamnesis-field textarea {
+            min-height: 95px;
+            resize: vertical;
+        }
+
+        .anamnesis-card.wide textarea {
+            min-height: 130px;
+        }
+
+        .anamnesis-field input:focus,
+        .anamnesis-field select:focus,
+        .anamnesis-field textarea:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px;
+        }
+
+        .anamnesis-options {
+            display: grid;
+            gap: 7px;
+            margin: 9px 0 12px;
+        }
+
+        .anamnesis-options label {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            font-size: 12px;
+            color: #34465d;
+            cursor: pointer;
+        }
+
+        .anamnesis-options input {
+            accent-color: #0968bd;
+        }
+
+        .anamnesis-habits {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 9px;
+        }
+
+        .anamnesis-habits .anamnesis-field {
+            margin-bottom: 0;
+        }
+
+        .anamnesis-hidden {
+            display: none !important;
+        }
+
+        .anamnesis-footer {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .anamnesis-button {
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            padding: 11px 18px;
+            background: #eef3f8;
+            color: #243950;
+            font-weight: 650;
+            cursor: pointer;
+        }
+
+        .anamnesis-button.primary {
+            background: #0968bd;
+            border-color: #0968bd;
+            color: white;
+        }
+
+        .anamnesis-button:hover {
+            filter: brightness(.96);
+        }
+
+        .anamnesis-message {
+            display: none;
+            flex: 1 1 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .anamnesis-message.show {
+            display: block;
+        }
+
+        .anamnesis-message.ok {
+            background: #e8f7ee;
+            color: #14633a;
+        }
+
+        .anamnesis-message.error {
+            background: #fff0ed;
+            color: #a32b25;
+        }
+
+        /* Visor de archivo clínico: vista previa a la izquierda e información a la derecha. */
+        .exa-viewer-modal {
+            max-width: 1000px !important;
+            width: min(94vw, 1000px) !important;
+            padding: 0 !important;
+            overflow: hidden;
+            text-align: left !important
+        }
+
+        .exa-viewer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: #104e80;
+            color: #fff;
+            padding: 16px 22px
+        }
+
+        .exa-viewer-header h2 {
+            margin: 0 !important;
+            color: #fff !important;
+            font-size: 20px !important;
+            text-align: left !important
+        }
+
+        .exa-viewer-close {
+            border: 0;
+            background: transparent;
+            color: white;
+            font-size: 30px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 5px
+        }
+
+        .exa-viewer-body {
+            padding: 18px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(260px, 1fr);
+            gap: 16px;
+            align-items: start
+        }
+
+        .exa-viewer-image {
+            background: #101d2b;
+            border-radius: 9px;
+            min-height: 290px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            overflow: hidden
+        }
+
+        .exa-viewer-image img {
+            max-width: 100%;
+            max-height: 62vh;
+            object-fit: contain;
+            display: block
+        }
+
+        .exa-viewer-image .exa-preview {
+            margin: 0;
+            max-height: 62vh
+        }
+
+        .exa-viewer-image a {
+            color: #cfe7ff;
+            font-weight: 650
+        }
+
+        .exa-viewer-info {
+            background: #f3f7fc;
+            border-radius: 9px;
+            padding: 17px;
+            min-width: 0;
+            color: #24405e
+        }
+
+        .exa-viewer-info h3 {
+            margin: 0 0 13px;
+            font-size: 16px;
+            color: #164b7d
+        }
+
+        .exa-viewer-info p {
+            margin: 0 0 13px;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-wrap: anywhere
+        }
+
+        .exa-viewer-info strong {
+            display: block;
+            color: #164b7d;
+            margin-bottom: 3px
+        }
+
+        .exa-viewer-info .proc-delete {
+            margin-top: 8px
+        }
+
+        @media(max-width:720px) {
+            .exa-viewer-body {
+                grid-template-columns: 1fr
+            }
+
+            .exa-viewer-image {
+                min-height: 180px
+            }
+
+            .exa-viewer-modal {
+                max-height: 90vh;
+                overflow: auto
+            }
+        }
+
+        /* Zona de material clínico: panel ancho y carga intuitiva */
+        .exa-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr)
+        }
+
+        .exa-material-fields {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px 22px;
+            align-items: start
+        }
+
+        .exa-material-fields .exa-field.full {
+            grid-column: 1/-1
+        }
+
+        .exa-material-fields .exa-upload-field {
+            grid-column: 3;
+            grid-row: 1/span 2
+        }
+
+        .exa-material-fields .exa-associated {
+            grid-column: 1 / span 2
+        }
+
+        .exa-upload-zone {
+            min-height: 134px;
+            border: 2px dashed #b5cfee;
+            border-radius: 9px;
+            background: #f7faff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            color: #145b9d;
+            transition: background .15s, border-color .15s
+        }
+
+        .exa-upload-zone:hover,
+        .exa-upload-zone.is-dragover,
+        .exa-upload-zone:focus-visible {
+            background: #eaf4ff;
+            border-color: #1472c6;
+            outline: none
+        }
+
+        .exa-upload-zone strong {
+            font-size: 15px
+        }
+
+        .exa-upload-zone small {
+            font-size: 12px;
+            color: #69829d
+        }
+
+        .exa-upload-zone .exa-upload-symbol {
+            font-size: 25px;
+            line-height: 1
+        }
+
+        .exa-upload-zone .exa-selected-file {
+            overflow-wrap: anywhere;
+            color: #155a92;
+            font-weight: 650
+        }
+
+        .exa-upload-field input[type=file] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none
+        }
+
+        @media(max-width:800px) {
+            .exa-material-fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .exa-material-fields .exa-upload-field {
+                grid-column: 1/-1;
+                grid-row: auto
+            }
+
+            .exa-material-fields .exa-associated {
+                grid-column: 1/-1
+            }
+        }
+
+        @media(max-width:1050px) {
+            .anamnesis-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .anamnesis-card,
+            .anamnesis-card.wide {
+                grid-column: span 1;
+            }
+        }
+
+        @media(max-width:650px) {
+            .anamnesis-container {
+                grid-template-columns: 1fr;
+            }
+
+            .anamnesis-card,
+            .anamnesis-card.wide {
+                grid-column: 1;
+            }
+
+            .anamnesis-habits {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* Distribución de examen físico general y segmentario */
+        .ef-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: start;
+            margin-top: 18px
+        }
+
+        .ef-panel {
+            min-width: 0;
+            padding: 18px;
+            background: #fff;
+            border: 1px solid #dce5ef;
+            border-radius: 12px;
+            box-shadow: 0 3px 14px rgba(15, 42, 76, .045)
+        }
+
+        .ef-title {
+            margin: 0 0 18px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #e6f0fc;
+            color: #174c7e;
+            font-size: 18px
+        }
+
+        .ef-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px
+        }
+
+        .ef-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            min-width: 0
+        }
+
+        .ef-field:last-child {
+            grid-column: 1/-1
+        }
+
+        .ef-field label,
+        .ef-segment-body label {
+            font-size: 13px;
+            font-weight: 650;
+            color: #25354b
+        }
+
+        .ef-field select,
+        .ef-field input[type="number"],
+        .ef-field textarea,
+        .ef-segment-body textarea {
+            width: 100%;
+            min-width: 0;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #172a41;
+            font: inherit;
+            font-size: 13px
+        }
+
+        .ef-field textarea,
+        .ef-segment-body textarea {
+            min-height: 90px;
+            resize: vertical
+        }
+
+        .ef-field select:focus,
+        .ef-field input[type="number"]:focus,
+        .ef-field textarea:focus,
+        .ef-segment-body textarea:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px
+        }
+
+        .ef-hint {
+            margin: -6px 0 15px;
+            font-size: 12px;
+            color: #64748b
+        }
+
+        .ef-segment {
+            margin: 0 0 10px;
+            border: 1px solid #dce5ef;
+            border-radius: 9px;
+            overflow: hidden;
+            background: #fff
+        }
+
+        .ef-segment summary {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 14px 38px 14px 15px;
+            cursor: pointer;
+            list-style: none;
+            color: #174c7e
+        }
+
+        .ef-segment summary::-webkit-details-marker {
+            display: none
+        }
+
+        .ef-segment summary:after {
+            content: '+';
+            position: absolute;
+            right: 15px;
+            top: 14px;
+            font-size: 20px;
+            color: #1766aa
+        }
+
+        .ef-segment[open] summary:after {
+            content: '−'
+        }
+
+        .ef-segment summary span {
+            font-weight: 700;
+            font-size: 15px
+        }
+
+        .ef-segment summary small {
+            color: #64748b;
+            font-size: 11px
+        }
+
+        .ef-segment-body {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            padding: 14px;
+            border-top: 1px solid #e7edf3;
+            background: #fbfdff
+        }
+
+        .ef-segment-body textarea+label {
+            margin-top: 7px
+        }
+
+        .ef-actions {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px
+        }
+
+        /* Zona de material clínico: panel ancho y carga intuitiva */
+        .exa-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr)
+        }
+
+        .exa-material-fields {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px 22px;
+            align-items: start
+        }
+
+        .exa-material-fields .exa-field.full {
+            grid-column: 1/-1
+        }
+
+        .exa-material-fields .exa-upload-field {
+            grid-column: 3;
+            grid-row: 1/span 2
+        }
+
+        .exa-material-fields .exa-associated {
+            grid-column: 1 / span 2
+        }
+
+        .exa-upload-zone {
+            min-height: 134px;
+            border: 2px dashed #b5cfee;
+            border-radius: 9px;
+            background: #f7faff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            color: #145b9d;
+            transition: background .15s, border-color .15s
+        }
+
+        .exa-upload-zone:hover,
+        .exa-upload-zone.is-dragover,
+        .exa-upload-zone:focus-visible {
+            background: #eaf4ff;
+            border-color: #1472c6;
+            outline: none
+        }
+
+        .exa-upload-zone strong {
+            font-size: 15px
+        }
+
+        .exa-upload-zone small {
+            font-size: 12px;
+            color: #69829d
+        }
+
+        .exa-upload-zone .exa-upload-symbol {
+            font-size: 25px;
+            line-height: 1
+        }
+
+        .exa-upload-zone .exa-selected-file {
+            overflow-wrap: anywhere;
+            color: #155a92;
+            font-weight: 650
+        }
+
+        .exa-upload-field input[type=file] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none
+        }
+
+        @media(max-width:800px) {
+            .exa-material-fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .exa-material-fields .exa-upload-field {
+                grid-column: 1/-1;
+                grid-row: auto
+            }
+
+            .exa-material-fields .exa-associated {
+                grid-column: 1/-1
+            }
+        }
+
+        @media(max-width:1050px) {
+            .ef-columns {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:550px) {
+            .ef-panel {
+                padding: 12px
+            }
+
+            .ef-fields {
+                grid-template-columns: 1fr
+            }
+
+            .ef-actions button {
+                flex: 1
+            }
+        }
+
+        /* Procedimientos: mantiene el lenguaje visual de las vistas anteriores */
+        .proc-shortcuts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .proc-shortcut {
+            border: 1px solid #cbdff5;
+            border-radius: 7px;
+            background: #f4f8ff;
+            color: #174c7e;
+            padding: 8px 12px;
+            font: 600 12px 'Segoe UI', Arial, sans-serif;
+            cursor: pointer;
+            transition: background .15s, border-color .15s
+        }
+
+        .proc-shortcut:hover {
+            background: #e4f0ff;
+            border-color: #93c5fd
+        }
+
+        .proc-shortcut[aria-pressed="true"] {
+            background: #1766aa;
+            color: #fff;
+            border-color: #1766aa
+        }
+
+        .proc-shortcut:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px
+        }
+
+        .proc-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+            gap: 16px;
+            margin-top: 18px;
+            align-items: start
+        }
+
+        .proc-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px
+        }
+
+        .proc-full {
+            grid-column: 1/-1
+        }
+
+        .proc-fields .ef-field:last-child {
+            grid-column: 1/-1
+        }
+
+        .proc-fields .ef-field input[type="text"],
+        .proc-fields .ef-field input[type="date"],
+        .proc-fields .ef-field input[type="time"] {
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #172a41;
+            font: inherit;
+            font-size: 13px
+        }
+
+        .proc-fields .ef-field input:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px
+        }
+
+        .proc-fields .ef-field[hidden] {
+            display: none !important
+        }
+
+        .proc-actions {
+            margin-top: 18px
+        }
+
+        .proc-title-secondary {
+            background: #e6f6ef;
+            color: #166347
+        }
+
+        .med-check-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            line-height: 1.4
+        }
+
+        .med-check-label input {
+            width: 17px;
+            height: 17px;
+            accent-color: #0968bd;
+            flex: none
+        }
+
+        /* Historial en formato tabla, acorde al estándar visual de las otras vistas */
+        .proc-list {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #dce5ef;
+            border-radius: 8px
+        }
+
+        .proc-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+            color: #47627e
+        }
+
+        .proc-table thead {
+            background: #0d4b83;
+            color: #fff
+        }
+
+        .proc-table th {
+            padding: 13px 14px;
+            font-weight: 700;
+            white-space: nowrap
+        }
+
+        .proc-table td {
+            padding: 14px;
+            border-bottom: 1px solid #dce5ef;
+            vertical-align: middle
+        }
+
+        .proc-table tbody tr:nth-child(odd) {
+            background: #f6f9fc
+        }
+
+        .proc-table tbody tr:nth-child(even) {
+            background: #fff
+        }
+
+        .proc-table tbody tr:last-child td {
+            border-bottom: 0
+        }
+
+        .proc-table .proc-details-row[hidden] {
+            display: none
+        }
+
+        .proc-table .proc-details-row td {
+            padding: 13px 14px;
+            background: #edf5ff;
+            color: #334155;
+            line-height: 1.6
+        }
+
+        .proc-table .proc-details-row p {
+            margin: 4px 0;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere
+        }
+
+        .proc-view {
+            border: 0;
+            background: none;
+            color: #1766d1;
+            font: inherit;
+            cursor: pointer;
+            padding: 4px 0
+        }
+
+        .proc-view:hover {
+            text-decoration: underline
+        }
+
+        .proc-delete {
+            background: #fff;
+            border: 1px solid #efc4c4;
+            color: #a32b25;
+            border-radius: 7px;
+            padding: 7px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px
+        }
+
+        .proc-empty {
+            padding: 22px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px
+        }
+
+        /* Zona de material clínico: panel ancho y carga intuitiva */
+        .exa-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr)
+        }
+
+        .exa-material-fields {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px 22px;
+            align-items: start
+        }
+
+        .exa-material-fields .exa-field.full {
+            grid-column: 1/-1
+        }
+
+        .exa-material-fields .exa-upload-field {
+            grid-column: 3;
+            grid-row: 1/span 2
+        }
+
+        .exa-material-fields .exa-associated {
+            grid-column: 1 / span 2
+        }
+
+        .exa-upload-zone {
+            min-height: 134px;
+            border: 2px dashed #b5cfee;
+            border-radius: 9px;
+            background: #f7faff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            color: #145b9d;
+            transition: background .15s, border-color .15s
+        }
+
+        .exa-upload-zone:hover,
+        .exa-upload-zone.is-dragover,
+        .exa-upload-zone:focus-visible {
+            background: #eaf4ff;
+            border-color: #1472c6;
+            outline: none
+        }
+
+        .exa-upload-zone strong {
+            font-size: 15px
+        }
+
+        .exa-upload-zone small {
+            font-size: 12px;
+            color: #69829d
+        }
+
+        .exa-upload-zone .exa-upload-symbol {
+            font-size: 25px;
+            line-height: 1
+        }
+
+        .exa-upload-zone .exa-selected-file {
+            overflow-wrap: anywhere;
+            color: #155a92;
+            font-weight: 650
+        }
+
+        .exa-upload-field input[type=file] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none
+        }
+
+        @media(max-width:800px) {
+            .exa-material-fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .exa-material-fields .exa-upload-field {
+                grid-column: 1/-1;
+                grid-row: auto
+            }
+
+            .exa-material-fields .exa-associated {
+                grid-column: 1/-1
+            }
+        }
+
+        @media(max-width:1050px) {
+            .proc-layout {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:600px) {
+            .proc-fields {
+                grid-template-columns: 1fr
+            }
+
+            .proc-actions {
+                justify-content: flex-start
+            }
+        }
+
+        /* Medicamentos: diseño consistente con Procedimientos */
+        .med-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+            gap: 16px;
+            margin-top: 18px;
+            align-items: start
+        }
+
+        .med-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px
+        }
+
+        .med-full {
+            grid-column: 1/-1
+        }
+
+        .med-fields .ef-field:last-child {
+            grid-column: 1/-1
+        }
+
+        .med-fields .ef-field input:not([type=checkbox]),
+        .med-fields .ef-field select,
+        .med-fields .ef-field textarea {
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #172a41;
+            font: inherit;
+            font-size: 13px
+        }
+
+        .med-fields .ef-field input:focus,
+        .med-fields .ef-field select:focus,
+        .med-fields .ef-field textarea:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px
+        }
+
+        .med-fields .ef-field input[readonly] {
+            background: #f6f9fc
+        }
+
+        /* Ocultar Especificar vía salvo cuando se selecciona Otra. */
+        .med-fields .ef-field[hidden] {
+            display: none !important
+        }
+
+        .med-fields input[type="file"] {
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            padding: 9px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 13px
+        }
+
+        .med-actions {
+            margin-top: 18px
+        }
+
+        /* Zona de material clínico: panel ancho y carga intuitiva */
+        .exa-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr)
+        }
+
+        .exa-material-fields {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px 22px;
+            align-items: start
+        }
+
+        .exa-material-fields .exa-field.full {
+            grid-column: 1/-1
+        }
+
+        .exa-material-fields .exa-upload-field {
+            grid-column: 3;
+            grid-row: 1/span 2
+        }
+
+        .exa-material-fields .exa-associated {
+            grid-column: 1 / span 2
+        }
+
+        .exa-upload-zone {
+            min-height: 134px;
+            border: 2px dashed #b5cfee;
+            border-radius: 9px;
+            background: #f7faff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            color: #145b9d;
+            transition: background .15s, border-color .15s
+        }
+
+        .exa-upload-zone:hover,
+        .exa-upload-zone.is-dragover,
+        .exa-upload-zone:focus-visible {
+            background: #eaf4ff;
+            border-color: #1472c6;
+            outline: none
+        }
+
+        .exa-upload-zone strong {
+            font-size: 15px
+        }
+
+        .exa-upload-zone small {
+            font-size: 12px;
+            color: #69829d
+        }
+
+        .exa-upload-zone .exa-upload-symbol {
+            font-size: 25px;
+            line-height: 1
+        }
+
+        .exa-upload-zone .exa-selected-file {
+            overflow-wrap: anywhere;
+            color: #155a92;
+            font-weight: 650
+        }
+
+        .exa-upload-field input[type=file] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none
+        }
+
+        @media(max-width:800px) {
+            .exa-material-fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .exa-material-fields .exa-upload-field {
+                grid-column: 1/-1;
+                grid-row: auto
+            }
+
+            .exa-material-fields .exa-associated {
+                grid-column: 1/-1
+            }
+        }
+
+        @media(max-width:1050px) {
+            .med-layout {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:600px) {
+            .med-fields {
+                grid-template-columns: 1fr
+            }
+
+            .med-actions {
+                justify-content: flex-start
+            }
+        }
+
+        /* Solicitudes y adjuntos: estándar visual de Procedimientos / Medicamentos */
+        .exa-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+            gap: 16px;
+            margin-top: 18px;
+            align-items: start
+        }
+
+        .exa-stack {
+            display: grid;
+            gap: 16px;
+            min-width: 0
+        }
+
+        .exa-panel {
+            padding: 18px;
+            background: #fff;
+            border: 1px solid #dce5ef;
+            border-radius: 12px;
+            min-width: 0;
+            box-shadow: 0 3px 14px rgba(15, 42, 76, .045)
+        }
+
+        .exa-head {
+            padding: 12px 14px;
+            background: #e6f0fc;
+            color: #174c7e;
+            border-radius: 8px;
+            font-size: 17px;
+            margin: 0 0 10px
+        }
+
+        .exa-head.green {
+            background: #e6f6ef;
+            color: #166347
+        }
+
+        .exa-head.purple {
+            background: #eee9ff;
+            color: #58449a
+        }
+
+        .exa-sub {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 15px
+        }
+
+        .exa-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px
+        }
+
+        .exa-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0
+        }
+
+        .exa-field.full {
+            grid-column: 1/-1
+        }
+
+        .exa-field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #25354b
+        }
+
+        .exa-field input,
+        .exa-field select,
+        .exa-field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            min-height: 42px;
+            padding: 10px 12px;
+            background: #fff;
+            color: #172a41;
+            font: 13px 'Segoe UI', Arial, sans-serif
+        }
+
+        .exa-field textarea {
+            min-height: 84px;
+            resize: vertical
+        }
+
+        .exa-field input:focus,
+        .exa-field select:focus,
+        .exa-field textarea:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px
+        }
+
+        .exa-choices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px
+        }
+
+        .exa-choice {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            border: 1px solid #d9e5f1;
+            border-radius: 8px;
+            padding: 10px;
+            background: #f8fbff;
+            color: #24496b;
+            font-size: 12px;
+            cursor: pointer
+        }
+
+        .exa-choice input {
+            accent-color: #0968bd
+        }
+
+        .exa-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+            flex-wrap: wrap;
+            margin-top: 15px
+        }
+
+        .exa-notice {
+            margin: 12px 0 0;
+            font-size: 12px;
+            color: #526c86
+        }
+
+        .exa-date {
+            font-weight: 750;
+            color: #124c80
+        }
+
+        .exa-time {
+            font-weight: 750;
+            color: #124c80
+        }
+
+        .exa-file {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 7px
+        }
+
+        .exa-file a {
+            color: #0968bd;
+            text-decoration: underline
+        }
+
+        .exa-detail {
+            padding: 13px 15px;
+            background: #eef5ff;
+            border-top: 1px solid #dce5ef;
+            color: #34465d;
+            font-size: 13px;
+            line-height: 1.65
+        }
+
+        .exa-detail p {
+            margin: 4px 0;
+            overflow-wrap: anywhere
+        }
+
+        .exa-detail[hidden] {
+            display: none
+        }
+
+        .exa-table td {
+            vertical-align: top
+        }
+
+        .exa-badge {
+            display: inline-block;
+            background: #edf5ff;
+            border-radius: 5px;
+            padding: 4px 7px;
+            color: #174c7e;
+            font-size: 11px
+        }
+
+        .exa-file-list {
+            display: grid;
+            gap: 9px;
+            margin-top: 9px
+        }
+
+        .exa-file-item {
+            padding: 10px;
+            border: 1px solid #dce5ef;
+            border-radius: 8px;
+            background: white
+        }
+
+        .exa-file-item small {
+            display: block;
+            color: #64748b;
+            margin-top: 4px
+        }
+
+        .exa-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 7px;
+            margin-top: 10px;
+            display: block
+        }
+
+        .exa-hidden {
+            display: none !important
+        }
+
+        /* Zona de material clínico: panel ancho y carga intuitiva */
+        .exa-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr)
+        }
+
+        .exa-material-fields {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px 22px;
+            align-items: start
+        }
+
+        .exa-material-fields .exa-field.full {
+            grid-column: 1/-1
+        }
+
+        .exa-material-fields .exa-upload-field {
+            grid-column: 3;
+            grid-row: 1/span 2
+        }
+
+        .exa-material-fields .exa-associated {
+            grid-column: 1 / span 2
+        }
+
+        .exa-upload-zone {
+            min-height: 134px;
+            border: 2px dashed #b5cfee;
+            border-radius: 9px;
+            background: #f7faff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            color: #145b9d;
+            transition: background .15s, border-color .15s
+        }
+
+        .exa-upload-zone:hover,
+        .exa-upload-zone.is-dragover,
+        .exa-upload-zone:focus-visible {
+            background: #eaf4ff;
+            border-color: #1472c6;
+            outline: none
+        }
+
+        .exa-upload-zone strong {
+            font-size: 15px
+        }
+
+        .exa-upload-zone small {
+            font-size: 12px;
+            color: #69829d
+        }
+
+        .exa-upload-zone .exa-upload-symbol {
+            font-size: 25px;
+            line-height: 1
+        }
+
+        .exa-upload-zone .exa-selected-file {
+            overflow-wrap: anywhere;
+            color: #155a92;
+            font-weight: 650
+        }
+
+        .exa-upload-field input[type=file] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none
+        }
+
+        @media(max-width:800px) {
+            .exa-material-fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .exa-material-fields .exa-upload-field {
+                grid-column: 1/-1;
+                grid-row: auto
+            }
+
+            .exa-material-fields .exa-associated {
+                grid-column: 1/-1
+            }
+        }
+
+        @media(max-width:1050px) {
+            .exa-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:560px) {
+            .exa-fields {
+                grid-template-columns: 1fr
+            }
+
+            .exa-choices {
+                grid-template-columns: 1fr
+            }
+
+            .exa-panel {
+                padding: 12px
+            }
+        }
+
+        /* Acciones de enfermería: dos paneles y registro cronológico */
+        .ae-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+            gap: 16px;
+            margin-top: 18px;
+            align-items: start
+        }
+
+        .ae-panel {
+            background: #fff;
+            border: 1px solid #dce5ef;
+            border-radius: 12px;
+            padding: 18px;
+            min-width: 0;
+            box-shadow: 0 3px 14px rgba(15, 42, 76, .045)
+        }
+
+        .ae-heading {
+            margin: 0 0 8px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #e6f0fc;
+            color: #174c7e;
+            font-size: 17px
+        }
+
+        .ae-heading.green {
+            background: #e6f6ef;
+            color: #166347
+        }
+
+        .ae-sub {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 16px
+        }
+
+        .ae-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        .ae-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0
+        }
+
+        .ae-field.full {
+            grid-column: 1/-1
+        }
+
+        .ae-field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #25354b
+        }
+
+        .ae-field input,
+        .ae-field select,
+        .ae-field textarea {
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            min-height: 42px;
+            padding: 10px 12px;
+            font: 13px 'Segoe UI', Arial, sans-serif;
+            color: #172a41
+        }
+
+        .ae-field textarea {
+            min-height: 110px;
+            resize: vertical
+        }
+
+        .ae-field input:focus,
+        .ae-field select:focus,
+        .ae-field textarea:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px
+        }
+
+        .ae-field input[readonly] {
+            background: #f6f9fc
+        }
+
+        .ae-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px
+        }
+
+        .ae-table-wrap {
+            overflow-x: auto
+        }
+
+        .ae-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px
+        }
+
+        .ae-table th {
+            background: #104e80;
+            color: #fff;
+            text-align: left;
+            padding: 12px 10px
+        }
+
+        .ae-table th:first-child {
+            border-radius: 7px 0 0 0
+        }
+
+        .ae-table th:last-child {
+            border-radius: 0 7px 0 0
+        }
+
+        .ae-table td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #dce5ef;
+            color: #34516e;
+            vertical-align: top
+        }
+
+        .ae-table tbody tr:nth-child(odd) {
+            background: #f7faff
+        }
+
+        .ae-table button {
+            border: 0;
+            background: #e9f2ff;
+            color: #0968bd;
+            border-radius: 6px;
+            padding: 7px 11px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .ae-date {
+            font-weight: 700;
+            color: #174c7e;
+            white-space: nowrap
+        }
+
+        .ae-empty {
+            color: #64748b;
+            font-size: 13px;
+            padding: 20px 0;
+            text-align: center
+        }
+
+        .ae-detail {
+            margin-top: 14px;
+            background: #f3f7fc;
+            border: 1px solid #dce5ef;
+            border-radius: 9px;
+            padding: 16px;
+            overflow-wrap: anywhere
+        }
+
+        .ae-detail h3 {
+            margin: 0 0 12px;
+            color: #174c7e
+        }
+
+        .ae-detail p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #34465d
+        }
+
+        .ae-detail strong {
+            color: #174c7e
+        }
+
+        .ae-detail-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px
+        }
+
+        .ae-delete {
+            background: #fff0ed !important;
+            color: #a32b25 !important;
+            border: 1px solid #f5b5ae !important
+        }
+
+        .ae-status {
+            font-size: 12px;
+            margin-top: 12px;
+            color: #14633a
+        }
+
+        .ae-hint {
+            font-size: 12px;
+            color: #64748b;
+            margin: 12px 0 0
+        }
+
+        @media(max-width:1000px) {
+            .ae-layout {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:560px) {
+            .ae-fields {
+                grid-template-columns: 1fr
+            }
+
+            .ae-panel {
+                padding: 12px
+            }
+        }
+
+        /* Destino: dos paneles con el estándar visual del módulo clínico */
+        .dest-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 18px;
+            align-items: start
+        }
+
+        .dest-panel {
+            min-width: 0;
+            background: #fff;
+            border: 1px solid #dce5ef;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 3px 14px rgba(15, 42, 76, .045)
+        }
+
+        .dest-title {
+            margin: 0 0 9px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #e6f0fc;
+            color: #174c7e;
+            font-size: 17px
+        }
+
+        .dest-title.green {
+            background: #e6f6ef;
+            color: #166347
+        }
+
+        .dest-sub {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 17px
+        }
+
+        .dest-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 17px
+        }
+
+        .dest-field label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #25354b
+        }
+
+        .dest-field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 118px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 11px 12px;
+            color: #172a41;
+            font: 13px 'Segoe UI', Arial, sans-serif;
+            resize: vertical
+        }
+
+        .dest-field textarea:focus {
+            outline: 2px solid #93c5fd;
+            outline-offset: 1px
+        }
+
+        .dest-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 11px;
+            margin: 12px 0 19px
+        }
+
+        .dest-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px;
+            border: 1px solid #d9e5f1;
+            border-radius: 9px;
+            background: #f8fbff;
+            color: #24496b;
+            font-size: 13px;
+            font-weight: 650;
+            cursor: pointer
+        }
+
+        .dest-option input {
+            accent-color: #0968bd;
+            width: 16px;
+            height: 16px
+        }
+
+        .dest-option:has(input:checked) {
+            background: #e8f3ff;
+            border-color: #2a83d0;
+            color: #114e80
+        }
+
+        .dest-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 17px
+        }
+
+        .dest-note {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 12px
+        }
+
+        .dest-message {
+            margin-top: 16px
+        }
+
+        .dest-panel .dest-field:last-child {
+            margin-bottom: 0
+        }
+
+        @media(max-width:1000px) {
+            .dest-layout {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:540px) {
+            .dest-options {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+    <!-- Contexto autorizado de 4.º medio; nunca contiene datos de otros estudiantes. -->
+    <script>window.__FICHA_4TO = @json($ficha4toContext ?? null);</script>
+    <link rel="stylesheet" href="{{ asset('css/estudiante-confirmacion-4to.css') }}">
+    <script src="{{ asset('js/estudiante/4to-backend-bridge.js') }}"></script>
+</head>
+
+<body>
+    <div class="app app-shell" id="appShell">
+
+        <!-- Menú lateral -->
+        @include('estudiante.partials.sidebar-4to')
+
+        <div class="main-area">
+
+            <!-- Barra superior -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Mostrar u ocultar menú"
+                        aria-controls="sidebar" aria-expanded="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <span class="topbar-title">Destino del paciente</span>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-details">
+                        <strong>Estudiante</strong>
+                        <small>4.º medio</small>
+                    </div>
+                    <div class="user-avatar">E</div>
+                </div>
+            </header>
+
+            <main class="content">
+
+                <!-- Encabezado -->
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">FICHA CLÍNICA EDUCATIVA</p>
+                        <h1>Destino del paciente</h1>
+                        <p class="muted">
+                            Registra el diagnóstico de enfermería y selecciona el destino del paciente simulado.
+                        </p>
+                    </div>
+
+                    <a class="btn btn-secondary" id="backToCase" href="{{ route('preview.estudiante.casos') }}">
+                        ← Volver al caso
+                    </a>
+                </div>
+
+                <!-- Caso clínico -->
+                <div class="case-banner">
+                    <div>
+                        <span class="case-code" id="caseCode">CAS-001</span>
+                        <strong id="caseTitle">Caso clínico</strong>
+                        <small>Paciente simulado · Destino del paciente</small>
+                    </div>
+
+                    <span class="case-status" id="caseStatusLabel">En desarrollo</span>
+                </div>
+
+                <!-- Navegación entre etapas -->
+                <nav class="tabs" aria-label="Etapas de ficha clínica">
+                    <a id="tabResumen"
+                        href="{{ route('preview.estudiante.caso', ['id' => request('caso') ?: request()->route('id') ?: 'CAS-001']) }}">
+                            Resumen
+                    </a>
+                    <a id="tabAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a>
+                    <a id="tabTriage" href="{{ route('preview.estudiante.triage') }}">Triage</a>
+                    <a id="tabSignos" href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a>
+                    <a id="tabABCDE" href="{{ route('preview.estudiante.abcde') }}">ABCDE</a>
+                    <a id="tabAnamnesis" href="{{ route('preview.estudiante.anamnesis') }}">Anamnesis</a>
+                    <a id="tabExaFisico" href="{{ route('preview.estudiante.examen-fisico') }}">Examen físico</a>
+                    <a id="tabProcedimientos"
+                        href="{{ route('preview.estudiante.procedimientos') }}">Procedimientos</a>
+                    <a id="tabMedicamentos" href="{{ route('preview.estudiante.medicamentos_4to') }}">Medicamentos</a>
+                    <a id="tabExamenes" href="{{ route('preview.estudiante.examenes') }}">Exámenes</a>
+                    <a id="tabAccEnfermeria" href="{{ route('preview.estudiante.acciones-enfermeria') }}">Acciones de
+                        enfermería</a>
+                    <a class="selected" id="tabDestino" href="{{ route('preview.estudiante.destino') }}"
+                        aria-current="page">Destino</a>
+                </nav>
+
+                <!-- Destino del paciente: campos de referencia del mockup del liceo, página 19. -->
+                <form id="destinoForm">
+                    <div class="dest-layout">
+                        <section class="dest-panel" aria-labelledby="destDiagnosticoTitle">
+                            <h2 class="dest-title" id="destDiagnosticoTitle">Diagnóstico del caso</h2>
+                            <p class="dest-sub">Registra el diagnóstico y los antecedentes que fundamentan la decisión.
+                            </p>
+                            <div class="dest-field"><label for="diagnostico">Diagnóstico de enfermería *</label>
+                                <textarea id="diagnostico" maxlength="3000" placeholder="Registrar diagnóstico correspondiente al caso..." required></textarea>
+                            </div>
+                            <div class="dest-field"><label for="resumenClinico">Resumen clínico / justificación
+                                    *</label>
+                                <textarea id="resumenClinico" maxlength="4000" placeholder="Describir antecedentes que respaldan la decisión..."
+                                    required></textarea>
+                            </div>
+                        </section>
+                        <section class="dest-panel" aria-labelledby="destSeleccionTitle">
+                            <h2 class="dest-title green" id="destSeleccionTitle">Seleccionar destino del paciente</h2>
+                            <p class="dest-sub">Selecciona una alternativa para el caso clínico simulado.</p>
+                            <div class="dest-options" role="radiogroup" aria-label="Destino del paciente">
+                                <label class="dest-option"><input type="radio" name="destino" value="Alta"
+                                        required> Alta</label>
+                                <label class="dest-option"><input type="radio" name="destino" value="Observación">
+                                    Observación</label>
+                                <label class="dest-option"><input type="radio" name="destino"
+                                        value="Hospitalización"> Hospitalización</label>
+                                <label class="dest-option"><input type="radio" name="destino" value="Pabellón">
+                                    Pabellón</label>
+                                <label class="dest-option"><input type="radio" name="destino" value="Derivación">
+                                    Derivación</label>
+                                <label class="dest-option"><input type="radio" name="destino" value="UCI">
+                                    UCI</label>
+                                <label class="dest-option"><input type="radio" name="destino"
+                                        value="Fallecimiento"> Fallecimiento</label>
+                            </div>
+                            <div class="dest-field"><label for="observacionesDestino">Observaciones sobre el
+                                    destino</label>
+                                <textarea id="observacionesDestino" maxlength="3000" placeholder="Registrar las indicaciones correspondientes..."></textarea>
+                            </div>
+                            <div class="dest-actions">
+                                <button type="button" class="anamnesis-button" id="limpiarDestino">Limpiar</button>
+                                <button type="button" class="anamnesis-button"
+                                    id="cancelarDestino">Cancelar</button>
+                                <button type="button" class="anamnesis-button" id="guardarBorradorDestino">Guardar borrador</button>
+                                <button type="submit" class="anamnesis-button primary"
+                                    id="finalizarDestino">Guardar y entregar</button>
+                            </div>
+                            <p class="dest-note">Guardar borrador conserva la ficha editable. Guardar y entregar cierra la ficha definitivamente y la envía al docente.</p>
+                        </section>
+                    </div>
+                </form>
+                <div id="mensajeDestino" class="anamnesis-message dest-message" role="status" aria-live="polite">
+                </div>
+            </main>
+        </div>
+    </div>
+    <div class="modal-overlay" id="destinoModal" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="destinoModalTitulo">
+            <div class="modal-icon">!</div>
+            <h2 id="destinoModalTitulo">Confirmar acción</h2>
+            <p id="destinoModalTexto"></p>
+            <div class="modal-actions"><button type="button" class="modal-cancel"
+                    id="destinoModalCancelar">Cancelar</button><button type="button" class="modal-confirm"
+                    id="destinoModalConfirmar">Confirmar</button></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            'use strict';
+            const $ = id => document.getElementById(id);
+            const casos = {
+                'CAS-001': 'Alteración neurológica aguda',
+                'CAS-002': 'Crisis convulsivas en Urgencias',
+                'CAS-003': 'Dolor torácico agudo',
+                'CAS-004': 'Hipoglicemia severa',
+                'CAS-005': 'Politraumatismo por accidente de tránsito'
+            };
+            const solicitado = new URLSearchParams(location.search).get('caso');
+            const casoId = window.__FICHA_4TO?.codigo || (Object.prototype.hasOwnProperty.call(casos, solicitado) ? solicitado : 'CAS-001');
+            const query = '?caso=' + encodeURIComponent(casoId);
+            $('caseCode').textContent = casoId;
+            $('caseTitle').textContent = window.__FICHA_4TO?.titulo || casos[casoId] || 'Caso clínico';
+            const rutas = {
+                detalle: "{{ url('/estudiante/caso') }}/" + encodeURIComponent(casoId),
+                admision: "{{ route('preview.estudiante.admision') }}" + query,
+                triage: "{{ route('preview.estudiante.triage') }}" + query,
+                signos: "{{ route('preview.estudiante.signos-vitales') }}" + query,
+                abcde: "{{ route('preview.estudiante.abcde') }}" + query,
+                anamnesis: "{{ route('preview.estudiante.anamnesis') }}" + query,
+                examen: "{{ route('preview.estudiante.examen-fisico') }}" + query,
+                procedimientos: "{{ route('preview.estudiante.procedimientos') }}" + query,
+                medicamentos: "{{ route('preview.estudiante.medicamentos_4to') }}" + query,
+                examenes: "{{ route('preview.estudiante.examenes') }}" + query,
+                acciones: "{{ route('preview.estudiante.acciones-enfermeria') }}" + query,
+                destino: "{{ route('preview.estudiante.destino') }}" + query
+            };
+            [
+                ['tabResumen', 'detalle'],
+                ['tabAdmision', 'admision'],
+                ['tabTriage', 'triage'],
+                ['tabSignos', 'signos'],
+                ['tabABCDE', 'abcde'],
+                ['tabAnamnesis', 'anamnesis'],
+                ['tabExaFisico', 'examen'],
+                ['tabProcedimientos', 'procedimientos'],
+                ['tabMedicamentos', 'medicamentos'],
+                ['tabExamenes', 'examenes'],
+                ['tabAccEnfermeria', 'acciones'],
+                ['tabDestino', 'destino'],
+                ['sidebarAdmision', 'admision'],
+                ['sidebarTriage', 'triage'],
+                ['sidebarSignos', 'signos'],
+                ['sidebarABCDE', 'abcde'],
+                ['sidebarAnamnesis', 'anamnesis']
+            ].forEach(([id, k]) => {
+                if ($(id)) $(id).href = rutas[k]
+            });
+            $('backToCase').href = rutas.detalle;
+            $('menuToggle').addEventListener('click', () => {
+                const hidden = $('appShell').classList.toggle('sidebar-hidden');
+                $('menuToggle').setAttribute('aria-expanded', String(!hidden));
+            });
+            const key = 'fctp_destino_v1_' + casoId;
+            const form = $('destinoForm');
+            const modal = $('destinoModal');
+            let pendiente = null;
+
+            function aviso(msg, error = false) {
+                const e = $('mensajeDestino');
+                e.textContent = msg;
+                e.className = 'anamnesis-message dest-message show ' + (error ? 'error' : 'ok');
+            }
+
+            function cerrarModal() {
+                modal.hidden = true;
+                pendiente = null;
+            }
+
+            function confirmar(titulo, texto, fn) {
+                $('destinoModalTitulo').textContent = titulo;
+                $('destinoModalTexto').textContent = texto;
+                pendiente = fn;
+                modal.hidden = false;
+                $('destinoModalCancelar').focus();
+            }
+            $('destinoModalCancelar').addEventListener('click', cerrarModal);
+            $('destinoModalConfirmar').addEventListener('click', () => {
+                const fn = pendiente;
+                cerrarModal();
+                if (fn) fn();
+            });
+            modal.addEventListener('click', e => {
+                if (e.target === modal) cerrarModal();
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && !modal.hidden) cerrarModal();
+            });
+
+            function datos() {
+                return {
+                    diagnostico: $('diagnostico').value.trim(),
+                    resumen: $('resumenClinico').value.trim(),
+                    destino: form.querySelector('input[name="destino"]:checked')?.value || '',
+                    observaciones: $('observacionesDestino').value.trim()
+                };
+            }
+
+            async function guardar(estado) {
+                const btns = [$('finalizarDestino'), $('guardarBorradorDestino')];
+                btns.forEach(b => b.disabled = true);
+                try {
+                    const registro = {...datos(), estado: 'borrador', actualizadoEn: new Date().toISOString()};
+                    sessionStorage.setItem(key, JSON.stringify(registro));
+                    // Garantiza que la última sección llegue al servidor antes de la entrega definitiva.
+                    await window.Ficha4toBridge.flush();
+                    if (estado === 'finalizado') {
+                        const response = await fetch(`/4to/casos/${encodeURIComponent(casoId)}/entregar`, {
+                            method: 'POST', credentials: 'same-origin',
+                            headers: {'Accept':'application/json','X-CSRF-TOKEN':window.__FICHA_4TO.csrf}
+                        });
+                        const result = await response.json().catch(()=>({}));
+                        if (!response.ok) throw new Error(result.message || 'No se pudo entregar la ficha.');
+                        window.location.assign(`/estudiante/caso/${encodeURIComponent(casoId)}`);
+                        return;
+                    }
+                    savedDraft = true;
+                    aviso('Borrador guardado correctamente.');
+                } catch (error) { aviso(error.message || 'No se pudo guardar.',true); }
+                finally { btns.forEach(b => b.disabled = false); }
+            }
+
+            function bloquear() {
+                form.querySelectorAll('input,textarea,button').forEach(e => e.disabled = true);
+            }
+            try {
+                const d = JSON.parse(sessionStorage.getItem(key) || 'null');
+                if (d && typeof d === 'object') {
+                    $('diagnostico').value = d.diagnostico || '';
+                    $('resumenClinico').value = d.resumen || '';
+                    $('observacionesDestino').value = d.observaciones || '';
+                    const radio = [...form.querySelectorAll('input[name="destino"]')].find(e => e.value === d
+                        .destino);
+                    if (radio) radio.checked = true;
+
+                }
+            } catch (e) {}
+            $('limpiarDestino').addEventListener('click', () => confirmar('Limpiar formulario',
+                '¿Estás seguro de que deseas limpiar los campos? Se descartarán los cambios no guardados.',
+                () => {
+                    form.reset();
+                    $('mensajeDestino').className = 'anamnesis-message dest-message';
+                }));
+            $('cancelarDestino').addEventListener('click', () => {
+                location.href = rutas.acciones;
+            });
+            let savedDraft = !!window.__FICHA_4TO?.snapshots?.destino;
+            $('guardarBorradorDestino').addEventListener('click', () => {
+                if (savedDraft) confirmar('Sobrescribir borrador',
+                    'Ya existe un registro guardado en Destino y cierre. ¿Deseas reemplazarlo por los cambios actuales?',
+                    () => guardar('borrador'));
+                else guardar('borrador');
+            });
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                if (!form.reportValidity()) return;
+                confirmar('Guardar y entregar ficha clínica',
+                    '¿Confirmas la entrega definitiva? Se guardarán los datos de destino y la ficha quedará disponible para evaluación docente. Esta acción no puede deshacerse desde tu cuenta.',
+                    () => guardar('finalizado'));
+            });
+        });
+    </script>
+</body>
+
+</html>

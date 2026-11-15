@@ -7,8 +7,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * API de administración de cuentas, estado y roles para clientes con token.
+ * La ruta exige rol administrador; mantener alineada con reglas del panel web.
+ */
 class UserManagementController extends Controller
 {
+    /** Lista usuarios con filtros y paginación mediante API. */
     public function index(Request $request)
     {
         $query = User::with('roles');
@@ -46,6 +51,7 @@ class UserManagementController extends Controller
         return response()->json(['data' => $users]);
     }
 
+    /** Crea cuenta y asigna permisos desde la API. */
     public function store(Request $request)
     {
         $request->validate([
@@ -82,6 +88,7 @@ class UserManagementController extends Controller
         ], 201);
     }
 
+    /** Edita una cuenta existente. */
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -105,6 +112,7 @@ class UserManagementController extends Controller
         ]);
     }
 
+    /** Inhabilita la cuenta y previene nuevos accesos. */
     public function desactivar(User $user, Request $request)
     {
         if ($request->user()->id === $user->id) {
@@ -127,6 +135,7 @@ class UserManagementController extends Controller
         ]);
     }
 
+    /** Habilita una cuenta desactivada. */
     public function activar(User $user)
     {
         $user->update(['activo' => true]);
@@ -145,6 +154,7 @@ class UserManagementController extends Controller
         ]);
     }
 
+    /** Actualiza rol, nivel educativo y curso. */
     public function asignarRolNivel(Request $request, User $user)
     {
         $request->validate([

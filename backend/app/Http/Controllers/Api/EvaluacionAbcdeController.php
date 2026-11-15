@@ -6,10 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\EvaluacionAbcde;
 use Illuminate\Http\Request;
 
+/**
+ * API clínica heredada para evaluación ABCDE ligada a una ficha.
+ * No confundir con la sección educativa `abcde` persistida en case_sections.
+ */
 class EvaluacionAbcdeController extends Controller
 {
+    /** Almacena evaluación ABCDE API de una ficha. */
     public function store(Request $request, $medicalRecordId)
     {
+        $medicalRecordId = \App\Support\MedicalRecordAccess::forWrite($request, $medicalRecordId)->id;
         $validated = $request->validate([
             // A
             'obstruccion_via_aerea' => 'required|in:no,parcial,total',
@@ -58,7 +64,7 @@ class EvaluacionAbcdeController extends Controller
 
         $evaluacionData = array_merge($validated, [
             'medical_record_id' => $medicalRecordId,
-            'estudiante_id' => auth()->id() ?? 1,
+            'estudiante_id' => $request->user()->id,
             'total_glasgow' => $totalGlasgow,
             'porcentaje_scq' => $validated['porcentaje_scq'] ?? 0,
         ]);
@@ -71,6 +77,7 @@ class EvaluacionAbcdeController extends Controller
         ], 201);
     }
 
+    /** Consulta el registro ABCDE autorizado. */
     public function show($medicalRecordId)
     {
         $evaluacion = EvaluacionAbcde::where('medical_record_id', $medicalRecordId)

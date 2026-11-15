@@ -515,29 +515,15 @@
             }
         }
     </style>
+    <!-- Contexto autorizado de 4.º medio; nunca contiene datos de otros estudiantes. -->
+    <script>window.__FICHA_4TO = @json($ficha4toContext ?? null);</script>
+    <link rel="stylesheet" href="{{ asset('css/estudiante-confirmacion-4to.css') }}">
+    <script src="{{ asset('js/estudiante/4to-backend-bridge.js') }}"></script>
 </head>
 
 <body>
     <div class="app app-shell" id="appShell">
-        <aside class="sidebar" id="sidebar">
-            <div class="brand">
-                <div class="brand-logo"><img src="{{ asset('images/logo-tp.png') }}" alt="Logo TP"></div><span>Ficha
-                    Clínica TP</span>
-            </div>
-            <nav aria-label="Navegación principal">
-                <div class="nav-title">Principal</div><a class="nav-link"
-                    href="{{ route('preview.estudiante.casos') }}">Mis casos clínicos</a>
-                <div class="nav-title">Atención clínica</div><a class="nav-link" id="sidebarFicha" href="#">Ficha
-                    clínica</a><a class="nav-link" id="sidebarAdmision"
-                    href="{{ route('preview.estudiante.admision') }}">Admisión</a><a class="nav-link" id="sidebarTriage"
-                    href="{{ route('preview.estudiante.triage') }}">Triage</a><a class="nav-link" id="sidebarSignos"
-                    href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a><a class="nav-link active"
-                    id="sidebarABCDE" href="{{ route('preview.estudiante.abcde') }}" aria-current="page">Evaluación
-                    clínica</a>
-                <div class="nav-title">Cuenta</div><a class="nav-link nav-disabled" href="#">Mi perfil</a><a
-                    class="nav-link" href="{{ url('/login') }}">Cerrar sesión</a>
-            </nav>
-        </aside>
+        @include('estudiante.partials.sidebar-4to')
         <div class="main-area">
             <header class="topbar">
                 <div class="topbar-left"><button type="button" class="menu-toggle" id="menuToggle"
@@ -563,14 +549,20 @@
                             clínico</strong><small>Paciente simulado · Evaluación ABCDE</small></div><span
                         class="case-status">En desarrollo</span>
                 </div>
-                <nav class="tabs" aria-label="Etapas de ficha clínica"><a id="tabResumen" href="#">Resumen</a><a
-                        id="tabAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a><a
-                        id="tabTriage" href="{{ route('preview.estudiante.triage') }}">Triage</a><a id="tabSignos"
-                        href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a><a class="selected"
-                        id="tabABCDE" href="{{ route('preview.estudiante.abcde') }}"
-                        aria-current="page">ABCDE</a><span>Anamnesis</span><span>Examen
-                        físico</span><span>Procedimientos</span><span>Medicamentos</span><span>Exámenes</span><span>Acciones
-                        de enfermería</span><span>Destino</span></nav>
+                <nav class="tabs" aria-label="Etapas de ficha clínica">
+                    <a id="tabResumen" href="#">Resumen</a>
+                    <a id="tabAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a>
+                    <a id="tabTriage" href="{{ route('preview.estudiante.triage') }}">Triage</a>
+                    <a id="tabSignos" href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a>
+                    <a class="selected" id="tabABCDE" href="{{ route('preview.estudiante.abcde') }}" aria-current="page">ABCDE</a>
+                    <a id="tabAnamnesis" href="{{ route('preview.estudiante.anamnesis') }}">Anamnesis</a>
+                    <a id="tabExaFisico" href="#">Examen físico</a>
+                    <a id="tabProcedimientos" href="#">Procedimientos</a>
+                    <a id="tabMedicamentos" href="#">Medicamentos</a>
+                    <a id="tabExamenes" href="#">Exámenes</a>
+                    <a id="tabAccEnfermeria" href="#">Acciones de enfermería</a>
+                    <a id="tabDestino" href="#">Destino</a>
+                </nav>
                 <form id="abcdeForm" novalidate>
                     <div class="abcde-layout">
                         <div class="abcde-sections">
@@ -672,8 +664,8 @@
                                                 la simulación.</small></div>
                                         <div class="abcde-field abcde-hidden" id="otroOxigenoWrap">
                                             <label for="otroOxigeno">Especificar otro dispositivo *</label>
-                                            <input id="otroOxigeno" name="otroOxigeno" type="text" maxlength="200"
-                                                placeholder="Indica el dispositivo utilizado">
+                                            <input id="otroOxigeno" name="otroOxigeno" type="text"
+                                                maxlength="200" placeholder="Indica el dispositivo utilizado">
                                         </div>
                                         <div class="abcde-field"><label for="esfuerzo">Trabajo respiratorio
                                                 *</label><select id="esfuerzo" name="esfuerzo" required>
@@ -889,6 +881,20 @@
             </main>
         </div>
     </div>
+     <!-- Modal de confirmación para limpiar ABCDE -->
+    <div class="modal-overlay" id="clearModal" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="clearModalTitle"
+            aria-describedby="clearModalDescription">
+            <div class="modal-icon">!</div>
+            <h2 id="clearModalTitle">Limpiar formulario</h2>
+            <p id="clearModalDescription">¿Estás seguro de que deseas limpiar los datos ingresados en ABCDE? Se
+                descartarán los cambios no guardados.</p>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" id="cancelClear">Cancelar</button>
+                <button type="button" class="modal-confirm" id="confirmClear">Sí, limpiar</button>
+            </div>
+        </div>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Referencias y caso clínico de demostración
@@ -901,10 +907,10 @@
                 'CAS-005': 'Politraumatismo por accidente de tránsito'
             };
             const solicitado = new URLSearchParams(window.location.search).get('caso');
-            const casoId = Object.prototype.hasOwnProperty.call(casos, solicitado) ? solicitado : 'CAS-001';
+            const casoId = window.__FICHA_4TO?.codigo || (Object.prototype.hasOwnProperty.call(casos, solicitado) ? solicitado : 'CAS-001');
             const query = '?caso=' + encodeURIComponent(casoId);
             $('caseCode').textContent = casoId;
-            $('caseTitle').textContent = casos[casoId];
+            $('caseTitle').textContent = window.__FICHA_4TO?.titulo || casos[casoId] || 'Caso clínico';
             const rutas = {
                 detalle: "{{ url('/estudiante/caso') }}" + '/' + encodeURIComponent(casoId),
                 admision: "{{ route('preview.estudiante.admision') }}" + query,
@@ -913,7 +919,7 @@
                 abcde: "{{ route('preview.estudiante.abcde') }}" + query
             };
             const enlaces = {
-                sidebarFicha: rutas.admision,
+                sidebarFicha: rutas.detalle,
                 sidebarAdmision: rutas.admision,
                 sidebarTriage: rutas.triage,
                 sidebarSignos: rutas.signos,
@@ -960,7 +966,9 @@
                 'ventilacion', 'oxigenoterapia', 'esfuerzo', 'ritmo', 'calidad', 'hemorragia', 'capilar',
                 'accesos', 'ocular', 'verbal', 'motora', 'pupilas', 'avdi', 'termica', 'quemaduras'
             ];
-            const fields = [...selectIds, 'flujo', 'otroOxigeno', 'pulso', 'otrasDescripcion', 'scq', 'observaciones'];
+            const fields = [...selectIds, 'flujo', 'otroOxigeno', 'pulso', 'otrasDescripcion', 'scq',
+                'observaciones'
+            ];
             // La puntuación no se suma si algún componente Glasgow es no evaluable
             function calcularGlasgow() {
                 const v = ['ocular', 'verbal', 'motora'].map(id => $(id).value);
@@ -1074,124 +1082,112 @@
                 $('saveMessage').className = 'abcde-message';
                 $('saveMessage').textContent = '';
             }
-            form.addEventListener('submit', async event => {
-    event.preventDefault();
-    if (!validar()) return;
-
-    const data = datosFormulario();
-    const fecha = new Date().toISOString();
-
-    mensaje('Guardando evaluación en la base de datos...', 'ok');
-
-    try {
-        const token = localStorage.getItem('auth_token');
-
-        // Payload adaptado al backend (SignosVitalesController -> EvaluacionAbcdeController)
-        const payload = {
-            // A
-            obstruccion_via_aerea: data.obstruccion === 'No presenta' ? 'no' : (data.obstruccion === 'Parcial' ? 'parcial' : 'total'),
-            collar_cervical: data.collar === 'No indicado' ? 'no_indicado' : (data.collar === 'Colocado' ? 'colocado' : 'indicado'),
-            aspiracion_secreciones: data.aspiracion === 'No requerida' ? 'no_realizada' : 'realizada',
-            intubacion: data.intubacion === 'No requerido' ? 'no_realizada' : 'orotraqueal',
-            observaciones_a: data.observaciones || null,
-            // B
-            murmullo_pulmonar: data.murmullo === 'Conservado bilateral' ? 'normal' : 'disminuido',
-            simetria_toracica: data.simetria === 'Simétrica' ? 'simetrica' : 'asimetrica',
-            oxigenoterapia: data.oxigenoterapia !== 'sin' ? true : false,
-            tipo_dispositivo_o2: data.oxigenoterapia || null,
-            flujo_o2_lmin: data.flujo ? Number(data.flujo) : null,
-            ventilacion: data.ventilacion === 'Espontánea' ? 'espontanea' : 'asistida',
-            observaciones_b: data.observaciones || null,
-            // C
-            pulso_frecuencia: data.pulso ? Number(data.pulso) : null,
-            pulso_ritmo: data.ritmo === 'Regular' ? 'regular' : 'irregular',
-            pulso_calidad: data.calidad === 'Normal / palpable' ? 'fuerte' : 'debil',
-            hemorragias: data.hemorragia === 'No presenta' ? 'no_presenta' : 'externas',
-            llenado_capilar: data.capilar === 'Menor o igual a 2 segundos' ? 'menor_2seg' : (data.capilar === 'Entre 2 y 4 segundos' ? '2_4seg' : 'mayor_4seg'),
-            accesos_venosos_perifericos: data.accesos === 'No tiene' ? 0 : 1,
-            observaciones_c: data.observaciones || null,
-            // D
-            glasgow_apertura_ocular: data.ocular !== 'NT' ? Number(data.ocular) : 1,
-            glasgow_respuesta_verbal: data.verbal !== 'NT' ? Number(data.verbal) : 1,
-            glasgow_respuesta_motora: data.motora !== 'NT' ? Number(data.motora) : 1,
-            pupilas: data.pupilas === 'Isocóricas y reactivas' ? 'iguales_reactivas' : 'anisocoricas',
-            escala_avdi: data.avdi === 'Alerta' ? 'alerta' : 'verbal',
-            observaciones_d: data.observaciones || null,
-            // E
-            lesiones_heridas: data.lesiones.includes('Heridas'),
-            lesiones_fracturas: data.lesiones.includes('Fracturas'),
-            lesiones_contusiones: data.lesiones.includes('Contusiones'),
-            temperatura_corporal: data.termica === 'Normotermia' ? 'normal' : 'hipotermia_leve',
-            quemaduras: data.quemaduras !== 'No presenta',
-            porcentaje_scq: data.scq ? Number(data.scq) : 0,
-            observaciones_e: data.observaciones || null,
-            observaciones_generales: data.observaciones || null,
-        };
-
-        const response = await fetch('/api/fichas/1/evaluacion-abcde', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
-
-        const result = await response.json();
-
-        if (response.status === 201 || response.status === 200) {
-            mensaje('Evaluación ABCDE guardada en la base de datos. ✅', 'ok');
-            
-            // También guardar en sessionStorage (respaldo)
-            if (editingId) {
-                const index = registros.findIndex(r => r.id === editingId);
-                if (index >= 0) {
-                    registros[index] = { ...registros[index], data, actualizado: fecha };
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                if (!validar()) return;
+                const data = datosFormulario();
+                const fecha = new Date().toISOString();
+                if (editingId) {
+                    const index = registros.findIndex(r => r.id === editingId);
+                    if (index >= 0) {
+                        registros[index] = {
+                            ...registros[index],
+                            data,
+                            actualizado: fecha
+                        };
+                    } else {
+                        editingId = null;
+                    }
                 }
-            } else {
-                registros.push({
-                    id: (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '_' + Math.random().toString(36).slice(2)),
-                    fecha,
-                    data
+                if (!editingId) {
+                    registros.push({
+                        id: (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date
+                            .now()) + '_' + Math.random().toString(36).slice(2)),
+                        fecha,
+                        data
+                    });
+                }
+                if (!persistir()) return;
+                const editado = Boolean(editingId);
+                editingId = registros[registros.length - 1]?.id || editingId;
+                mensaje('Guardando evaluación en el servidor…');
+                window.Ficha4toBridge?.flush().then(() => {
+                    mensaje(editado ? 'Evaluación ABCDE actualizada y guardada correctamente.' :
+                        'Evaluación ABCDE guardada correctamente en la ficha clínica.');
+                }).catch(error => {
+                    mensaje('No se guardó la evaluación en el servidor: ' + error.message, 'error');
                 });
-            }
-            persistir();
-            limpiar();
-        } else {
-            console.error('Error del servidor:', result);
-            mensaje('Error al guardar en la base de datos: ' + (result.message || 'Error desconocido'), 'error');
-        }
-    } catch (error) {
-        console.error('Error de red:', error);
-        mensaje('Error de conexión. Se guardó localmente en esta sesión.', 'error');
-        
-        // Guardar localmente como respaldo
-        if (!editingId) {
-            registros.push({
-                id: (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '_' + Math.random().toString(36).slice(2)),
-                fecha,
-                data
             });
-        }
-        persistir();
-        limpiar();
-    }
-});
+            // Modal de confirmación para limpiar, con el mismo diseño de Triage
+            const clearModal = $('clearModal');
+            const cancelClear = $('cancelClear');
+            const confirmClear = $('confirmClear');
+            let previousFocus = null;
+
+            function cerrarModalLimpiar() {
+                clearModal.hidden = true;
+                document.body.style.overflow = '';
+                if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+            }
+
             $('clearButton').addEventListener('click', () => {
-                if (confirm('¿Limpiar los campos del formulario? Los registros guardados no se borrarán.'))
-                    limpiar();
+                previousFocus = document.activeElement;
+                clearModal.hidden = false;
+                document.body.style.overflow = 'hidden';
+                cancelClear.focus();
+            });
+
+            cancelClear.addEventListener('click', cerrarModalLimpiar);
+            confirmClear.addEventListener('click', () => {
+                limpiar();
+                cerrarModalLimpiar();
+            });
+            clearModal.addEventListener('click', event => {
+                if (event.target === clearModal) cerrarModalLimpiar();
+            });
+            document.addEventListener('keydown', event => {
+                if (clearModal.hidden) return;
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    cerrarModalLimpiar();
+                } else if (event.key === 'Tab') {
+                    if (event.shiftKey && document.activeElement === cancelClear) {
+                        event.preventDefault();
+                        confirmClear.focus();
+                    } else if (!event.shiftKey && document.activeElement === confirmClear) {
+                        event.preventDefault();
+                        cancelClear.focus();
+                    }
+                }
             });
             $('cancelButton').addEventListener('click', () => {
-                window.location.href = rutas.signos;
+                window.Ficha4toBridge?.flush().then(() => { window.location.href = rutas.signos; }).catch(() => alert('No se guardó el registro en el servidor.'));
             });
             ['ocular', 'verbal', 'motora'].forEach(id => $(id).addEventListener('change', calcularGlasgow));
             ['oxigenoterapia', 'quemaduras'].forEach(id => $(id).addEventListener('change',
                 actualizarCondicionales));
             document.querySelectorAll('input[name="lesiones"]').forEach(x => x.addEventListener('change',
                 actualizarLesiones));
-            actualizarCondicionales();
-            calcularGlasgow();
+            // Restaurar el registro previamente guardado en la ficha (Laravel -> sesión -> formulario).
+            // Esto no crea un registro duplicado; al guardar se actualizará el mismo id.
+            const anterior = registros[registros.length - 1];
+            if (anterior?.data && typeof anterior.data === 'object') {
+                selectIds.forEach(id => { if (Object.prototype.hasOwnProperty.call(anterior.data, id)) $(id).value = anterior.data[id] ?? ''; });
+                document.querySelectorAll('input[name="lesiones"]').forEach(input => {
+                    input.checked = Array.isArray(anterior.data.lesiones) && anterior.data.lesiones.includes(input.value);
+                });
+                actualizarCondicionales();
+                ['flujo','otroOxigeno','pulso','otrasDescripcion','scq','observaciones'].forEach(id => {
+                    if (Object.prototype.hasOwnProperty.call(anterior.data, id)) $(id).value = anterior.data[id] ?? '';
+                });
+                calcularGlasgow();
+                editingId = anterior.id;
+                $('saveButton').textContent = 'Actualizar evaluación';
+                mensaje('Se recuperó la evaluación ABCDE guardada anteriormente.');
+            } else {
+                actualizarCondicionales();
+                calcularGlasgow();
+            }
         });
     </script>
 </body>

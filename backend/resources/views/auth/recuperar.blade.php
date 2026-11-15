@@ -16,7 +16,8 @@
                    un enlace de recuperación.</p>
             </div>
 
-            <form action="{{ route('preview.confirmacion') }}" method="GET">
+            <form action="{{ route('password.email') }}" method="POST">
+                @csrf
                 <div class="field">
                     <label for="email">Correo electrónico</label>
                     <input

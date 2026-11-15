@@ -8,35 +8,17 @@
     <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-triage.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-formularios.css') }}">
+    <!-- Contexto autorizado de 4.º medio; nunca contiene datos de otros estudiantes. -->
+    <script>window.__FICHA_4TO = @json($ficha4toContext ?? null);</script>
+    <link rel="stylesheet" href="{{ asset('css/estudiante-confirmacion-4to.css') }}">
+    <script src="{{ asset('js/estudiante/4to-backend-bridge.js') }}"></script>
 </head>
 
 <body>
     <div class="app app-shell" id="appShell">
 
         <!-- Menú lateral -->
-        <aside class="sidebar" id="sidebar">
-            <div class="brand">
-                <div class="brand-logo">
-                    <img src="{{ asset('images/logo-tp.png') }}" alt="Logo TP">
-                </div>
-                <span>Ficha Clínica TP</span>
-            </div>
-            <nav aria-label="Navegación principal">
-                <div class="nav-title">Principal</div>
-                <a class="nav-link" href="{{ route('preview.estudiante.casos') }}">Mis casos clínicos</a>
-                <div class="nav-title">Atención clínica</div>
-                <a class="nav-link" id="sidebarFicha" href="#">Ficha clínica</a>
-                <a class="nav-link" id="sidebarAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a>
-                <a class="nav-link" id="sidebarTriage" href="{{ route('preview.estudiante.triage') }}">Triage</a>
-                <a class="nav-link active" id="sidebarSignos" href="{{ route('preview.estudiante.signos-vitales') }}"
-                    aria-current="page">Signos vitales</a>
-                <a class="nav-link" id="sidebarABCDE" href="{{ route('preview.estudiante.abcde') }}">Evaluación
-                    clínica</a>
-                <div class="nav-title">Cuenta</div>
-                <a class="nav-link nav-disabled" href="#">Mi perfil</a>
-                <a class="nav-link" href="{{ url('/login') }}">Cerrar sesión</a>
-            </nav>
-        </aside>
+        @include('estudiante.partials.sidebar-4to')
 
         <div class="main-area">
             <!-- Barra superior -->
@@ -84,16 +66,15 @@
                     <a id="tabResumen" href="#">Resumen</a>
                     <a id="tabAdmision" href="{{ route('preview.estudiante.admision') }}">Admisión</a>
                     <a id="tabTriage" href="{{ route('preview.estudiante.triage') }}">Triage</a>
-                    <a class="selected" id="tabSignos" href="{{ route('preview.estudiante.signos-vitales') }}"
-                        aria-current="page">Signos vitales</a>
-                    <a id="tabABCDE" href="{{ route('preview.estudiante.abcde') }}">ABCDE</a>
-                    <span>Anamnesis</span>
-                    <span>Examen físico</span>
-                    <span>Procedimientos</span>
-                    <span>Medicamentos</span>
-                    <span>Exámenes</span>
-                    <span>Acciones de enfermería</span>
-                    <span>Destino</span>
+                    <a class="selected" id="tabSignos" href="{{ route('preview.estudiante.signos-vitales') }}">Signos vitales</a>
+                    <a id="tabABCDE" href="{{ route('preview.estudiante.abcde') }}" aria-current="page">ABCDE</a>
+                    <a id="tabAnamnesis" href="{{ route('preview.estudiante.anamnesis') }}">Anamnesis</a>
+                    <a id="tabExaFisico" href="#">Examen físico</a>
+                    <a id="tabProcedimientos" href="#">Procedimientos</a>
+                    <a id="tabMedicamentos" href="#">Medicamentos</a>
+                    <a id="tabExamenes" href="#">Exámenes</a>
+                    <a id="tabAccEnfermeria" href="#">Acciones de enfermería</a>
+                    <a id="tabDestino" href="#">Destino</a>
                 </nav>
 
                 <!-- Formulario -->
@@ -311,11 +292,11 @@
 
             const params = new URLSearchParams(window.location.search);
             const solicitado = params.get('caso');
-            const casoId = Object.prototype.hasOwnProperty.call(casos, solicitado) ? solicitado : 'CAS-001';
+            const casoId = window.__FICHA_4TO?.codigo || (Object.prototype.hasOwnProperty.call(casos, solicitado) ? solicitado : 'CAS-001');
             const casoQuery = '?caso=' + encodeURIComponent(casoId);
 
             $('caseCode').textContent = casoId;
-            $('caseTitle').textContent = casos[casoId];
+            $('caseTitle').textContent = window.__FICHA_4TO?.titulo || casos[casoId] || 'Caso clínico';
 
             // Rutas de navegación
             const rutas = {
@@ -327,7 +308,7 @@
             };
 
             const enlaces = {
-                sidebarFicha: rutas.admision,
+                sidebarFicha: rutas.detalle,
                 sidebarAdmision: rutas.admision,
                 sidebarTriage: rutas.triage,
                 sidebarSignos: rutas.signos,
@@ -418,7 +399,7 @@
                         observaciones: ''
                     }
                 ];
-                return casoId === 'CAS-001' ? base : [];
+                return window.__FICHA_4TO ? [] : (casoId === 'CAS-001' ? base : []);
             }
 
             const storageKey = 'fctp_signos_vitales_v2_' + casoId;
@@ -941,20 +922,25 @@
                 grafico.update();
             }
 
-            form.addEventListener('submit', async function(event) {
+            // Guardar o actualizar registro
+            form.addEventListener('submit', function(event) {
                 event.preventDefault();
                 actualizarIndicadores();
 
                 if (!form.reportValidity()) {
-                    mostrarMensaje('Completa los campos obligatorios y revisa los valores ingresados.', 'error');
+                    mostrarMensaje('Completa los campos obligatorios y revisa los valores ingresados.',
+                        'error');
                     return;
                 }
 
                 const pas = numero('presionSistolica');
                 const pad = numero('presionDiastolica');
 
-                if (pas === null || pad === null || pas <= pad || pas > 300 || pad > 200 || pas < 1 || pad < 1) {
-                    mostrarMensaje('Verifica la presión arterial: la sistólica debe superar a la diastólica.', 'error');
+                if (pas === null || pad === null || pas <= pad || pas > 300 || pad > 200 || pas < 1 || pad <
+                    1) {
+                    mostrarMensaje(
+                        'Verifica la presión arterial: la sistólica debe superar a la diastólica.',
+                        'error');
                     return;
                 }
 
@@ -968,7 +954,8 @@
                 ];
 
                 if (valoresValidos.some(([id, min, max]) => !dentro(id, min, max))) {
-                    mostrarMensaje('Hay valores fuera de los rangos permitidos. Revisa las advertencias.', 'error');
+                    mostrarMensaje('Hay valores fuera de los rangos permitidos. Revisa las advertencias.',
+                        'error');
                     return;
                 }
 
@@ -997,46 +984,6 @@
                     glasgow: numero('glasgow'),
                     observaciones: form.querySelector('[name="observaciones"]').value.trim()
                 };
-
-                message.textContent = 'Guardando en la base de datos...';
-
-                try {
-                    const token = localStorage.getItem('auth_token');
-                    
-                    const payload = {
-                        frecuencia_cardiaca: registro.fc,
-                        presion_arterial: registro.pas + '/' + registro.pad,
-                        frecuencia_respiratoria: registro.fr,
-                        temperatura: registro.temp,
-                        saturacion_oxigeno: registro.spo2,
-                        glicemia_hgt: registro.hgt,
-                        peso: registro.peso,
-                        talla: registro.talla ? registro.talla / 100 : null,
-                        observaciones: registro.observaciones,
-                    };
-
-                    const response = await fetch('/api/fichas/1/signos-vitales', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer ' + token,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(payload),
-                    });
-
-                    const data = await response.json();
-
-                    if (response.status === 201 || response.status === 200) {
-                        mostrarMensaje('Signos vitales guardados en la base de datos. ✅');
-                    } else {
-                        console.error('Error del servidor:', data);
-                        mostrarMensaje('Error al guardar en la base de datos.', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    mostrarMensaje('Error de conexión. Se guardó localmente.', 'error');
-                }
 
                 if (registroEditando !== null) {
                     const indice = registros.findIndex(r => r.id === registroEditando);

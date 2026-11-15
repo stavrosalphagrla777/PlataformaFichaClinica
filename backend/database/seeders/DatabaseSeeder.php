@@ -2,35 +2,13 @@
 
 namespace Database\Seeders;
 
-
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-
-    use WithoutModelEvents;
-        public function run(): void
-{
-    $this->call([
-        RoleSeeder::class,
-        MedicalRecordSeeder::class,
-    ]);
+    public function run(): void
+    {
+        // No crear usuarios de contraseña pública en una instalación normal.
+        $this->call([RoleSeeder::class]);
+    }
 }
-    /**
-     * Seed the application's database.
-     */
-    /**public function run(): void
-    {   $this->call(RoleSeeder::class);
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-    }*/
-
-}
-

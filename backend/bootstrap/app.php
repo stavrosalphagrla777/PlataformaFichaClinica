@@ -21,7 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'auth.token' => \App\Http\Middleware\AuthenticateWithToken::class, // <-- NUEVO MIDDLEWARE
+            'auth.token' => \App\Http\Middleware\AuthenticateWithToken::class,
+            '4to.case' => \App\Http\Middleware\RequireFourthYearCase::class, // <-- NUEVO MIDDLEWARE
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

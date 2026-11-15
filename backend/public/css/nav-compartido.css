@@ -1,0 +1,37 @@
+/* Menú compartido: idéntico para administradores en páginas administrativas y docentes. */
+.app {display:flex; min-height:100vh; width:100%;}
+.app .sidebar {width:235px; flex:0 0 235px; background:#075b9e; color:#fff; overflow:hidden; transition:width .24s ease,flex-basis .24s ease;}
+.app.sidebar-hidden .sidebar {width:0; flex-basis:0; visibility:hidden;}
+.sidebar .brand {min-height:90px; display:flex;align-items:center;gap:12px;padding:14px 18px;background:#064778;color:#fff;font-size:18px;font-weight:700;}
+.sidebar .brand-logo {width:54px;height:54px;flex:0 0 54px;border-radius:50%;overflow:hidden;}
+.sidebar .brand-logo img {display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.sidebar .nav-title {padding:19px 18px 7px;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.8;}
+.sidebar .nav-link {display:block;width:100%;padding:12px 18px;border:0;background:transparent;text-align:left;color:#fff;text-decoration:none;font:400 14px 'Segoe UI',Arial,sans-serif;cursor:pointer;}
+.sidebar .nav-link:hover,.sidebar .nav-link:focus-visible {background:#ffffff22;outline-offset:-2px;}
+.sidebar .nav-link.active {background:#ffffff33;border-left:4px solid #fff;padding-left:14px;font-weight:700;}
+.sidebar form {margin:0;} .sidebar form .nav-link {font:400 14px 'Segoe UI',Arial,sans-serif;color:#fff;border:0;background:transparent;border-radius:0;padding:12px 18px;}
+.sidebar form .nav-link:hover {background:#ffffff22;}
+.app .main {min-width:0; flex:1 1 0; width:0;}
+/* Menú visible: X. Menú oculto: tres líneas (indica la acción de abrir). */
+.topbar .menu-toggle {width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer;background:transparent;border:0;color:#fff;padding:5px;flex:0 0 42px;}
+.topbar .menu-toggle span {display:block;width:23px;height:2.5px;background:currentColor;border-radius:2px;position:static;transition:transform .2s,opacity .2s;}
+.topbar .menu-toggle span::before,.topbar .menu-toggle span::after{content:none!important;}
+.topbar .menu-toggle span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
+.topbar .menu-toggle span:nth-child(2){opacity:0;}
+.topbar .menu-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
+.app.sidebar-hidden .topbar .menu-toggle span:nth-child(1),.app.sidebar-hidden .topbar .menu-toggle span:nth-child(3){transform:none;}
+.app.sidebar-hidden .topbar .menu-toggle span:nth-child(2){opacity:1;}
+.topbar .menu-toggle:hover,.topbar .menu-toggle:focus-visible {background:#ffffff22;outline-offset:2px;border-radius:8px;}
+@media(max-width:750px){.app{flex-direction:column}.app .sidebar{width:100%;flex:0 0 auto;max-height:1100px;transition:max-height .25s ease}.app.sidebar-hidden .sidebar{width:100%;flex-basis:auto;max-height:0}.app .main{width:100%;}}
+
+/* Ajuste responsive: el área principal ocupa TODO el espacio liberado por el menú. */
+.app, .app-shell { max-width: none; }
+.app > .main, .app > .main-area, .app .main { min-width: 0; }
+.app .content { width: 100%; max-width: none; margin-left: 0; margin-right: 0; box-sizing: border-box; }
+.app.sidebar-hidden .content { width: 100%; max-width: none; margin-left: 0; margin-right: 0; }
+.app.sidebar-hidden .page-heading h1, .app.sidebar-hidden .heading h1 { font-size: clamp(24px, 2.1vw, 32px); }
+.app.sidebar-hidden .content p, .app.sidebar-hidden .content label,
+.app.sidebar-hidden .content td { font-size: max(1em, clamp(14px, 1.1vw, 16px)); }
+@media (max-width: 760px) {
+    .app .content, .app.sidebar-hidden .content { padding: 18px; }
+}
