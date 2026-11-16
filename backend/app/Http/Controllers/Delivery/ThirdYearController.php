@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Delivery;
 use App\Http\Controllers\Controller;
 use App\Models\StudentCase;
 use App\Models\CaseSection;
+use App\Models\FichaClinica;
+use App\Models\MedicalRecord;
 use App\Support\ActivityAudit;
 use Illuminate\Support\Facades\DB;
 use App\Support\ThirdYear;
@@ -10,12 +12,7 @@ use App\Support\FourthYear;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Flujo CESFAM de 3.º medio: formularios, validaciones, persistencia de cuatro secciones
- * y entrega definitiva con auditoría; verifica identidad y asignación del estudiante.
- */
 class ThirdYearController extends Controller {
-    /** Resuelve ficha propia de 3.º e inicializa dentro del plazo. */
     private function record(Request $r,string $code,bool $start=true):StudentCase{
         $assignment=ThirdYear::assignment($r->user(),$code);
         $record=StudentCase::with('sections','assignment.clinicalCase')->where('case_assignment_id',$assignment->id)->where('estudiante_id',$r->user()->id)->first();
@@ -26,7 +23,6 @@ class ThirdYearController extends Controller {
         abort_unless($record,409,'Esta actividad no está disponible.');
         return $record;
     }
-    /** Muestra sección de CESFAM y datos previos del estudiante. */
     public function show(Request $request,string $section) {
         abort_unless(isset(ThirdYear::SECTIONS[$section]),404);
         $code=(string)$request->query('caso','');
@@ -34,16 +30,27 @@ class ThirdYearController extends Controller {
         $record=$this->record($request,$code);
         $key='ficha-tp-3ro:'.$code.':'.$section;
         $saved=$record->sections->firstWhere('clave',$section);
-        $context=['codigo'=>$code,'section'=>$section,'editable'=>FourthYear::editable($record),
-            'snapshot'=>$saved ? json_decode($saved->payload,true):null, 'usuario'=>$request->user()->name];
+        
+        // Buscamos la ficha clínica para inyectar su ID en la vista
+        $ficha = \App\Models\FichaClinica::where('user_id', $request->user()->id)->first();
+        
+        $context=[
+            'codigo'=>$code,
+            'section'=>$section,
+            'editable'=>FourthYear::editable($record),
+            'snapshot'=>$saved ? json_decode($saved->payload,true):null, 
+            'usuario'=>$request->user()->name,
+            'fichaId' => $ficha ? $ficha->id : null // <--- ID INYECTADO AQUÍ
+        ];
         return view('estudiante.'.$section,['casoId'=>$code,'thirdYearContext'=>$context, 'segmentario'=>$record->assignment->clinicalCase->segmentario ?? []]);
     }
-    /** Valida y persiste secciones CESFAM; impone reglas de antecedentes/citaciones. */
+    
     public function save(Request $request,string $code,string $section){
         abort_unless(isset(ThirdYear::SECTIONS[$section]),404);
         $record=$this->record($request,$code);
         FourthYear::requireEditable($record);
         $data=$request->validate(['form'=>'required|array','tables'=>'nullable|array']);
+        
         if ($section === 'antecedentes-3ro') {
             $motivo = trim((string)($data['form']['motivo_consulta'] ?? ''));
             if ($motivo === '') throw ValidationException::withMessages(['motivo_consulta' => 'Debes ingresar el motivo de consulta antes de guardar.']);
@@ -52,7 +59,31 @@ class ThirdYearController extends Controller {
                     throw ValidationException::withMessages([$table => 'Seleccionaste «Sí refiere» para '.$table.'. Añade al menos un registro o cambia la opción.']);
                 }
             }
+
+            // --- INICIO AUTOMATIZACIÓN: CREAR FICHA Y REGISTRO MÉDICO ---
+            $fichaExistente = \App\Models\FichaClinica::where('user_id', $request->user()->id)->first();
+            
+            if (!$fichaExistente) {
+                // 1. Crear el registro médico base
+                $newRecord = \App\Models\MedicalRecord::create([
+                    'user_id' => $request->user()->id,
+                    'patient_id' => 1,
+                    'esi_triage' => 3,
+                    'blood_pressure' => '120/80'
+                ]);
+
+                // 2. Crear la ficha clínica vinculada
+                \App\Models\FichaClinica::create([
+                    'user_id' => $request->user()->id,
+                    'paciente_id' => 1,
+                    'estado' => 'en_espera',
+                    'motivo_consulta' => $motivo,
+                    'medical_record_id' => $newRecord->id
+                ]);
+            }
+            // --- FIN AUTOMATIZACIÓN ---
         }
+        
         if ($section === 'citaciones-3ro') {
             $data['form']['profesional_asignado'] = $request->user()->name;
         }
@@ -63,11 +94,10 @@ class ThirdYearController extends Controller {
         $record->touch();
         return response()->json(['message'=>'Registro guardado correctamente.']);
     }
-    /** Entrega ficha CESFAM tras guardar la última sección y registra evento único. */
+    
     public function submit(Request $request,string $code){
         $record = $this->record($request, $code, false);
         DB::transaction(function () use ($request, $record) {
-            // El bloqueo impide auditar entregas duplicadas cuando se envía dos veces.
             $locked = StudentCase::with('assignment.clinicalCase')->whereKey($record->id)->lockForUpdate()->firstOrFail();
             FourthYear::requireEditable($locked);
             abort_unless($locked->sections()->where('clave', 'citaciones-3ro')->exists(), 422,

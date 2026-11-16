@@ -10,7 +10,7 @@ final class MedicalRecordAccess {
     // signos vitales y ABCDE. No se asume coincidencia entre IDs de ambas tablas.
     $ficha=FichaClinica::whereKey($id)->first();
     if($ficha){
-       abort_unless($ficha->user_id === $request->user()->id,403);
+       abort_unless((int)$ficha->user_id === (int)$request->user()->id, 403);
        abort_unless($ficha->medical_record_id,409,'Ficha anterior sin registro clínico vinculado; requiere migración de datos.');
        return MedicalRecord::where('user_id',$request->user()->id)->findOrFail($ficha->medical_record_id);
     }
