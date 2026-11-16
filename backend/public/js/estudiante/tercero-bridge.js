@@ -5,6 +5,7 @@
   if (!ctx?.codigo || !ctx.section) return;
   const key = `ficha-tp-3ro:${ctx.codigo}:${ctx.section}`;
   const tableKey = key + ':tablas';
+  
   try {
     if (ctx.snapshot && typeof ctx.snapshot === 'object') {
       localStorage.setItem(key, JSON.stringify(ctx.snapshot.form || {}));
@@ -29,7 +30,6 @@
       message.style.color = isError ? '#b42318' : '#17663b';
     }
 
-    // Elementos reutilizables y accesibles; el resto del diseño original se conserva.
     const backdrop = document.createElement('div');
     backdrop.className = 'ces-persist-backdrop'; backdrop.hidden = true;
     backdrop.innerHTML = `<div class="ces-persist-modal" role="dialog" aria-modal="true" aria-labelledby="cesPersistTitle">
@@ -66,7 +66,61 @@
 
     async function save(deliver) {
       if (busy) return;
-      // No se permite guardar antecedentes sin un motivo de consulta.
+      
+      // --- LÓGICA ESPECÍFICA PARA SIGNOS VITALES 3RO ---
+      if (ctx.section === 'signos-vitales-3ro') {
+        if (!form.reportValidity()) return;
+        busy = true;
+        if (buttonSubmit) buttonSubmit.disabled = true;
+        notice('Guardando signos vitales...');
+
+        try {
+            const pas = form.elements.namedItem('pas').value;
+            const pad = form.elements.namedItem('pad').value;
+            const presion_arterial = `${pas}/${pad}`;
+
+            const payload = {
+                frecuencia_cardiaca: Number(form.elements.namedItem('fc').value),
+                presion_arterial: presion_arterial,
+                frecuencia_respiratoria: Number(form.elements.namedItem('fr').value),
+                temperatura: Number(form.elements.namedItem('temperatura').value),
+                saturacion_oxigeno: Number(form.elements.namedItem('spo2').value),
+                peso: Number(form.elements.namedItem('peso').value) || null,
+                talla: Number(form.elements.namedItem('talla').value) / 100 || null,
+                observaciones: form.elements.namedItem('interpretacion').value
+            };
+
+                        // Usamos el token y el ID de ficha inyectados desde el HTML
+            const token = window.fichaThirdYear.apiToken;
+            const fichaId = window.fichaThirdYear.fichaId || ctx.codigo;
+            
+            const response = await fetch(`/api/fichas/${encodeURIComponent(fichaId)}/signos-vitales`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.message || 'No se pudieron guardar los signos vitales.');
+            
+            notice('Signos vitales guardados correctamente.');
+            ctx.snapshot = { form: payload, tables: {} };
+
+        } catch (error) {
+            notice(error.message || 'Error al guardar.', true);
+        } finally {
+            busy = false;
+            if (buttonSubmit) buttonSubmit.disabled = false;
+        }
+        return; 
+      }
+      // --- FIN LÓGICA ESPECÍFICA ---
+
+      // Lógica genérica para otras secciones (Antecedentes, etc.)
       if (ctx.section === 'antecedentes-3ro') {
         const motivo = form.elements.namedItem('motivo_consulta');
         if (!motivo?.value.trim()) { notice('Debes ingresar el motivo de consulta antes de guardar.', true); motivo?.focus(); return; }
@@ -83,22 +137,40 @@
       if (buttonSubmit) buttonSubmit.disabled = true;
       if ($('cesSaveAndSubmit')) $('cesSaveAndSubmit').disabled = true;
       notice(deliver ? 'Guardando y entregando...' : 'Guardando registro...');
+      
       try {
-        // El script CESFAM genera el formulario y las tablas con el mismo formato original.
         form.dispatchEvent(new Event('ces-local-save', {bubbles:false}));
         const formData = JSON.parse(localStorage.getItem(key) || '{}');
         if (professional) formData.profesional_asignado = ctx.usuario;
         const tables = ctx.section === 'antecedentes-3ro' ? JSON.parse(localStorage.getItem(tableKey) || '{}') : {};
+        
+        const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1];
+
         const response = await fetch(`/3ro/casos/${encodeURIComponent(ctx.codigo)}/secciones/${encodeURIComponent(ctx.section)}`, {
-          method:'PUT',credentials:'same-origin',headers:{'Accept':'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content},
+          method:'PUT',
+          credentials:'same-origin',
+          headers:{
+              'Accept':'application/json',
+              'Content-Type':'application/json',
+              'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content,
+              'X-XSRF-TOKEN': decodeURIComponent(csrfToken || '')
+          },
           body:JSON.stringify({form:formData,tables})
         });
         const result = await response.json().catch(()=>({}));
         if (!response.ok) throw new Error(result.errors ? Object.values(result.errors).flat().join(' ') : (result.message || 'No se pudo guardar el registro.'));
+        
         ctx.snapshot = {form:formData,tables};
+        
         if (deliver) {
           const entregado = await fetch(`/3ro/casos/${encodeURIComponent(ctx.codigo)}/entregar`,{
-            method:'POST',credentials:'same-origin',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content}
+            method:'POST',
+            credentials:'same-origin',
+            headers:{
+                'Accept':'application/json',
+                'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content,
+                'X-XSRF-TOKEN': decodeURIComponent(csrfToken || '')
+            }
           });
           const salida = await entregado.json().catch(()=>({}));
           if (!entregado.ok) throw new Error(salida.message || 'No fue posible entregar la ficha.');
@@ -122,6 +194,7 @@
           () => save(false));
       } else save(false);
     }
+    
     form.addEventListener('submit', e => {e.preventDefault(); e.stopImmediatePropagation(); requestSave(false);}, true);
     $('cesSaveAndSubmit')?.addEventListener('click', ()=>requestSave(true));
   });

@@ -8,512 +8,83 @@
     <link rel="stylesheet" href="{{ asset('css/estudiante-admision.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-triage.css') }}">
     <link rel="stylesheet" href="{{ asset('css/estudiante-formularios.css') }}">
+    <!-- Estilos específicos de ABCDE -->
     <style>
-        .abcde-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 300px;
-            gap: 18px;
-            align-items: start
-        }
-
-        .abcde-sections {
-            display: grid;
-            gap: 16px;
-            min-width: 0
-        }
-
-        .abcde-card,
-        .abcde-aside {
-            background: #fff;
-            border: 1px solid #dce5ef;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 3px 14px rgba(15, 42, 76, .045)
-        }
-
-        .abcde-head {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 18px;
-            color: #fff
-        }
-
-        .abcde-letter {
-            display: grid;
-            place-items: center;
-            width: 39px;
-            height: 39px;
-            flex-shrink: 0;
-            border: 1px solid #ffffff80;
-            border-radius: 10px;
-            font-size: 22px;
-            font-weight: 800
-        }
-
-        .abcde-head h2 {
-            margin: 0;
-            color: inherit;
-            font-size: 17px
-        }
-
-        .abcde-head p {
-            margin: 3px 0 0;
-            color: #ffffffdc;
-            font-size: 12px
-        }
-
-        .abcde-a {
-            background: #c73838
-        }
-
-        .abcde-b {
-            background: #1766aa
-        }
-
-        .abcde-c {
-            background: #15805b
-        }
-
-        .abcde-d {
-            background: #c28a12
-        }
-
-        .abcde-e {
-            background: #7548a8
-        }
-
-        .abcde-body {
-            padding: 18px
-        }
-
-        .abcde-fields {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 15px
-        }
-
-        .abcde-field {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 0
-        }
-
-        .abcde-field.full {
-            grid-column: 1/-1
-        }
-
-        .abcde-field label,
-        .abcde-field .field-label {
-            font-weight: 650;
-            font-size: 13px;
-            color: #25354b
-        }
-
-        .abcde-field select,
-        .abcde-field input,
-        .abcde-field textarea {
-            width: 100%;
-            min-width: 0;
-            min-height: 41px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: #fff;
-            color: #172a41;
-            padding: 9px 11px;
-            font: inherit;
-            font-size: 13px
-        }
-
-        .abcde-field textarea {
-            min-height: 100px;
-            resize: vertical
-        }
-
-        .abcde-field input:focus,
-        .abcde-field select:focus,
-        .abcde-field textarea:focus {
-            outline: 2px solid #93c5fd;
-            outline-offset: 1px
-        }
-
-        .abcde-field small {
-            color: #65758a;
-            font-size: 11px
-        }
-
-        .abcde-checks {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px 17px;
-            padding: 8px 0
-        }
-
-        .abcde-checks label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 450;
-            font-size: 13px
-        }
-
-        .abcde-checks input {
-            width: 16px;
-            min-height: auto;
-            height: 16px;
-            accent-color: #0b65b9
-        }
-
-        .abcde-total {
-            border-radius: 10px;
-            background: #f1f6ff;
-            border: 1px solid #cfe0fb;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px
-        }
-
-        .abcde-total strong {
-            font-size: 26px;
-            color: #164c92
-        }
-
-        .abcde-total small {
-            display: block;
-            font-size: 12px;
-            color: #51647b
-        }
-
-        .abcde-aside {
-            position: sticky;
-            top: 16px;
-            padding: 18px
-        }
-
-        .abcde-aside h3 {
-            margin: 0 0 12px;
-            font-size: 17px
-        }
-
-        .abcde-aside p {
-            font-size: 13px;
-            color: #52647b;
-            line-height: 1.5
-        }
-
-        .abcde-progress {
-            display: grid;
-            gap: 10px;
-            margin: 16px 0
-        }
-
-        .abcde-progress div {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #edf1f5;
-            padding: 6px 0;
-            font-size: 13px
-        }
-
-        .abcde-progress b {
-            color: #145ba0
-        }
-
-        .abcde-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 16px
-        }
-
-        .abcde-btn {
-            border: 1px solid #cbd5e1;
-            border-radius: 9px;
-            background: #eef3f8;
-            color: #243950;
-            padding: 11px 16px;
-            font-weight: 650;
-            cursor: pointer
-        }
-
-        .abcde-btn.primary {
-            background: #0968bd;
-            color: #fff;
-            border-color: #0968bd
-        }
-
-        .abcde-btn:focus-visible {
-            outline: 3px solid #8dbdf5
-        }
-
-        .abcde-message {
-            padding: 12px 14px;
-            border-radius: 9px;
-            margin: 12px 0;
-            display: none;
-            font-size: 13px
-        }
-
-        .abcde-message.show {
-            display: block
-        }
-
-        .abcde-message.ok {
-            background: #e8f7ee;
-            color: #14633a
-        }
-
-        .abcde-message.error {
-            background: #fff0ed;
-            color: #a32b25
-        }
-
-        .abcde-history {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px
-        }
-
-        .abcde-history th,
-        .abcde-history td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #e7edf3;
-            text-align: left
-        }
-
-        .abcde-history th {
-            background: #f1f6fb;
-            color: #264665
-        }
-
-        .abcde-history button {
-            border: 0;
-            background: transparent;
-            color: #0968bd;
-            cursor: pointer;
-            text-decoration: underline
-        }
-
-        .abcde-scroll {
-            overflow-x: auto
-        }
-
-        .abcde-muted {
-            font-size: 12px;
-            color: #64748b
-        }
-
-        .abcde-note {
-            padding: 12px;
-            background: #f3f7fc;
-            border-radius: 9px;
-            font-size: 12px;
-            color: #405570
-        }
-
-        .abcde-hidden {
-            display: none !important
-        }
-
-        @media(max-width:1050px) {
-            .abcde-layout {
-                grid-template-columns: 1fr
-            }
-
-            .abcde-aside {
-                position: static
-            }
-        }
-
-        @media(max-width:600px) {
-            .abcde-fields {
-                grid-template-columns: 1fr
-            }
-
-            .abcde-body {
-                padding: 13px
-            }
-
-            .abcde-head {
-                padding: 12px
-            }
-
-            .abcde-actions {
-                justify-content: stretch
-            }
-
-            .abcde-actions button {
-                flex: 1
-            }
-        }
-
-        /* Distribución ABCDE en cinco columnas como el prototipo validado */
-        .abcde-layout {
-            display: block;
-            margin-top: 16px
-        }
-
-        .abcde-sections {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 7px;
-            align-items: stretch
-        }
-
-        .abcde-card {
-            min-width: 0;
-            border-radius: 7px
-        }
-
-        .abcde-sections>.abcde-card {
-            height: 100%
-        }
-
-        .abcde-head {
-            min-height: 51px;
-            padding: 10px 8px;
-            gap: 6px;
-            align-items: center
-        }
-
-        .abcde-letter {
-            width: 24px;
-            height: 27px;
-            border: 0;
-            border-radius: 4px;
-            font-size: 16px
-        }
-
-        .abcde-head h2 {
-            font-size: 12px;
-            line-height: 1.25
-        }
-
-        .abcde-head p {
-            display: none
-        }
-
-        .abcde-body {
-            padding: 10px 8px
-        }
-
-        .abcde-fields {
-            display: flex;
-            flex-direction: column;
-            gap: 12px
-        }
-
-        .abcde-field {
-            gap: 5px
-        }
-
-        .abcde-field label,
-        .abcde-field .field-label {
-            font-size: 11px;
-            line-height: 1.35
-        }
-
-        .abcde-field select,
-        .abcde-field input,
-        .abcde-field textarea {
-            min-height: 33px;
-            padding: 6px;
-            font-size: 11px;
-            border-radius: 5px
-        }
-
-        .abcde-field small {
-            font-size: 10px
-        }
-
-        .abcde-checks {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 7px;
-            padding: 5px 0
-        }
-
-        .abcde-checks label {
-            font-size: 11px
-        }
-
-        .abcde-total {
-            padding: 9px;
-            gap: 4px;
-            flex-wrap: wrap
-        }
-
-        .abcde-total strong {
-            font-size: 18px
-        }
-
-        .abcde-total small {
-            font-size: 10px
-        }
-
-        .abcde-bottom {
-            display: grid;
-            gap: 14px;
-            margin-top: 14px
-        }
-
-        .abcde-bottom>.abcde-card:first-child .abcde-body {
-            padding: 16px 20px
-        }
-
-        .abcde-bottom>.abcde-card:first-child .abcde-field label {
-            font-size: 13px
-        }
-
-        .abcde-bottom>.abcde-card:first-child textarea {
-            min-height: 72px;
-            font-size: 13px
-        }
-
-        .abcde-aside {
-            position: static;
-            margin-top: 14px;
-            padding: 14px 18px
-        }
-
-        .abcde-progress {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 10px
-        }
-
-        .abcde-progress div {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap
-        }
-
-        @media(max-width:1150px) {
-            .abcde-sections {
-                overflow-x: auto;
-                grid-template-columns: repeat(5, minmax(205px, 1fr));
-                padding-bottom: 8px
-            }
-
-            .abcde-progress {
-                grid-template-columns: repeat(3, minmax(0, 1fr))
-            }
-        }
-
-        @media(max-width:600px) {
-            .abcde-progress {
-                grid-template-columns: repeat(2, minmax(0, 1fr))
-            }
-
-            .abcde-bottom>.abcde-card:first-child .abcde-body {
-                padding: 13px
-            }
-        }
+        .abcde-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start }
+        .abcde-sections { display: grid; gap: 16px; min-width: 0 }
+        .abcde-card, .abcde-aside { background: #fff; border: 1px solid #dce5ef; border-radius: 14px; overflow: hidden; box-shadow: 0 3px 14px rgba(15, 42, 76, .045) }
+        .abcde-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: #fff }
+        .abcde-letter { display: grid; place-items: center; width: 39px; height: 39px; flex-shrink: 0; border: 1px solid #ffffff80; border-radius: 10px; font-size: 22px; font-weight: 800 }
+        .abcde-head h2 { margin: 0; color: inherit; font-size: 17px }
+        .abcde-head p { margin: 3px 0 0; color: #ffffffdc; font-size: 12px }
+        .abcde-a { background: #c73838 } .abcde-b { background: #1766aa } .abcde-c { background: #15805b } .abcde-d { background: #c28a12 } .abcde-e { background: #7548a8 }
+        .abcde-body { padding: 18px }
+        .abcde-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px }
+        .abcde-field { display: flex; flex-direction: column; gap: 6px; min-width: 0 }
+        .abcde-field.full { grid-column: 1/-1 }
+        .abcde-field label, .abcde-field .field-label { font-weight: 650; font-size: 13px; color: #25354b }
+        .abcde-field select, .abcde-field input, .abcde-field textarea { width: 100%; min-width: 0; min-height: 41px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #172a41; padding: 9px 11px; font: inherit; font-size: 13px }
+        .abcde-field textarea { min-height: 100px; resize: vertical }
+        .abcde-field input:focus, .abcde-field select:focus, .abcde-field textarea:focus { outline: 2px solid #93c5fd; outline-offset: 1px }
+        .abcde-field small { color: #65758a; font-size: 11px }
+        .abcde-checks { display: flex; flex-wrap: wrap; gap: 10px 17px; padding: 8px 0 }
+        .abcde-checks label { display: flex; align-items: center; gap: 6px; font-weight: 450; font-size: 13px }
+        .abcde-checks input { width: 16px; min-height: auto; height: 16px; accent-color: #0b65b9 }
+        .abcde-total { border-radius: 10px; background: #f1f6ff; border: 1px solid #cfe0fb; padding: 15px; display: flex; justify-content: space-between; align-items: center; gap: 10px }
+        .abcde-total strong { font-size: 26px; color: #164c92 }
+        .abcde-total small { display: block; font-size: 12px; color: #51647b }
+        .abcde-aside { position: sticky; top: 16px; padding: 18px }
+        .abcde-aside h3 { margin: 0 0 12px; font-size: 17px }
+        .abcde-aside p { font-size: 13px; color: #52647b; line-height: 1.5 }
+        .abcde-progress { display: grid; gap: 10px; margin: 16px 0 }
+        .abcde-progress div { display: flex; justify-content: space-between; border-bottom: 1px solid #edf1f5; padding: 6px 0; font-size: 13px }
+        .abcde-progress b { color: #145ba0 }
+        .abcde-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 16px }
+        .abcde-btn { border: 1px solid #cbd5e1; border-radius: 9px; background: #eef3f8; color: #243950; padding: 11px 16px; font-weight: 650; cursor: pointer }
+        .abcde-btn.primary { background: #0968bd; color: #fff; border-color: #0968bd }
+        .abcde-btn:focus-visible { outline: 3px solid #8dbdf5 }
+        .abcde-message { padding: 12px 14px; border-radius: 9px; margin: 12px 0; display: none; font-size: 13px }
+        .abcde-message.show { display: block }
+        .abcde-message.ok { background: #e8f7ee; color: #14633a }
+        .abcde-message.error { background: #fff0ed; color: #a32b25 }
+        .abcde-history { width: 100%; border-collapse: collapse; font-size: 12px }
+        .abcde-history th, .abcde-history td { padding: 10px 8px; border-bottom: 1px solid #e7edf3; text-align: left }
+        .abcde-history th { background: #f1f6fb; color: #264665 }
+        .abcde-history button { border: 0; background: transparent; color: #0968bd; cursor: pointer; text-decoration: underline }
+        .abcde-scroll { overflow-x: auto }
+        .abcde-muted { font-size: 12px; color: #64748b }
+        .abcde-note { padding: 12px; background: #f3f7fc; border-radius: 9px; font-size: 12px; color: #405570 }
+        .abcde-hidden { display: none !important }
+        @media(max-width:1050px) { .abcde-layout { grid-template-columns: 1fr } .abcde-aside { position: static } }
+        @media(max-width:600px) { .abcde-fields { grid-template-columns: 1fr } .abcde-body { padding: 13px } .abcde-head { padding: 12px } .abcde-actions { justify-content: stretch } .abcde-actions button { flex: 1 } }
+        .abcde-layout { display: block; margin-top: 16px }
+        .abcde-sections { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; align-items: stretch }
+        .abcde-card { min-width: 0; border-radius: 7px }
+        .abcde-sections>.abcde-card { height: 100% }
+        .abcde-head { min-height: 51px; padding: 10px 8px; gap: 6px; align-items: center }
+        .abcde-letter { width: 24px; height: 27px; border: 0; border-radius: 4px; font-size: 16px }
+        .abcde-head h2 { font-size: 12px; line-height: 1.25 }
+        .abcde-head p { display: none }
+        .abcde-body { padding: 10px 8px }
+        .abcde-fields { display: flex; flex-direction: column; gap: 12px }
+        .abcde-field { gap: 5px }
+        .abcde-field label, .abcde-field .field-label { font-size: 11px; line-height: 1.35 }
+        .abcde-field select, .abcde-field input, .abcde-field textarea { min-height: 33px; padding: 6px; font-size: 11px; border-radius: 5px }
+        .abcde-field small { font-size: 10px }
+        .abcde-checks { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; padding: 5px 0 }
+        .abcde-checks label { font-size: 11px }
+        .abcde-total { padding: 9px; gap: 4px; flex-wrap: wrap }
+        .abcde-total strong { font-size: 18px }
+        .abcde-total small { font-size: 10px }
+        .abcde-bottom { display: grid; gap: 14px; margin-top: 14px }
+        .abcde-bottom>.abcde-card:first-child .abcde-body { padding: 16px 20px }
+        .abcde-bottom>.abcde-card:first-child .abcde-field label { font-size: 13px }
+        .abcde-bottom>.abcde-card:first-child textarea { min-height: 72px; font-size: 13px }
+        .abcde-aside { position: static; margin-top: 14px; padding: 14px 18px }
+        .abcde-progress { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px }
+        .abcde-progress div { display: flex; gap: 6px; flex-wrap: wrap }
+        @media(max-width:1150px) { .abcde-sections { overflow-x: auto; grid-template-columns: repeat(5, minmax(205px, 1fr)); padding-bottom: 8px } .abcde-progress { grid-template-columns: repeat(3, minmax(0, 1fr)) } }
+        @media(max-width:600px) { .abcde-progress { grid-template-columns: repeat(2, minmax(0, 1fr)) } .abcde-bottom>.abcde-card:first-child .abcde-body { padding: 13px } }
     </style>
     <!-- Contexto autorizado de 4.º medio; nunca contiene datos de otros estudiantes. -->
     <script>window.__FICHA_4TO = @json($ficha4toContext ?? null);</script>
@@ -895,6 +466,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Inyección de Token, Ficha ID y Usuario ID para ABCDE -->
+    <script>
+        window.abcdeToken = '17|z8GvrFkN7SAFY48JvOSH3ocXmTmna1e3VhFgDcPw23dcc677';
+        
+        // Inyectamos el ID del usuario logueado y el ID de la ficha directamente
+        @php
+            $ficha = \App\Models\FichaClinica::where('user_id', auth()->id())->first();
+        @endphp
+        window.abcdeFichaId = {{ $ficha ? $ficha->id : 'null' }};
+        window.abcdeUserId = {{ auth()->id() }};
+        
+        // Inyectamos el contexto para que el JS no falle
+        window.__FICHA_4TO = {
+            codigo: new URLSearchParams(window.location.search).get('caso') || 'CAS-001',
+            titulo: 'Evaluación ABCDE'
+        };
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Referencias y caso clínico de demostración
@@ -1082,42 +672,49 @@
                 $('saveMessage').className = 'abcde-message';
                 $('saveMessage').textContent = '';
             }
-            form.addEventListener('submit', event => {
+
+            // --- INICIO LÓGICA DE CONEXIÓN A LA API ---
+            form.addEventListener('submit', async event => {
                 event.preventDefault();
                 if (!validar()) return;
+                
                 const data = datosFormulario();
-                const fecha = new Date().toISOString();
-                if (editingId) {
-                    const index = registros.findIndex(r => r.id === editingId);
-                    if (index >= 0) {
-                        registros[index] = {
-                            ...registros[index],
-                            data,
-                            actualizado: fecha
-                        };
-                    } else {
-                        editingId = null;
-                    }
+                const token = window.abcdeToken;
+                const fichaId = window.abcdeFichaId;
+                
+                if (!fichaId) {
+                    mensaje('No se encontró una ficha clínica activa para guardar. Guarda primero la Admisión.', 'error');
+                    return;
                 }
-                if (!editingId) {
-                    registros.push({
-                        id: (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date
-                            .now()) + '_' + Math.random().toString(36).slice(2)),
-                        fecha,
-                        data
+
+                $('saveButton').disabled = true;
+                $('saveButton').textContent = 'Guardando...';
+                mensaje('Enviando datos al servidor...');
+
+                try {
+                    const response = await fetch(`/api/fichas/${encodeURIComponent(fichaId)}/evaluacion-abcde`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
                     });
+
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(result.message || 'No se pudo guardar la evaluación ABCDE.');
+                    
+                    mensaje('Evaluación ABCDE guardada correctamente en la ficha clínica.');
+                } catch (error) {
+                    mensaje('Error: ' + (error.message || 'Error de conexión'), 'error');
+                } finally {
+                    $('saveButton').disabled = false;
+                    $('saveButton').textContent = 'Guardar evaluación';
                 }
-                if (!persistir()) return;
-                const editado = Boolean(editingId);
-                editingId = registros[registros.length - 1]?.id || editingId;
-                mensaje('Guardando evaluación en el servidor…');
-                window.Ficha4toBridge?.flush().then(() => {
-                    mensaje(editado ? 'Evaluación ABCDE actualizada y guardada correctamente.' :
-                        'Evaluación ABCDE guardada correctamente en la ficha clínica.');
-                }).catch(error => {
-                    mensaje('No se guardó la evaluación en el servidor: ' + error.message, 'error');
-                });
             });
+            // --- FIN LÓGICA DE CONEXIÓN A LA API ---
+
             // Modal de confirmación para limpiar, con el mismo diseño de Triage
             const clearModal = $('clearModal');
             const cancelClear = $('cancelClear');
@@ -1161,15 +758,15 @@
                 }
             });
             $('cancelButton').addEventListener('click', () => {
-                window.Ficha4toBridge?.flush().then(() => { window.location.href = rutas.signos; }).catch(() => alert('No se guardó el registro en el servidor.'));
+                window.location.href = rutas.signos;
             });
             ['ocular', 'verbal', 'motora'].forEach(id => $(id).addEventListener('change', calcularGlasgow));
             ['oxigenoterapia', 'quemaduras'].forEach(id => $(id).addEventListener('change',
                 actualizarCondicionales));
             document.querySelectorAll('input[name="lesiones"]').forEach(x => x.addEventListener('change',
                 actualizarLesiones));
-            // Restaurar el registro previamente guardado en la ficha (Laravel -> sesión -> formulario).
-            // Esto no crea un registro duplicado; al guardar se actualizará el mismo id.
+            
+            // Restaurar el registro previamente guardado (opcional, usando sessionStorage por ahora)
             const anterior = registros[registros.length - 1];
             if (anterior?.data && typeof anterior.data === 'object') {
                 selectIds.forEach(id => { if (Object.prototype.hasOwnProperty.call(anterior.data, id)) $(id).value = anterior.data[id] ?? ''; });

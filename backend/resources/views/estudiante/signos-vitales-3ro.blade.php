@@ -240,8 +240,11 @@
         </div>
     </div>
     <script>window.fichaThirdYear = {!! json_encode($thirdYearContext, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) !!};</script>
+    <script>window.fichaThirdYear.apiToken = '16|rvC0Zdr2FAuI55TDXkQGDqG2bP9gNPj9qSvepnjJb912ea59';</script>
+    <script>window.fichaThirdYear.fichaId = {{ $thirdYearContext['fichaId'] ?? 'null' }};</script>
     <script src="{{ asset('js/estudiante/tercero.js') }}" defer></script>
     <script src="{{ asset('js/estudiante/tercero-bridge.js') }}" defer></script>
+    
 </body>
 
 </html>
