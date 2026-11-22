@@ -1,0 +1,13 @@
+.case-rubric-scroll{width:100%;overflow-x:auto;margin:16px 0 22px}
+.case-rubric-table{width:100%;border-collapse:collapse;min-width:590px;font-size:14px}
+.case-rubric-table th,.case-rubric-table td{padding:12px;border:1px solid #cfdfec;text-align:left;vertical-align:top;line-height:1.5;color:#213b51}
+.case-rubric-table th{background:#1c5685;color:#fff;font-weight:700}
+.case-rubric-table tbody tr:nth-child(even){background:#f4f9ff}
+.case-rubric-badge{display:inline-block;white-space:nowrap;border-radius:14px;font-size:12px;font-weight:700;padding:5px 9px}
+.case-rubric-badge.is-yes{background:#d9f6e4;color:#146e39}
+.case-rubric-badge.is-no{background:#ffe5e7;color:#922c35}
+.case-rubric-badge.is-pending{background:#fff0c2;color:#805500}
+.case-rubric-download{display:flex;align-items:flex-start;flex-direction:column;gap:7px;margin-top:20px}
+.case-pdf-button{display:inline-flex;align-items:center;gap:9px;border-radius:8px;background:#185985;color:#fff!important;padding:11px 17px;text-decoration:none;font-weight:700;line-height:1.4}
+.case-pdf-button:hover,.case-pdf-button:focus{background:#10436c;color:#fff!important}
+.case-rubric-download small{color:#496478}

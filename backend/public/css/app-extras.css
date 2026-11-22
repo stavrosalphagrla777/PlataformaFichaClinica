@@ -1,0 +1,245 @@
+/* =====================================================
+   Elementos comunes autenticados (Footer y Notificaciones)
+   ===================================================== */
+
+/* --- FOOTER --- */
+.ficha-app-footer {
+    box-sizing: border-box;
+    background: #0c4b77;
+    color: white;
+    min-height: 125px;
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.ficha-footer-name {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.ficha-footer-subtitle {
+    font-size: 12px;
+    opacity: .9;
+    margin-top: 5px;
+}
+
+/* El contenedor del logo corregido */
+.ficha-footer-logo {
+    width: 85px;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    /* --- CAMBIOS AQUÍ --- */
+    border: 3px solid #ffffff;     /* Borde blanco parejo */
+    background-color: #ffffff;     /* Fondo blanco */
+    border-radius: 50%;            /* Forma redonda */
+    box-sizing: border-box;        /* Evita que el borde agrande el círculo */
+    overflow: hidden;              /* Corta lo que sobresalga */
+}
+
+/* La imagen del logo */
+.ficha-footer-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+/* --- CAMPANITA DE NOTIFICACIONES (Sin cambios) --- */
+.ficha-bell {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    z-index: 2000;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: 18px;
+}
+
+.ficha-bell-toggle {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border: 0;
+    border-radius: 100px;
+    background: transparent;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ficha-bell-toggle:hover,
+.ficha-bell-toggle[aria-expanded=true] {
+    background: rgba(255, 255, 255, .16);
+}
+
+.ficha-bell-toggle:focus-visible {
+    outline: 3px solid #9fddff;
+    outline-offset: 2px;
+}
+
+.ficha-bell-badge {
+    position: absolute;
+    right: -1px;
+    top: 0;
+    background: #d43f52;
+    color: #fff;
+    border-radius: 12px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 3px;
+    box-sizing: border-box;
+    font-size: 11px;
+    line-height: 18px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.ficha-bell-menu {
+    box-sizing: border-box;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: min(390px, calc(100vw - 28px));
+    background: #fff;
+    color: #1c2b40;
+    border: 1px solid #d3dee9;
+    border-radius: 12px;
+    box-shadow: 0 14px 38px rgba(6, 31, 58, .24);
+    overflow: hidden;
+    z-index: 3000;
+    text-align: left;
+}
+
+.ficha-bell-menu[hidden] {
+    display: none !important;
+}
+
+.ficha-bell-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 17px;
+    border-bottom: 1px solid #e2eaf2;
+    background: #f3f8fd;
+}
+
+.ficha-bell-heading strong {
+    font-size: 15px;
+    color: #1a4162;
+}
+
+.ficha-bell-heading span {
+    font-size: 12px;
+    color: #54677b;
+}
+
+.ficha-bell-items {
+    max-height: 345px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.ficha-bell-item {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-bottom: 1px solid #e7edf3;
+}
+
+.ficha-bell-item button {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 13px 17px;
+    text-align: left;
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+    background: #fff;
+    color: #263849;
+    white-space: normal;
+}
+
+.ficha-bell-item.is-unread button {
+    background: #eaf5ff;
+}
+
+.ficha-bell-item button:hover {
+    background: #dcecff;
+}
+
+.ficha-bell-item strong {
+    font-size: 14px;
+    color: #1c4f78;
+}
+
+.ficha-bell-item span {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.ficha-bell-item small {
+    font-size: 11px;
+    color: #5c6d7b;
+}
+
+.ficha-bell-empty {
+    padding: 22px;
+    color: #53657a;
+    text-align: center;
+    font-size: 14px;
+}
+
+.ficha-bell-all {
+    display: block;
+    text-align: center;
+    padding: 13px;
+    font-size: 14px;
+    color: #165987;
+    font-weight: 700;
+    background: #fafcff;
+    text-decoration: none;
+}
+
+.ficha-bell-all:hover {
+    text-decoration: underline;
+    background: #eaf5ff;
+}
+
+/* --- RESPONSIVIDAD --- */
+@media(max-width:690px) {
+    .ficha-bell {
+        margin-right: 6px;
+    }
+    .ficha-bell-toggle {
+        width: 40px;
+        height: 40px;
+    }
+    .ficha-bell-menu {
+        right: -15px;
+    }
+    .ficha-app-footer {
+        padding: 18px 20px;
+        min-height: 95px;
+    }
+    .ficha-footer-logo {
+        width: 65px;
+        height: 65px;
+    }
+    .ficha-footer-name {
+        font-size: 16px;
+    }
+}

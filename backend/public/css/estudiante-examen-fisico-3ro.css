@@ -1,0 +1,279 @@
+/* Examen físico CESFAM - coherente con la presentación de 4.º medio. */
+.ces-exam-form {
+    gap: 16px;
+}
+
+.ces-exam-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+.ces-exam-card {
+    min-width: 0;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #dce5ef;
+    border-radius: 12px;
+    box-shadow: 0 3px 14px rgba(15, 42, 76, .045);
+}
+
+.ces-exam-card h2 {
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #e6f0fc;
+    color: #174c7e;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.ces-exam-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ces-exam-card label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 650;
+    color: #25354b;
+}
+
+.ces-exam-fields select,
+.ces-exam-fields input,
+.ces-interpretacion textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #172a41;
+    font: 13px 'Segoe UI', Arial, sans-serif;
+}
+
+.ces-exam-fields select:focus,
+.ces-exam-fields input:focus,
+.ces-interpretacion textarea:focus {
+    outline: 2px solid #93c5fd;
+    outline-offset: 1px;
+}
+
+.ces-exam-fields input[readonly] {
+    background: #f3f7fc;
+    border-color: #d9e5f2;
+    color: #294b70;
+    cursor: default;
+}
+
+.ces-exam-fields input::placeholder {
+    color: #879aaf;
+}
+
+.ces-exam-hint {
+    margin: -5px 0 18px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.ces-segmentario-fields {
+    row-gap: 22px;
+}
+
+.ces-eva {
+    margin-top: 44px;
+}
+
+.ces-eva>label {
+    display: block;
+    margin-bottom: 17px;
+}
+
+.ces-eva input[type=range] {
+    display: block;
+    width: 100%;
+    height: 10px;
+    padding: 0;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    border-radius: 99px;
+    background: linear-gradient(to right, #f8b53d 0%, #f8b53d var(--eva-progress, 20%), #e4ebf3 var(--eva-progress, 20%), #e4ebf3 100%);
+    cursor: pointer;
+}
+
+.ces-eva input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 21px;
+    height: 21px;
+    border: 0;
+    border-radius: 50%;
+    background: #1769c9;
+}
+
+.ces-eva input[type=range]::-moz-range-thumb {
+    width: 21px;
+    height: 21px;
+    border: 0;
+    border-radius: 50%;
+    background: #1769c9;
+}
+
+.ces-eva-ticks {
+    display: flex;
+    justify-content: space-between;
+    gap: 2px;
+    margin-top: 16px;
+    color: #344f70;
+    font-size: 12px;
+}
+
+.ces-eva output {
+    display: block;
+    width: fit-content;
+    margin: 12px 8px 0 auto;
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: #fff2d4;
+    color: #a96b00;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ces-interpretacion {
+    margin-top: 44px;
+}
+
+.ces-interpretacion label {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.ces-interpretacion textarea {
+    min-height: 110px;
+    resize: vertical;
+    background: #f6f9fd;
+}
+
+.ces-exam-actions {
+    margin-top: 0;
+}
+
+/* La pestaña Resumen siempre aparece primero, igual que en 4.º medio. */
+.ces-tabs.tabs .ces-summary-tab {
+    margin-left: 0;
+    border-left: 0;
+}
+
+@media(max-width:1000px) {
+    .ces-exam-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .ces-eva,
+    .ces-interpretacion {
+        margin-top: 28px;
+    }
+}
+
+@media(max-width:560px) {
+    .ces-exam-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .ces-exam-card {
+        padding: 14px;
+    }
+}
+
+/* EVA opcional */
+.ces-eva .ces-eva-checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.ces-eva-checkbox input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    accent-color: #075b9e;
+}
+
+.ces-eva input[type=range]:disabled {
+    opacity: .42;
+    cursor: not-allowed;
+}
+
+.ces-eva:has(input[type=range]:disabled) .ces-eva-ticks {
+    opacity: .5;
+}
+
+/* Acciones dentro de una tarjeta blanca, igual que Triage de 4.º medio. */
+.ces-exam-footer {
+    overflow: hidden;
+}
+
+.ces-exam-footer .form-actions {
+    padding: 24px 25px;
+}
+
+.ces-exam-footer .save-message {
+    flex: 1 1 200px;
+}
+
+.ces-exam-footer .btn {
+    min-height: 48px;
+    padding: 12px 20px;
+}
+
+/* Casilla y control EVA: evitar que los estilos genéricos deformen el checkbox/range. */
+.ces-eva .ces-eva-checkbox {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+}
+
+.ces-eva .ces-eva-checkbox input[type="checkbox"] {
+    appearance: auto;
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    padding: 0;
+    flex: 0 0 17px;
+    cursor: pointer;
+    accent-color: #075b9e;
+}
+
+.ces-eva input[type="range"]:not(:disabled) {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.ces-eva input[type="range"]:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+@media(max-width:600px) {
+    .ces-exam-footer .form-actions {
+        padding: 16px;
+    }
+}
+
+

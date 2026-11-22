@@ -1,0 +1,9 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notificaciones - Ficha Clínica TP</title>
+<style>body{margin:0;font-family:system-ui,sans-serif;color:#141c2b;background:#f4f7fa}main{max-width:880px;margin:35px auto;padding:24px}h1{margin:0 0 12px}a{color:#14528d}.panel{background:#fff;border:1px solid #d4dfe8;border-radius:12px;padding:16px;margin-bottom:12px}.new{border-left:5px solid #2872b6}.date{font-size:12px;color:#53657c}.btn{display:inline-block;background:#1c5c93;color:white;border:0;border-radius:6px;padding:9px 15px;cursor:pointer}.top{display:flex;justify-content:space-between;gap:20px}.pages{margin:20px 0}</style></head><body>
+<main><div class="top"><h1>Notificaciones</h1><a href="{{ auth()->user()->hasRole('administrador') ? route('admin.dashboard') : (auth()->user()->hasRole('docente') ? route('preview.docente.dashboard') : route('preview.estudiante.casos')) }}">Volver al panel</a></div>
+<p>Recibirás avisos cuando se asignen casos, se entreguen fichas o se publiquen evaluaciones, según tu rol.</p>
+@forelse($notices as $notice)
+<article class="panel {{ $notice->read_at ? '' : 'new' }}"><strong>{{ $notice->data['titulo'] ?? 'Notificación' }}</strong><p>{{ $notice->data['mensaje'] ?? '' }}</p><p class="date">{{ $notice->created_at->format('d/m/Y H:i') }} · {{ $notice->read_at ? 'Leída' : 'Sin leer' }}</p>
+<form method="POST" action="{{ route('notifications.read',$notice->id) }}">@csrf<button type="submit" class="btn">{{ $notice->read_at ? 'Abrir' : 'Marcar como leída y abrir' }}</button></form></article>
+@empty <div class="panel">No tienes notificaciones por el momento.</div> @endforelse
+<div class="pages">{{ $notices->links() }}</div></main>@include('shared.app-extras')</body></html>

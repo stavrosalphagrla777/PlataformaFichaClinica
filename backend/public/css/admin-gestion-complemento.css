@@ -1,0 +1,36 @@
+/* Complementos al diseño original de Pablo: filtros y acciones reales. */
+.panel .filters{grid-template-columns:minmax(160px,2fr) repeat(3,minmax(125px,1fr)) auto;align-items:center;}
+.panel .filter-actions{display:flex;align-items:center;gap:7px;}
+.panel .filter-actions .admin-clean-button{min-height:42px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;}
+.panel .bulk-toolbar button{background:#fff;color:#075b9e;border:1px solid #c9daeb;border-radius:7px;padding:9px 12px;}
+.panel .bulk-toolbar button:disabled{opacity:.45;cursor:not-allowed;}
+.panel .bulk-toolbar button:hover:not(:disabled){background:#e1effb;}
+.panel .actions button.action{background:#fff0ee;color:#b42318;border:0;padding:7px 9px;font-size:12px;}
+.panel .actions button.action:not(.danger){background:#eef6ff;color:#075b9e;}
+.panel .actions a.action{padding:7px 9px;white-space:nowrap;}
+.panel .roles-mode-bar button.roles-mode{background:#fff;color:#075b9e;border:1px solid #d7e2ee;}
+.panel .roles-mode-bar button.roles-mode.active{background:#075b9e;color:#fff;border-color:#075b9e;}
+.panel button.admin-clean-button{color:#075b9e;background:#fff;border:1px solid #c8d8e7;}
+.panel button.admin-clean-button:hover{background:#eef6fc;}
+.panel .form-field input,.panel .form-field select{min-height:42px;max-width:100%;}
+.panel .roles-filter-grid select{width:100%;}
+.panel .roles-user-row input,.panel .check-col input{min-height:0;}
+.modal-overlay .modal-card button.modal-cancel{background:#eff5fb;color:#075b9e;border:1px solid #c8d8e7;}
+.modal-overlay .modal-card button.modal-confirm{background:#075b9e;color:#fff;border:1px solid #075b9e;}
+.modal-overlay .modal-card button.modal-confirm.deactivate{background:#b42318;border-color:#b42318;}
+.panel .table-wrap{overflow-x:auto;}
+.panel .pager nav{max-width:100%;overflow-x:auto;}
+@media(max-width:1200px){.panel .filters{grid-template-columns:repeat(2,minmax(0,1fr));}.panel .filter-actions{grid-column:1/-1;}}
+@media(max-width:640px){.panel .filters{grid-template-columns:1fr}.panel .filter-actions{flex-wrap:wrap}.panel .filter-actions .admin-clean-button{flex:1}.panel .roles-filter-grid{grid-template-columns:1fr;}}
+
+/* Prioridad sobre reglas generales del parche administrativo anterior. */
+.roles-mode-bar button#modeIndividual,.roles-mode-bar button#modeMultiple{background:#fff;color:#075b9e;border:1px solid #d7e2ee;}
+.roles-mode-bar button#modeIndividual.active,.roles-mode-bar button#modeMultiple.active{background:#075b9e;color:#fff;border-color:#075b9e;}
+.panel .bulk-toolbar button#bulkActivate,.panel .bulk-toolbar button#bulkDeactivate,.panel .bulk-toolbar button#clearSelection{background:#fff;color:#075b9e;border:1px solid #c9daeb;}
+.panel .filter-actions button.admin-clean-button,.panel #clearUserFilters,.panel #clearSelection.admin-clean-button,.panel #resetChanges{background:#fff;color:#075b9e;border:1px solid #c8d8e7;}
+
+/* Filtro adicional por curso en la lista de usuarios: disposición adaptable. */
+.panel form.filters {grid-template-columns:minmax(170px,2fr) repeat(4,minmax(110px,1fr)) auto;}
+@media (max-width:1350px){.panel form.filters {grid-template-columns:repeat(3,minmax(0,1fr));}.panel form.filters .filter-actions {grid-column:auto;}}
+@media (max-width:900px){.panel form.filters {grid-template-columns:repeat(2,minmax(0,1fr));}.panel form.filters .filter-actions{grid-column:1/-1;}}
+@media (max-width:600px){.panel form.filters{grid-template-columns:1fr;}}

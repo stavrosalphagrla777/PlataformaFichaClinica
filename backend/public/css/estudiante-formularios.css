@@ -1,0 +1,516 @@
+
+/* =========================================
+   FICHA CLÍNICA TP
+   FORMULARIOS CLÍNICOS
+   ========================================= */
+
+/* NAVEGACIÓN */
+.tabs a,
+.tabs a:visited {
+    color: #60758a;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+}
+
+.tabs a:hover {
+    color: #075b9e;
+    background: #f1f7fd;
+}
+
+.tabs .selected,
+.tabs a.selected,
+.tabs a.selected:visited {
+    color: #075b9e;
+    background: #f1f7fd;
+    border-bottom: 3px solid #075b9e;
+    font-weight: 700;
+}
+
+/* ETIQUETAS */
+.form-grid .vital-field > label {
+    display: block;
+    margin-bottom: 8px;
+    color: #41566b;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.form-grid .vital-field > label em {
+    display: inline;
+    margin-left: 4px;
+    color: #dc2626;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.form-grid .vital-field > label .optional-label {
+    display: inline;
+    margin-left: 6px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+/* CAMPOS */
+.form-grid .vital-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.form-grid .vital-field > input,
+.form-grid .imc-result > input {
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 11px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    background: #fff;
+    color: #263849;
+    font: 13px 'Segoe UI', Arial, sans-serif;
+}
+
+.form-grid .vital-field > input:focus {
+    outline: none;
+    border-color: #075b9e;
+    box-shadow: 0 0 0 2px rgba(7, 91, 158, 0.1);
+}
+
+/* PRESIÓN ARTERIAL */
+.form-grid .blood-pressure {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+.form-grid .blood-pressure input {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+    min-height: 40px;
+    padding: 10px 8px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.pressure-divider {
+    flex: 0 0 auto;
+    color: #60758a;
+    font-weight: 700;
+}
+
+/* =========================================
+   CUADROS DE CLASIFICACIÓN
+   ========================================= */
+
+.form-grid .threshold-alert {
+    display: none;
+    margin-top: 9px;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.form-grid .threshold-alert:not(:empty) {
+    display: block !important;
+}
+
+.threshold-row {
+    display: block;
+}
+
+.threshold-row + .threshold-row {
+    margin-top: 3px;
+}
+
+.threshold-row strong {
+    font-weight: 700;
+}
+
+/* NORMAL - VERDE */
+.form-grid .threshold-alert.alert-normal {
+    background: #ecfdf3;
+    border-color: #a7e2bd;
+    color: #166534;
+}
+
+/* ADVERTENCIA - AMARILLO */
+.form-grid .threshold-alert.alert-warning {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+/* CRÍTICO - ROJO */
+.form-grid .threshold-alert.alert-critical {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+/* INFORMATIVO - AZUL */
+.form-grid .threshold-alert.alert-info {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+}
+
+/* =========================================
+   ADVERTENCIAS DE VALORES ATÍPICOS
+   ========================================= */
+
+.form-grid .atypical-alert {
+    display: none;
+    margin-top: 9px;
+    padding: 11px 12px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    border-radius: 6px;
+    color: #9a3412;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.form-grid .atypical-alert:not(:empty) {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.atypical-alert strong {
+    font-weight: 700;
+}
+
+.atypical-alert small {
+    color: #9a3412;
+    font-size: 11px;
+}
+
+.form-grid input.atypical-input {
+    border-color: #f97316;
+    background: #fff7ed;
+}
+
+/* =========================================
+   IMC
+   ========================================= */
+
+.form-grid .imc-result > input {
+    background: #f1f7fd;
+    color: #075b9e;
+    border-color: #b8d4ed;
+    font-weight: 700;
+}
+
+.form-grid .imc-result .threshold-alert {
+    margin-top: 9px;
+}
+
+/* =========================================
+   OBSERVACIONES
+   ========================================= */
+
+.form-section .triage-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #41566b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-section .triage-field textarea {
+    width: 100%;
+    min-height: 105px;
+    padding: 11px;
+    border: 1px solid #cdd9e4;
+    border-radius: 5px;
+    background: #fff;
+    color: #263849;
+    font: 13px 'Segoe UI', Arial, sans-serif;
+    resize: vertical;
+}
+
+.form-section .triage-field textarea:focus {
+    outline: none;
+    border-color: #075b9e;
+    box-shadow: 0 0 0 2px rgba(7, 91, 158, 0.1);
+}
+
+/* MODAL */
+.modal-overlay[hidden] {
+    display: none !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .form-grid.cols-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid .blood-pressure {
+        gap: 6px;
+    }
+}
+
+
+/* =========================================
+   HISTORIAL Y GRÁFICO DE SIGNOS VITALES
+   ========================================= */
+
+.vitals-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.vitals-panel {
+    background: #ffffff;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(20, 49, 80, 0.05);
+    min-width: 0;
+}
+
+.vitals-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.vitals-panel-header h2 {
+    margin: 0;
+    color: #075b9e;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.vitals-period {
+    color: #718096;
+    font-size: 11px;
+}
+
+.vitals-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.vitals-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+.vitals-table thead {
+    background: #075b9e;
+    color: #ffffff;
+}
+
+.vitals-table th,
+.vitals-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #e6edf5;
+}
+
+.vitals-table tbody tr:nth-child(even) {
+    background: #f4f8fc;
+}
+
+.vitals-table tbody tr:hover {
+    background: #eaf3fc;
+}
+
+.vitals-edit {
+    border: 0;
+    background: transparent;
+    color: #075b9e;
+    font-weight: 600;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.vitals-edit:hover {
+    text-decoration: underline;
+}
+
+.vitals-chart-container {
+    position: relative;
+    height: 270px;
+    width: 100%;
+}
+
+.vitals-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (min-width: 1200px) {
+    .content:has(.vitals-dashboard) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        gap: 12px;
+        align-items: start;
+    }
+
+    .content:has(.vitals-dashboard) > .page-heading,
+    .content:has(.vitals-dashboard) > .case-banner,
+    .content:has(.vitals-dashboard) > .tabs {
+        grid-column: 1 / -1;
+    }
+
+    .content:has(.vitals-dashboard) > .form-card {
+        grid-column: 1;
+    }
+
+    .content:has(.vitals-dashboard) > .vitals-dashboard {
+        grid-column: 2;
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .vitals-panel {
+        padding: 12px;
+    }
+
+    .vitals-chart-container {
+        height: 240px;
+    }
+}
+
+
+/* Etiquetas de los campos */
+.form-grid .vital-field > label {
+    display: block;
+    margin-bottom: 8px;
+    color: #41566b;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.form-grid .vital-field > label em {
+    display: inline;
+    margin-left: 4px;
+    color: #dc2626;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.form-grid .vital-field > label .optional-label {
+    display: inline;
+    margin-left: 6px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+/* Cuadros de clasificación */
+.form-grid .threshold-alert {
+    display: none;
+    margin-top: 9px;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.form-grid .threshold-alert:not(:empty) {
+    display: block !important;
+    visibility: visible;
+    opacity: 1;
+}
+
+.threshold-row + .threshold-row {
+    margin-top: 3px;
+}
+
+.threshold-row strong {
+    font-weight: 700;
+}
+
+/* Clasificación normal */
+.form-grid .threshold-alert.alert-normal {
+    background: #ecfdf3;
+    border-color: #a7e2bd;
+    color: #166534;
+}
+
+/* Clasificación de advertencia */
+.form-grid .threshold-alert.alert-warning {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+/* Clasificación crítica */
+.form-grid .threshold-alert.alert-critical {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+/* Clasificación informativa */
+.form-grid .threshold-alert.alert-info {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+}
+
+/* Advertencias de valores atípicos */
+.form-grid .atypical-alert {
+    display: none;
+    margin-top: 9px;
+    padding: 11px 12px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    border-radius: 6px;
+    color: #9a3412;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.form-grid .atypical-alert:not(:empty) {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3px;
+    visibility: visible;
+    opacity: 1;
+}
+
+.form-grid .atypical-alert small {
+    font-size: 11px;
+    color: #9a3412;
+}
+
+.form-grid input.atypical-input {
+    border-color: #f97316;
+    background: #fff7ed;
+}
+
+/* Campo calculado de IMC */
+.form-grid .imc-result > input {
+    background: #f1f7fd;
+    color: #075b9e;
+    border-color: #b8d4ed;
+    font-weight: 700;
+}
+
+/* Visibilidad del modal */
+.modal-overlay[hidden] {
+    display: none !important;
+}
