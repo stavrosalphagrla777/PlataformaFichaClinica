@@ -1,5 +1,11 @@
 # Ficha Clínica TP - Plataforma Digital de Ficha Clínica
 
+Aplicación educativa de simulación clínica para 3.º medio (CESFAM) y 4.º medio (Urgencias), desarrollada con Laravel/PHP, MySQL 8 y Docker.
+
+El proyecto integra el backend de Alexis y las interfaces de Pablo. Utilizar exclusivamente datos ficticios.
+
+Documento de referencia para Alexis: [Informe técnico y transferencia](docs/INFORME_TECNICO_Y_TRANSFERENCIA.md).
+
 Proyecto completo para el Hospital de Simulación Virtual del Liceo Bicentenario Hermanos Sotomayor Baeza, basado en el ZIP `PlataformaFichaClinica-main(3).zip` proporcionado el 19-11-2026. Se conserva la plataforma original de Laravel/PHP, MySQL 8 y las vistas de administrador, docente y estudiantes de 3.º y 4.º medio.
 
 ## Instalación local en Windows, sin afectar instalaciones anteriores

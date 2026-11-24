@@ -1750,8 +1750,9 @@
                                     <textarea id="descripcionMaterial" maxlength="1500" placeholder="Contexto del material adjunto..."></textarea>
                                 </div>
                             </div>
-                            <p class="exa-notice">Puedes registrar un resultado sin adjuntar un archivo. Los documentos
-                                e imágenes que agregues quedarán asociados a la solicitud seleccionada y podrás consultarlos posteriormente.</p>
+                            <p class="exa-notice">Puedes guardar el resultado sin adjuntar un archivo. Si seleccionas uno,
+                                estará disponible solo durante esta sesión: actualmente la plataforma conserva los
+                                datos del resultado en Laravel, pero no almacena permanentemente los archivos.</p>
                             <div class="exa-actions"><button type="button" id="cancelarMaterial"
                                     class="anamnesis-button">Cancelar</button><button type="submit"
                                     class="anamnesis-button primary">Guardar material</button></div>
@@ -2092,22 +2093,7 @@
                 add('Estado', mat.estado);
                 add('Archivo', mat.archivoNombre || 'Sin archivo adjunto');
                 add('Descripción', mat.descripcion || 'Sin descripción');
-                // El archivo puede existir en memoria durante la carga o en el almacenamiento
-                // privado del servidor al abrir una ficha en una sesión posterior.
-                const localUrl = archivosEnMemoria.get(mat.id);
-                let secureUrl = null;
-                if (mat.archivoUrl && mat.archivoNombre) {
-                    try {
-                        const candidate = new URL(mat.archivoUrl, location.origin);
-                        const expectedPrefix = `/4to/casos/${encodeURIComponent(casoId)}/archivos/`;
-                        if (candidate.origin === location.origin &&
-                            candidate.pathname.startsWith(expectedPrefix) &&
-                            /^[A-Za-z0-9]{40}\.(?:jpg|jpeg|png|pdf)$/i.test(candidate.pathname.slice(expectedPrefix.length))) {
-                            secureUrl = candidate.href;
-                        }
-                    } catch (_) { /* Referencia anterior no compatible; mostrar detalle sin vista previa. */ }
-                }
-                const url = localUrl || secureUrl;
+                const url = archivosEnMemoria.get(mat.id);
                 if (url) {
                     if (mat.mime?.startsWith('image/')) {
                         const img = document.createElement('img');

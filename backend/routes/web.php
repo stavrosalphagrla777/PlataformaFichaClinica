@@ -25,10 +25,11 @@ Route::post('/recuperar', [PasswordRecoveryController::class, 'sendLink'])->midd
 Route::get('/restablecer/{token}', [PasswordRecoveryController::class, 'showReset'])->name('password.reset');
 Route::post('/restablecer', [PasswordRecoveryController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
 
-// PDF de pautas finalizadas: estudiantes descargan las suyas; docentes las asignadas; administración todas.
-Route::middleware('auth')->get('/evaluaciones/{record}/pdf',
-    [\App\Http\Controllers\Delivery\EvaluationPdfController::class, 'download'])
-    ->name('delivery.evaluacion.pdf');
+// PDF de pautas finalizadas
+Route::middleware('auth')->get(
+    '/evaluaciones/{record}/pdf',
+    [\App\Http\Controllers\Delivery\EvaluationPdfController::class, 'download']
+)->name('delivery.evaluacion.pdf');
 
 // --- ESTUDIANTES: FLUJO REAL DE 4.º MEDIO ---
 Route::middleware(['auth', 'role:estudiante'])->group(function () {
@@ -43,7 +44,9 @@ Route::middleware(['auth', 'role:estudiante'])->group(function () {
 
 // Todos los formularios del 4.º medio requieren sesión, rol, asignación y plazo.
 Route::middleware(['auth', 'role:estudiante', '4to.case'])
-    ->prefix('estudiante')->name('preview.estudiante.')->group(function () {
+    ->prefix('estudiante')
+    ->name('preview.estudiante.')
+    ->group(function () {
         Route::get('/admision', fn () => view('estudiante.admision'))->name('admision');
         Route::get('/triage', fn () => view('estudiante.triage'))->name('triage');
         Route::get('/signos-vitales', fn () => view('estudiante.signos-vitales'))->name('signos-vitales');
@@ -57,24 +60,25 @@ Route::middleware(['auth', 'role:estudiante', '4to.case'])
         Route::get('/destino', fn () => view('estudiante.destino'))->name('destino');
     });
 
-// AJAX de formularios de 4.º medio; CSRF de la sesión web (no tokens en localStorage).
-Route::middleware(['auth', 'role:estudiante'])->prefix('4to/casos/{code}')
-    ->name('delivery.student.')->group(function () {
+// AJAX de formularios de 4.º medio
+Route::middleware(['auth', 'role:estudiante'])
+    ->prefix('4to/casos/{code}')
+    ->name('delivery.student.')
+    ->group(function () {
         Route::get('/secciones', [StudentCaseController::class, 'snapshots'])->name('snapshots');
         Route::put('/secciones/{section}', [StudentCaseController::class, 'saveSection'])->name('save');
         Route::post('/entregar', [StudentCaseController::class, 'submit'])->name('submit');
         Route::post('/secciones/{section}/upload', [StudentCaseController::class, 'uploadExamFile'])->name('upload');
-        Route::get('/archivos/{filename}',[StudentCaseController::class,'downloadExamFile'])->name('file');
+        Route::get('/archivos/{filename}', [StudentCaseController::class, 'downloadExamFile'])->name('file');
     });
 
-
-// Avisos personales: acceso exclusivamente por la sesión del destinatario.
+// --- NOTIFICACIONES ---
 Route::middleware('auth')->group(function () {
-    Route::get('/notificaciones', [\App\Http\Controllers\Delivery\NotificationController::class,'index'])->name('notifications.index');
-    Route::post('/notificaciones/{id}/leer', [\App\Http\Controllers\Delivery\NotificationController::class,'read'])->name('notifications.read');
+    Route::get('/notificaciones', [\App\Http\Controllers\Delivery\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notificaciones/{id}/leer', [\App\Http\Controllers\Delivery\NotificationController::class, 'read'])->name('notifications.read');
 });
 
-// --- ADMINISTRACIÓN: sesión y base de datos ---
+// --- ADMINISTRACIÓN ---
 Route::middleware(['auth', 'role:administrador'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Delivery\AdminPanelController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/usuarios', [\App\Http\Controllers\Delivery\AdminPanelController::class, 'users'])->name('admin.usuarios');
@@ -89,6 +93,7 @@ Route::middleware(['auth', 'role:administrador'])->prefix('admin')->group(functi
     Route::get('/roles-niveles', [\App\Http\Controllers\Delivery\AdminPanelController::class, 'roles'])->name('admin.roles-niveles');
     Route::get('/historial', [\App\Http\Controllers\Delivery\AdminPanelController::class, 'history'])->name('admin.historial');
 });
+
 // Compatibilidad con enlaces existentes del frontend de Pablo.
 Route::middleware(['auth', 'role:administrador'])->group(function () {
     Route::redirect('/admin/crear-usuario', '/admin/usuarios/crear')->name('preview.admin.crear');
@@ -99,52 +104,67 @@ Route::middleware(['auth', 'role:administrador'])->group(function () {
     Route::redirect('/admin/listado', '/admin/usuarios')->name('preview.admin.usuarios');
 });
 
-// === INTEGRACIÓN FRONTEND PABLO / BACKEND ALEXIS (FASE 1) ===
-// Mantener endpoints y controladores de Alexis; reincorporar rutas visuales de Pablo.
-// 4.º medio y docentes: primera integración persistente con autenticación web.
-// 3.º medio conserva las rutas de previsualización originales.
+// === INTEGRACIÓN FRONTEND PABLO / BACKEND ALEXIS ===
 
+// --- AUTENTICACIÓN WEB ---
 Route::get('/login', [WebController::class, 'login'])->name('preview.login');
 Route::post('/login', [SessionController::class, 'store'])->middleware('throttle:10,1')->name('delivery.login.submit');
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('delivery.logout');
 Route::get('/iniciar-sesion', [WebController::class, 'login'])->name('login');
 
-// Docentes: flujo funcional respaldado por base de datos.
-Route::middleware(['auth', 'role:docente|administrador'])->prefix('docente')->name('preview.docente.')->group(function () {
-    Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('dashboard');
-    Route::get('/casos', [TeacherController::class, 'index'])->name('casos');
-    Route::get('/crear-caso', [TeacherController::class, 'create'])->name('crear-caso');
-    Route::get('/rubricas', [\App\Http\Controllers\Delivery\RubricController::class,'index'])->name('rubricas');
-    Route::post('/rubricas', [\App\Http\Controllers\Delivery\RubricController::class,'store'])->name('rubricas.store');
-    Route::post('/rubricas/casos/{case}', [\App\Http\Controllers\Delivery\RubricController::class,'assign'])->name('rubricas.assign');
-    Route::get('/rubricas/predeterminada/{nivel}/pdf', [\App\Http\Controllers\Delivery\RubricController::class,'defaultPdf'])->name('rubricas.default-pdf');
-    Route::get('/rubricas/predeterminada/{nivel}', [\App\Http\Controllers\Delivery\RubricController::class,'defaults'])->name('rubricas.defaults');
-    Route::get('/rubricas/{rubric}/pdf', [\App\Http\Controllers\Delivery\RubricController::class,'pdf'])->name('rubricas.pdf');
-    Route::get('/rubricas/{rubric}', [\App\Http\Controllers\Delivery\RubricController::class,'show'])->name('rubricas.show');
-    Route::post('/casos', [TeacherController::class, 'store'])->name('store-caso');
-    Route::delete('/casos/{case}', [TeacherController::class, 'destroy'])->name('casos.destroy');
-    Route::get('/asignaciones', [TeacherController::class, 'assignments'])->name('asignaciones');
-    Route::get('/asignaciones/datos', [TeacherController::class, 'assignmentIndex'])->name('assignments.index');
-    Route::post('/asignaciones', [TeacherController::class, 'assignmentStore'])->name('assignments.store');
-    Route::put('/asignaciones/{assignment}', [TeacherController::class, 'assignmentUpdate'])->name('assignments.update');
-    Route::delete('/asignaciones/{assignment}', [TeacherController::class, 'assignmentDestroy'])->name('assignments.destroy');
-    Route::get('/revision-fichas', [TeacherController::class, 'review'])->name('revision-fichas');
-    Route::get('/evaluaciones', [TeacherController::class, 'evaluations'])->name('evaluaciones');
-    Route::get('/revision-3ro', fn () => redirect()->route('preview.docente.evaluaciones', ['nivel' => '3']))->name('revision-3ro');
-    Route::get('/revision-3ro/{record}', [\App\Http\Controllers\Delivery\ThirdReviewController::class, 'show'])->name('revision-3ro.detalle');
-    Route::post('/revision-3ro/{record}/evaluar', [\App\Http\Controllers\Delivery\ThirdReviewController::class, 'feedback'])->name('revision-3ro.evaluar');
-    Route::get('/fichas/datos', [ReviewController::class, 'index'])->name('reviews.index');
-    Route::get('/fichas/{record}', [ReviewController::class, 'show'])->name('reviews.show');
-    Route::post('/fichas/{record}/evaluacion', [ReviewController::class, 'evaluate'])->name('reviews.evaluate');
-});
+// --- DOCENTES ---
+Route::middleware(['auth', 'role:docente|administrador'])
+    ->prefix('docente')
+    ->name('preview.docente.')
+    ->group(function () {
+        Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('dashboard');
+        Route::get('/casos', [TeacherController::class, 'index'])->name('casos');
+        Route::get('/crear-caso', [TeacherController::class, 'create'])->name('crear-caso');
 
-// 3.º medio: vistas y guardado MySQL únicamente para casos asignados al estudiante.
-Route::middleware(['auth', 'role:estudiante'])->prefix('estudiante/3ro')->name('preview.estudiante.3ro.')->group(function () {
-    foreach (['antecedentes-3ro','signos-vitales-3ro','examen-fisico-3ro','citaciones-3ro'] as $slug) {
-        Route::get('/'.$slug, fn (Request $request) => app(\App\Http\Controllers\Delivery\ThirdYearController::class)->show($request,$slug))->name($slug);
-    }
-});
-Route::middleware(['auth','role:estudiante'])->prefix('3ro/casos/{code}')->name('delivery.third.')->group(function () {
-    Route::put('/secciones/{section}', [\App\Http\Controllers\Delivery\ThirdYearController::class,'save'])->name('save');
-    Route::post('/entregar', [\App\Http\Controllers\Delivery\ThirdYearController::class,'submit'])->name('submit');
-});
+        // Rúbricas
+        Route::get('/rubricas', [\App\Http\Controllers\Delivery\RubricController::class, 'index'])->name('rubricas');
+        Route::post('/rubricas', [\App\Http\Controllers\Delivery\RubricController::class, 'store'])->name('rubricas.store');
+        Route::post('/rubricas/casos/{case}', [\App\Http\Controllers\Delivery\RubricController::class, 'assign'])->name('rubricas.assign');
+        Route::get('/rubricas/predeterminada/{nivel}/pdf', [\App\Http\Controllers\Delivery\RubricController::class, 'defaultPdf'])->name('rubricas.default-pdf');
+        Route::get('/rubricas/predeterminada/{nivel}', [\App\Http\Controllers\Delivery\RubricController::class, 'defaults'])->name('rubricas.defaults');
+        Route::get('/rubricas/{rubric}/pdf', [\App\Http\Controllers\Delivery\RubricController::class, 'pdf'])->name('rubricas.pdf');
+        Route::get('/rubricas/{rubric}', [\App\Http\Controllers\Delivery\RubricController::class, 'show'])->name('rubricas.show');
+
+        // Casos clínicos
+        Route::post('/casos', [TeacherController::class, 'store'])->name('store-caso');
+        Route::delete('/casos/{case}', [TeacherController::class, 'destroy'])->name('casos.destroy');
+
+        // Asignaciones
+        Route::post('/asignaciones', [TeacherController::class, 'assignmentStore'])->name('assignments.store');
+        Route::get('/asignaciones', [TeacherController::class, 'assignments'])->name('asignaciones');
+        Route::get('/asignaciones/datos', [TeacherController::class, 'assignmentIndex'])->name('assignments.index');
+        Route::delete('/asignaciones/{assignment}', [TeacherController::class, 'assignmentDestroy'])->name('assignments.destroy');
+
+        // Revisión y evaluación
+        Route::get('/revision-fichas', [TeacherController::class, 'review'])->name('revision-fichas');
+        Route::get('/evaluaciones', [TeacherController::class, 'evaluations'])->name('evaluaciones');
+        Route::get('/revision-3ro', fn () => redirect()->route('preview.docente.evaluaciones', ['nivel' => '3']))->name('revision-3ro');
+        Route::get('/revision-3ro/{record}', [\App\Http\Controllers\Delivery\ThirdReviewController::class, 'show'])->name('revision-3ro.detalle');
+        Route::post('/revision-3ro/{record}/evaluar', [\App\Http\Controllers\Delivery\ThirdReviewController::class, 'feedback'])->name('revision-3ro.evaluar');
+        Route::get('/fichas/datos', [ReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/fichas/{record}', [ReviewController::class, 'show'])->name('reviews.show');
+        Route::post('/fichas/{record}/evaluacion', [ReviewController::class, 'evaluate'])->name('reviews.evaluate');
+    });
+
+// --- 3.º MEDIO ---
+Route::middleware(['auth', 'role:estudiante'])
+    ->prefix('estudiante/3ro')
+    ->name('preview.estudiante.3ro.')
+    ->group(function () {
+        foreach (['antecedentes-3ro', 'signos-vitales-3ro', 'examen-fisico-3ro', 'citaciones-3ro'] as $slug) {
+            Route::get('/' . $slug, fn (Request $request) => app(\App\Http\Controllers\Delivery\ThirdYearController::class)->show($request, $slug))->name($slug);
+        }
+    });
+
+Route::middleware(['auth', 'role:estudiante'])
+    ->prefix('3ro/casos/{code}')
+    ->name('delivery.third.')
+    ->group(function () {
+        Route::put('/secciones/{section}', [\App\Http\Controllers\Delivery\ThirdYearController::class, 'save'])->name('save');
+        Route::post('/entregar', [\App\Http\Controllers\Delivery\ThirdYearController::class, 'submit'])->name('submit');
+    });

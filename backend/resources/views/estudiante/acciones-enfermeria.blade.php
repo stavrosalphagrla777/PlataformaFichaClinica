@@ -2026,13 +2026,13 @@
             function guardar(mensaje = 'Registro guardado correctamente.') {
                 sessionStorage.setItem(storageKey, JSON.stringify(registros));
                 if (!window.Ficha4toBridge?.flush) {
-                    avisar('No se pudo guardar el registro. Inténtalo nuevamente.', true);
+                    avisar('El registro no pudo confirmarse con el servidor.', true);
                     return;
                 }
                 avisar('Guardando registro…');
                 void window.Ficha4toBridge.flush()
                     .then(() => avisar(mensaje))
-                    .catch(() => avisar('No se pudo guardar el registro. Revisa la conexión y vuelve a intentarlo.', true));
+                    .catch(() => avisar('No se pudo confirmar el guardado en el servidor. Revisa la conexión y vuelve a intentar.', true));
             }
 
             function ahora() {

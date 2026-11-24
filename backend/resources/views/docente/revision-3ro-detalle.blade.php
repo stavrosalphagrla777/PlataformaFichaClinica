@@ -32,7 +32,8 @@
         <p>Aún no existen registros guardados para esta ficha.</p>
     @endforelse
     <section class="panel2">
-        <h2>Retroalimentación y evaluación</h2>
+        <h2>Retroalimentación y evaluación manual</h2>
+        <p>Para 3.º medio CESFAM todavía se debe acordar la rúbrica oficial; si se registra nota o porcentaje, son ingresados manualmente por el docente.</p>
         <p>Revisa la información registrada por el estudiante y consigna los resultados de su evaluación.</p>
         @if(session('ok'))<p role="status">{{ session('ok') }}</p>@endif
         @if($errors->any())<p role="alert">{{ $errors->first() }}</p>@endif
@@ -45,7 +46,7 @@
             <label for="porcentaje">Porcentaje de logro (20 a 100)</label>
             <input id="porcentaje" type="number" name="porcentaje" step="0.01" min="20" max="100" value="{{ old('porcentaje', $record->evaluation?->porcentaje) }}" @disabled($record->evaluation?->estado === 'finalizada')>
             @if($record->evaluation?->estado !== 'finalizada')
-                <button name="finalizar" value="0">Guardar evaluación</button>
+                <button name="finalizar" value="0">Guardar borrador</button>
                 @if(in_array($estado, ['Entregada', 'Tiempo agotado']))
                     <button name="finalizar" value="1" onclick="return confirm('¿Finalizar la evaluación? No podrá modificarse.')">Finalizar evaluación</button>
                 @endif

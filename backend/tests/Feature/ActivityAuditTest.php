@@ -52,7 +52,7 @@ class ActivityAuditTest extends TestCase
     private function assignmentPayload(string $code): array
     {
         return [
-            'codigo' => $code, 'nivel' => '4.º medio', 'curso' => '4.º Medio A',
+            'codigo' => $code, 'nivel' => '4.º medio', 'curso' => '4.º Medio C',
             'inicio' => now()->subMinutes(5)->format('Y-m-d\TH:i'),
             'termino' => now()->addDay()->format('Y-m-d\TH:i'),
             'duracion' => 90, 'estado' => 'Activa', 'observaciones' => '',
@@ -77,7 +77,7 @@ class ActivityAuditTest extends TestCase
     public function test_assignment_submission_and_final_grade_are_logged_once(): void
     {
         $teacher = $this->account('docente', 'docente-ciclo');
-        $student = $this->account('estudiante', 'estudiante-ciclo', '4° A');
+        $student = $this->account('estudiante', 'estudiante-ciclo', '4.º Medio C');
         $case = $this->case($teacher);
 
         $this->actingAs($teacher)->postJson('/docente/asignaciones', $this->assignmentPayload($case->codigo))

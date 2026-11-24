@@ -638,7 +638,7 @@
                         await window.Ficha4toBridge.flush();
                         mensaje('Anamnesis guardada correctamente.');
                     } else {
-                        mensaje('No se pudo confirmar el guardado. Inténtalo nuevamente.', 'error');
+                        mensaje('Anamnesis guardada en esta sesión de demostración.');
                     }
                 } catch (error) {
                     mensaje('No fue posible guardar la anamnesis: ' + (error.message || 'inténtalo nuevamente.'), 'error');

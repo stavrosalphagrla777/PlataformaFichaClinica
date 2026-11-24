@@ -106,8 +106,11 @@
                         </div><a class="btn btn-secondary" id="evalPdf" href="#" hidden>Descargar pauta PDF</a> <button type="button" class="btn btn-secondary" id="evalBack">Volver al
                             listado</button>
                     </div>
-                    <div class="eval-scale"><strong>Escala de rendimiento de la pauta:</strong> 20% = 2,0 · 60% = 4,0 ·
-                        100% = 7,0</div>
+                    <div class="eval-scale">
+                        <strong>Escala de rendimiento de la pauta:</strong>
+                        20% = 2,0 · 60% = 4,0 · 100% = 7,0
+                        <small>La fórmula entre estos puntos es provisional y requiere confirmación del liceo.</small>
+                    </div>
                     <div class="eval-summary">
                         <div><span class="eval-kicker">Criterios cumplidos</span><strong id="evalCompleted">0 /
                                 9</strong></div>
@@ -166,7 +169,7 @@
                             <h2 id="evalModalTitle">Finalizar evaluación</h2>
                         </div>
                         <div class="modal-body">
-                            <p>Al finalizar, la evaluación quedará cerrada y no podrás modificarla. ¿Deseas continuar?
+                            <p>Al finalizar, la evaluación quedará bloqueada de forma definitiva en el servidor. ¿Deseas continuar?
                             </p>
                         </div>
                         <div class="modal-footer"><button class="btn btn-secondary" type="button"

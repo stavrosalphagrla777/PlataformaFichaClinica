@@ -8,18 +8,14 @@
 @include('estudiante.partials.sidebar-4to')
 <div class="main"><header class="topbar"><div class="topbar-left"><button type="button" class="menu-toggle" id="menuToggle" aria-label="Mostrar u ocultar menú" aria-controls="sidebar" aria-expanded="true"><span></span><span></span><span></span></button><strong>Detalle del caso · 4.º medio</strong></div><div class="user-info"><strong>{{ auth()->user()?->name }}</strong><small>Estudiante · Urgencias</small></div></header>
 <main class="content"><div class="page-heading"><div><p class="case-eyebrow">FICHA CLÍNICA EDUCATIVA · URGENCIAS</p><h1>{{ $case->titulo }}</h1><p>{{ $case->codigo }} · {{ $case->tipo }} · Servicio de urgencias</p></div><a class="btn-secondary-link" href="{{ route('preview.estudiante.casos') }}">← Volver a mis casos</a></div>
-<div class="case-overview-grid"><section class="case-panel case-description"><h2>Descripción del caso clínico</h2>
-<!-- CORRECCIÓN AQUÍ: Renderizar HTML directamente -->
-<div class="case-richtext">{!! $case->descripcion !!}</div>
-@if($case->antecedentes)<h3>Antecedentes del escenario</h3>
-<div class="case-richtext">{!! $case->antecedentes !!}</div>@endif
+<div class="case-overview-grid"><section class="case-panel case-description"><h2>Descripción del caso clínico</h2><div class="case-richtext">{!! nl2br(e(strip_tags(str_replace(['</p>','</li>','<br>','<br/>'],["\n","\n","\n","\n"],$case->descripcion)))) !!}</div>
+@if($case->antecedentes)<h3>Antecedentes del escenario</h3><div class="case-richtext">{!! nl2br(e(strip_tags(str_replace(['</p>','</li>','<br>'],["\n","\n","\n"],$case->antecedentes)))) !!}</div>@endif
 @if($assignment->observaciones)<h3>Indicaciones del docente</h3><p class="case-richtext">{{ $assignment->observaciones }}</p>@endif</section>
 <section class="case-panel"><h2>Datos de la actividad</h2><dl class="case-facts"><dt>Código</dt><dd>{{ $case->codigo }}</dd><dt>Paciente simulado</dt><dd>{{ $case->paciente ?: 'Sin identificar' }}</dd><dt>Edad</dt><dd>{{ $case->edad ?? 'No informada' }}</dd><dt>Clasificación ESI</dt><dd>{{ $case->esi ?? 'No asignada' }}</dd><dt>Curso</dt><dd>4.º medio</dd><dt>Inicio</dt><dd>{{ $assignment->inicio->format('d/m/Y H:i') }}</dd><dt>Término</dt><dd>{{ $assignment->termino->format('d/m/Y H:i') }}</dd><dt>Duración máxima</dt><dd>{{ $assignment->effectiveDuration() }} minutos</dd><dt>Estado</dt><dd><span class="case-state">{{ $status }}</span></dd></dl></section></div>
 @if(collect($case->segmentario ?? [])->filter(fn($v)=>trim((string)$v)!=='')->isNotEmpty())
 <section class="case-panel"><h2>Hallazgos del examen físico segmentario</h2><p class="case-help">Datos del escenario aportados por el docente. No sustituyen tu propia valoración.</p><div class="case-segmentario-grid">
 @foreach(['cabeza_cuello'=>'Cabeza y cuello','torax_abdomen'=>'Tórax y abdomen','extremidades_piel'=>'Extremidades y piel','neurologico'=>'Neurológico'] as $field=>$name)
-<!-- CORRECCIÓN AQUÍ: Renderizar HTML en segmentario -->
-@if(filled($case->segmentario[$field] ?? null))<div class="case-segmentario-item"><strong>{{ $name }}</strong><p class="case-richtext">{!! $case->segmentario[$field] !!}</p></div>@endif
+@if(filled($case->segmentario[$field] ?? null))<div class="case-segmentario-item"><strong>{{ $name }}</strong><p class="case-richtext">{{ $case->segmentario[$field] }}</p></div>@endif
 @endforeach
 </div></section>
 @endif
